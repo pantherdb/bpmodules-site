@@ -39,10 +39,20 @@ export class AnnotationService {
 
     private client: Client;
     uniqueList: Annotation[];
+    onBPModulesChanged: BehaviorSubject<any>;
+    leafGenesToCheck = [
+        "UniProtKB:O75603",
+        "UniProtKB:Q96GW7",
+        "UniProtKB:P10915",
+        "UniProtKB:Q9GZV7",
+        "UniProtKB:Q9UGB7",
+        "UniProtKB:Q96RU2",
+        "UniProtKB:Q9UHP3"];
 
     constructor(
         private httpClient: HttpClient,
         private annotationGraphQLService: AnnotationGraphQLService) {
+        this.onBPModulesChanged = new BehaviorSubject(null);
         this.onAnnotationsChanged = new BehaviorSubject(null);
         this.onGeneCountChanged = new BehaviorSubject(null);
         //this.onAnnotationGroupsChanged = new BehaviorSubject(null);
@@ -61,6 +71,43 @@ export class AnnotationService {
         const err = new Error(error);
         return throwError(() => err);
     }
+
+    private jsonUrl = 'assets/sample.json';  // URL to JSON file
+
+
+    getJsonData() {
+        this.httpClient.get<any>(this.jsonUrl).subscribe({
+            next: (data) => {
+                const data1 = this.calculateMatchPercentagesAndColor(data);
+                this.onBPModulesChanged.next(data1);
+            },
+            error: (err) => {
+                // Handle error here
+                console.error('Error fetching data:', err);
+            }
+        });
+    }
+
+    private calculateMatchPercentagesAndColor(data: any[]): any[] {
+        return data.map(module => {
+            const allLeafGenes = module.nodes.flatMap(node => node.leaf_genes);
+            const totalGenes = allLeafGenes.length;
+            const matchingGenes = allLeafGenes.filter(gene => this.leafGenesToCheck.includes(gene)).length;
+            const matchPercentage = totalGenes > 0 ? (matchingGenes / totalGenes) * 100 : 0;
+            const grayscaleColor = this.getGrayscaleColor(matchPercentage);
+            return {
+                ...module,
+                matchPercentage,
+                grayscaleColor // Add the calculated color
+            };
+        });
+    }
+
+    private getGrayscaleColor(percentage: number): string {
+        const intensity = Math.round(255 - (255 * percentage / 100));
+        return `rgb(${intensity}, ${intensity}, ${intensity})`;
+    }
+
 
 
     getAnnotationsExport(page: number): any {

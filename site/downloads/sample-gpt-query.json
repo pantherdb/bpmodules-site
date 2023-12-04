@@ -1,0 +1,44 @@
+[
+    {
+        "module_term": "GO:0048839",
+        "nodes": [
+            {
+                "ptn_id": "PTN002750520",
+                "label": "HARMONIN",
+                "terms": [
+                    "GO:0060122",
+                    "GO:0042491",
+                    "GO:0042472"
+                ],
+                "leaf_genes": [
+                    "UniProtKB:Q9Y6N9"
+                ]
+            },
+            {
+                "ptn_id": "PTN002750487",
+                "label": "PDZ DOMAIN-CONTAINING PROTEIN 7",
+                "terms": [
+                    "GO:0060088"
+                ],
+                "leaf_genes": [
+                    "UniProtKB:Q9H5P4"
+                ]
+            }
+        ]
+    },
+    {
+        "module_term": "GO:0007605",
+        "nodes": [
+            {
+                "ptn_id": "PTN002750520",
+                "label": "HARMONIN",
+                "terms": [
+                    "GO:0007605"
+                ],
+                "leaf_genes": [
+                    "UniProtKB:Q9Y6N9"
+                ]
+            }
+        ]
+    }
+]

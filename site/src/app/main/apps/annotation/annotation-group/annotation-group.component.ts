@@ -26,6 +26,8 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
   columns: any[] = [];
   count = 0
 
+  bpModules: any[] = []
+
   amigoTermUrl = environment.amigoTermUrl
   pubmedUrl = environment.pubmedUrl
 
@@ -73,6 +75,8 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
 
     this._unsubscribeAll = new Subject();
 
+    this.annotationService.getJsonData()
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -83,6 +87,18 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit(): void {
+
+    this.annotationService.onBPModulesChanged
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((bpModules) => {
+        if (!bpModules) {
+          this.bpModules = []
+          return
+        }
+
+        this.bpModules = bpModules
+      });
+
 
     if (this.options?.displayedColumns) {
       this.displayedColumns = this.options.displayedColumns
