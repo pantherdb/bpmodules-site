@@ -1,0 +1,14 @@
+@import "src/@pango/scss/pango";
+@import "src/@pango.common/scss/pango.common";
+
+$primary: map-get($theme, primary);
+$accent: map-get($theme, accent);
+
+:host {
+  .footer {
+    background: #1a237e;
+    background: linear-gradient(to right, #0e2a3b 0%, #34306b 100%);
+    padding: 20px;
+    color: #fff;
+  }
+}

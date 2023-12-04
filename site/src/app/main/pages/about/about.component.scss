@@ -1,0 +1,46 @@
+@import "src/@pango/scss/pango";
+@import "src/@pango.common/scss/pango.common";
+
+:host {
+  overflow-y: auto;
+  pango-footer {
+  }
+
+  .pango-sm-container {
+    width: 800px;
+  }
+
+  .pango-section {
+    padding: 40px 10px;
+
+    .pango-heading {
+      margin: 0 auto;
+      width: 800px;
+
+      h3 {
+        font-size: 28px;
+      }
+    }
+
+    h1 {
+      font-size: 40px;
+    }
+
+    h2 {
+      font-size: 30px;
+    }
+
+    &.section-1 {
+      background-color: #fff;
+    }
+
+    &.section-2 {
+      background-color: rgba($pango-primary-color, 0.1);
+    }
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 24px;
+  }
+}
