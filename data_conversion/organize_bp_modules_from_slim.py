@@ -9,7 +9,8 @@ parser.add_argument('-m', '--bp_modules_json')
 parser.add_argument('-s', '--go_slim_file')
 parser.add_argument('-o', '--go_ontology_file', help="TSV of GO term parent(col1)-child(col2) relationships (is_a, part_of only)")
 parser.add_argument('-t', '--top_tier_terms_file', help="File of line-separated GO terms to use as top-tier terms")
-
+parser.add_argument('-l', '--go_term_labels_file')
+parser.add_argument('-j', '--json_output_file')
 
 class OntologyManager:
     def __init__(self, goslim_term_list: str, ontology: str, top_tier_terms_file: str):
@@ -76,6 +77,12 @@ class OntologyManager:
         else:
             return [goterm]
 
+    def top_tier_term_precedence_index_for_term(self, goterm: str):
+        top_tier_terms = self.generalize_top_tier_term(goterm)
+        if top_tier_terms:
+            return self.top_tier_terms_precedence.index(top_tier_terms[0])
+        return 10000  # Some huge number so it sorts last
+
     def generalize_slim_term(self, goterm: str):
         generalized_slim_terms = self.generalize_term_from_list(self.goslim_terms, goterm)
         if len(generalized_slim_terms) > 1:
@@ -84,8 +91,12 @@ class OntologyManager:
             for top_tier_term in self.top_tier_terms_precedence:
                 if top_tier_term in generalized_slim_terms:
                     generalized_slim_terms_no_top_tier_terms.remove(top_tier_term)
-            if len(generalized_slim_terms_no_top_tier_terms) > 0:
+            if len(generalized_slim_terms_no_top_tier_terms) == 1:
                 return generalized_slim_terms_no_top_tier_terms
+            elif len(generalized_slim_terms_no_top_tier_terms) > 1:
+                # If still multiples, order by their top tier term precedence and return first one
+                sorted_terms = sorted(generalized_slim_terms_no_top_tier_terms, key=lambda x: self.top_tier_term_precedence_index_for_term(x))
+                return [sorted_terms[0]]
             else:
                 # Gotta try something else
                 # Use self.top_tier_terms_precedence to determine which single slim term to keep
@@ -96,7 +107,14 @@ class OntologyManager:
 
     def generalize_top_tier_term(self, goterm: str):
         if goterm not in self.slim_to_top_tier_lkp:
-            self.slim_to_top_tier_lkp[goterm] = self.generalize_term_from_list(self.top_tier_terms, goterm)
+            generalized_top_tier_terms = self.generalize_term_from_list(self.top_tier_terms, goterm)
+            if len(generalized_top_tier_terms) > 1:
+                # If still multiples, order by their top tier term precedence and return first one
+                sorted_terms = sorted(generalized_top_tier_terms, key=lambda x: self.top_tier_term_precedence_index_for_term(x))
+                generalized_top_tier_term = [sorted_terms[0]]
+            else:
+                generalized_top_tier_term = generalized_top_tier_terms
+            self.slim_to_top_tier_lkp[goterm] = generalized_top_tier_term
         return self.slim_to_top_tier_lkp[goterm]
 
     def get_ancestors_in_list(self, term_list, term, hops: int = 0):
@@ -120,22 +138,36 @@ if __name__ == "__main__":
     print("go_parents", len(ont_manager.go_parents))
     print("top_tier_terms", len(ont_manager.top_tier_terms))
 
+    term_labels = {}
+    with open(args.go_term_labels_file) as gtlf:
+        reader = csv.reader(gtlf, delimiter="\t")
+        for r in reader:
+            goterm, label = r[0], r[1]
+            term_labels[goterm] = label
+
     # Load BP modules
     with open(args.bp_modules_json) as bmj:
         bp_modules = json.load(bmj)
     print(len(bp_modules))
     # Iterate through and put module in go_slim_terms key if key is_ancestor_of module_term
-    module_leftovers = []
+    module_leftovers = {}
     for m in bp_modules:
         module_term = m["module_term"]
         slim_terms = ont_manager.generalize_slim_term(module_term)
         if slim_terms:
             if len(slim_terms) > 1:
-                print("\t".join(["Multiple slim terms for", module_term] + slim_terms))
+                terms_with_labels = []
+                for mt in [module_term] + slim_terms:
+                    term_label = term_labels.get(mt, "")
+                    term_and_label = mt + " " + term_label
+                    terms_with_labels.append(term_and_label)
+                print("\t".join(["Multiple slim terms for"] + terms_with_labels))
             for slim_term in slim_terms:
                 ont_manager.goslim_terms[slim_term].append(m)
         else:
-            module_leftovers.append(m)
+            if module_term not in module_leftovers:
+                module_leftovers[module_term] = []
+            module_leftovers[module_term].append(m)
 
     # Iterate through go_slim_terms and put in top_tier_terms key if top_tier_term is_ancestor_of slim_term
     slim_term_leftovers = {}
@@ -144,14 +176,14 @@ if __name__ == "__main__":
         top_tier_terms = ont_manager.generalize_top_tier_term(slim_term)
         if top_tier_terms:
             for top_tier_term in top_tier_terms:
-                if slim_term not in ont_manager.top_tier_terms[top_tier_term]:
-                    ont_manager.top_tier_terms[top_tier_term][slim_term] = []
-                ont_manager.top_tier_terms[top_tier_term][slim_term].append(st_modules)
+                # if slim_term not in ont_manager.top_tier_terms[top_tier_term]:
+                #     ont_manager.top_tier_terms[top_tier_term][slim_term] = []
+                ont_manager.top_tier_terms[top_tier_term][slim_term] = st_modules
         else:
             slim_term_leftovers[slim_term] = st_modules
 
-    ont_manager.top_tier_terms["Other"] = slim_term_leftovers
-    print(len(ont_manager.top_tier_terms["Other"]))
+    ont_manager.top_tier_terms["other biological process"] = module_leftovers
+    print(len(ont_manager.top_tier_terms["other biological process"]))
     distinct_leftover_modules = []
     for slim_term, modules in slim_term_leftovers.items():
         for m in modules:
@@ -180,3 +212,27 @@ if __name__ == "__main__":
         if m in distinct_modules and m not in module_intersection:
             module_intersection.append(m)
     print("Intersection:", len(module_intersection))
+
+    if args.json_output_file:
+        json_output_ds = []
+        for top_tier_term, slim_terms in ont_manager.top_tier_terms.items():
+            top_term_ds = {
+                "id": top_tier_term,
+                "categories": []
+            }
+            for st in slim_terms:
+                if st == top_tier_term:
+                    term_id = "other {}".format(term_labels[st])
+                else:
+                    term_id = st
+                slim_term_ds = {
+                    "id": term_id,
+                    "modules": []
+                }
+                for m in slim_terms[st]:
+                    slim_term_ds["modules"].append(m)
+                top_term_ds["categories"].append(slim_term_ds)
+            json_output_ds.append(top_term_ds)
+        # Write out json
+        with open(args.json_output_file, "w") as jof:
+            json.dump(json_output_ds, jof, indent=4)
