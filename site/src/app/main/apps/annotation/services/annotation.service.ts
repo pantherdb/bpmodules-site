@@ -11,6 +11,8 @@ import { AnnotationGraphQLService } from './annotation-graphql.service';
 import { pangoData } from '@pango.common/data/config';
 import { Gene } from '../../gene/models/gene.model';
 
+import genes from '@pango.common/data/genes1.json';
+
 @Injectable({
     providedIn: 'root',
 })
@@ -40,19 +42,15 @@ export class AnnotationService {
     private client: Client;
     uniqueList: Annotation[];
     onBPModulesChanged: BehaviorSubject<any>;
-    leafGenesToCheck = [
-        "UniProtKB:O75603",
-        "UniProtKB:Q96GW7",
-        "UniProtKB:P10915",
-        "UniProtKB:Q9GZV7",
-        "UniProtKB:Q9UGB7",
-        "UniProtKB:Q96RU2",
-        "UniProtKB:Q9UHP3"];
+    onBPModuleChanged: BehaviorSubject<any>;
+    leafGenesToCheck = genes
+
 
     constructor(
         private httpClient: HttpClient,
         private annotationGraphQLService: AnnotationGraphQLService) {
         this.onBPModulesChanged = new BehaviorSubject(null);
+        this.onBPModuleChanged = new BehaviorSubject(null);
         this.onAnnotationsChanged = new BehaviorSubject(null);
         this.onGeneCountChanged = new BehaviorSubject(null);
         //this.onAnnotationGroupsChanged = new BehaviorSubject(null);
@@ -89,18 +87,25 @@ export class AnnotationService {
     }
 
     private calculateMatchPercentagesAndColor(data: any[]): any[] {
-        return data.map(module => {
-            const allLeafGenes = module.nodes.flatMap(node => node.leaf_genes);
-            const totalGenes = allLeafGenes.length;
-            const matchingGenes = allLeafGenes.filter(gene => this.leafGenesToCheck.includes(gene)).length;
-            const matchPercentage = totalGenes > 0 ? (matchingGenes / totalGenes) * 100 : 0;
-            const grayscaleColor = this.getGrayscaleColor(matchPercentage);
-            return {
-                ...module,
-                matchPercentage,
-                grayscaleColor // Add the calculated color
-            };
-        });
+        return data.map(item => ({
+            ...item,
+            categories: item.categories.map(category => ({
+                ...category,
+                modules: category.modules.map(module => {
+                    const totalNodes = module.nodes.length;
+                    const matchingNodesCount = module.nodes.filter(node =>
+                        node.leaf_genes.some(gene => this.leafGenesToCheck.includes(gene))
+                    ).length;
+                    const matchPercentage = totalNodes > 0 ? (matchingNodesCount / totalNodes) * 100 : 0;
+                    const grayscaleColor = this.getGrayscaleColor(matchPercentage);
+                    return {
+                        ...module,
+                        matchPercentage,
+                        grayscaleColor // Add the calculated color
+                    };
+                })
+            }))
+        }));
     }
 
     private getGrayscaleColor(percentage: number): string {
@@ -126,6 +131,10 @@ export class AnnotationService {
         const self = this;
         self.loading = true;
         return this.annotationGraphQLService.getAnnotationsExportAllQuery(this.query)
+    }
+
+    setDetail(bpModule) {
+        this.onBPModuleChanged.next(bpModule);
     }
 
     getAnnotationsPage(query: Query, page: number): any {

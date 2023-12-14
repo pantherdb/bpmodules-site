@@ -9,6 +9,57 @@ $accent: map-get($theme, accent);
     @include deep-width(500px !important);
   }
 
+  .matched-gene {
+    background-color: #28a745 !important;
+    color: #f2f2f2;
+  }
+  .module-display {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .module-header {
+    background-color: #e7f5ff;
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #0056b3;
+  }
+
+  .node {
+    background-color: #fff;
+    border: 1px solid #eee;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .node h4 {
+    color: #007bff;
+    margin-bottom: 10px;
+  }
+
+  .node p {
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  .terms,
+  .genes {
+    background-color: #f2f2f2;
+    padding: 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+
   .pango-annotation-detail-row {
     padding: 5px 10px;
     border-bottom: #888 solid 1px;

@@ -21,20 +21,27 @@ export class AnnotationDetailComponent implements OnInit, OnDestroy {
 
   annotation: Annotation;
   private _unsubscribeAll: Subject<any>;
+  module: any;
   constructor(
     private annotationService: AnnotationService) {
     this._unsubscribeAll = new Subject();
   }
 
   ngOnInit(): void {
-    this.annotationService.onAnnotationChanged
+    this.annotationService.onBPModuleChanged
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((annotation: Annotation) => {
-        if (!annotation) {
+      .subscribe((bpModule) => {
+        if (!bpModule) {
           return
         }
-        this.annotation = annotation;
+        this.module = bpModule
+
+        // console.log(this.bpModule)
       });
+  }
+
+  isGeneMatched(gene: string): boolean {
+    return this.annotationService.leafGenesToCheck.includes(gene);
   }
 
   ngOnDestroy(): void {

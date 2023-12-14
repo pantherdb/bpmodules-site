@@ -167,8 +167,9 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
     this.pangoMenuService.closeRightDrawer()
   }
 
-  openAnnotationSummary() {
-    this.pangoMenuService.selectRightPanel(RightPanel.annotationSummary);
+  openAnnotationSummary(term) {
+    this.annotationService.onBPModuleChanged.next(term)
+    this.pangoMenuService.selectRightPanel(RightPanel.annotationDetail);
     this.pangoMenuService.openRightDrawer()
   }
 

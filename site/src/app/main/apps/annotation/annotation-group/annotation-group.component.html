@@ -1,7 +1,12 @@
-<div class="matrix">
-  <div class="square" *ngFor="let module of bpModules" [style.background-color]="module.grayscaleColor"
-    title="{{ module.module_term }}">
-    <!-- Optional: Display module_term here -->
-    <span>{{ module.module_term }}</span>
+<div *ngFor="let item of  bpModules" class="item">
+  <h2>{{ item.id }}</h2>
+  <div *ngFor="let category of item.categories" class="category">
+    <h3>{{ category.id }}</h3>
+    <div class="matrix">
+      <div class="square" *ngFor="let module of category.modules" [style.background-color]="module.grayscaleColor"
+        title="{{ module.module_term }}" (click)="openAnnotationSummary(module)">
+        <span>{{ module.module_term }}</span>
+      </div>
+    </div>
   </div>
 </div>
