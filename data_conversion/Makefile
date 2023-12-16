@@ -1,62 +1,7 @@
 SHELL := /bin/bash
 
-%/all: %/full_go_annotated.json %/human_iba_annotations.json %/human_iba_gene_info.json %/taxon_lkp.json
+%/all: %/go_term_info.json
 	echo "Done"
-
-%/resources/gene_association.paint_human.gaf.gz:
-	mkdir -p $*/resources
-	wget http://data.pantherdb.org/ftp/downloads/paint/test/15.0/2022-04-18/presubmission/gene_association.paint_human.gaf.gz -O $@
-
-.PRECIOUS: %/resources/gene_association.paint_human.gaf
-%/resources/gene_association.paint_human.gaf: %/resources/gene_association.paint_human.gaf.gz
-	gunzip $<
-
-.PRECIOUS: %/resources/gene.dat.gz
-%/resources/gene.dat.gz:
-	mkdir -p $*/resources
-	wget http://data.pantherdb.org/PANTHER15.0/globals/gene.dat.gz -O $@
-
-.PRECIOUS: %/resources/gene.dat
-%/resources/gene.dat: %/resources/gene.dat.gz
-	gunzip $<
-
-.PRECIOUS: %/resources/gene_node.dat.gz
-%/resources/gene_node.dat.gz:
-	mkdir -p $*/resources
-	wget http://data.pantherdb.org/PANTHER15.0/globals/gene_node.dat.gz -O $@
-
-.PRECIOUS: %/resources/gene_node.dat
-%/resources/gene_node.dat: %/resources/gene_node.dat.gz
-	gunzip $<
-
-.PRECIOUS: %/resources/Homo_sapiens.chromosomal_location.gz
-%/resources/Homo_sapiens.chromosomal_location.gz:
-	mkdir -p $*/resources
-	wget http://data.pantherdb.org/PANTHER15.0/globals/Homo_sapiens.chromosomal_location.gz -O $@
-
-.PRECIOUS: %/resources/Homo_sapiens.chromosomal_location
-%/resources/Homo_sapiens.chromosomal_location: %/resources/Homo_sapiens.chromosomal_location.gz
-	gunzip $<
-
-.PRECIOUS: %/resources/goparentchild.tsv
-%/resources/goparentchild.tsv:
-	mkdir -p $*/resources
-	wget http://data.pantherdb.org/ftp/downloads/paint/test/15.0/2022-04-18/goparentchild.tsv -O $@
-
-.PRECIOUS: %/resources/go_aspects.tsv
-%/resources/go_aspects.tsv:
-	mkdir -p $*/resources
-	wget http://data.pantherdb.org/ftp/downloads/paint/test/15.0/2022-04-18/go_aspects.tsv -O $@
-
-.PRECIOUS: %/resources/species_list_15.tsv
-%/resources/species_list_15.tsv:
-	mkdir -p $*/resources
-	wget http://data.pantherdb.org/PANTHER15.0/globals/species_list.tsv -O $@
-
-.PRECIOUS: %/resources/goslim_generic.owl
-%/resources/goslim_generic.owl:
-	mkdir -p $*/resources
-	wget http://current.geneontology.org/ontology/subsets/goslim_generic.owl -O $@
 
 .PRECIOUS: %/resources/go.obo
 %/resources/go.obo:
@@ -70,37 +15,17 @@ SHELL := /bin/bash
 	wget https://github.com/ontodev/robot/raw/master/bin/robot -O $@
 	chmod 744 $@
 
-.PRECIOUS: %/goslim_generic_w_alt_ids.tsv
-%/goslim_generic_w_alt_ids.tsv: resources/goslim_generic_pt.obo %/bin/robot
-	$*/bin/robot export --input $< --header "ID|LABEL" --format tsv --export $@
+.PRECIOUS: %/level_one_terms.json
+%/level_one_terms.json:
+	python3 mint_other_terms.py -t resources/level_one_terms.txt -o /Users/ebertdu/panther/fullgo_paint_update/2022-12-06_fullgo/go.json > $@
 
-.PRECIOUS: %/goslim_generic.tsv
-%/goslim_generic.tsv: %/goslim_generic_w_alt_ids.tsv
-	awk '$$2 != ""' $< | cut -f1 | grep GO > $@
+.PRECIOUS: %/go_term_info.json
+%/go_term_info.json: %/level_one_terms.json %/ibd_modules_organized.json
+	python3 go_term_lkp_json.py -l $< -o /Users/ebertdu/panther/fullgo_paint_update/2022-12-06_fullgo/go.json -b $*/ibd_modules_organized.json -g $@ -d $*/term_dispositions.json
 
-.PRECIOUS: %/human_iba_annotations.json
-%/human_iba_annotations.json: %/resources/gene_association.paint_human.gaf %/resources/goparentchild.tsv %/goslim_generic.tsv %/resources/go_aspects.tsv %/resources/gene.dat
-	python3 iba_exp_refs_to_json.py -f $*/resources/gene_association.paint_human.gaf resources/annot_human_genes_not_in_families_selected.gaf -o $*/resources/goparentchild.tsv -s $*/goslim_generic.tsv -a $*/resources/go_aspects.tsv -p $*/resources/gene.dat > $@
-
-# .PRECIOUS: %/human_iba_gene_info.json
-# %/human_iba_gene_info.json: %/resources/gene_association.paint_human.gaf %/resources/goparentchild.tsv %/goslim_generic.tsv %/resources/go_aspects.tsv %/resources/gene.dat %/resources/Homo_sapiens.chromosomal_location
-# 	python3 iba_exp_refs_to_json.py -f $*/resources/gene_association.paint_human.gaf -o $*/resources/goparentchild.tsv -s $*/goslim_generic.tsv -a $*/resources/go_aspects.tsv -p $*/resources/gene.dat -c $*/resources/Homo_sapiens.chromosomal_location -g > $@
-
-.PRECIOUS: %/human_iba_gene_info.json
-%/human_iba_gene_info.json: %/resources/gene_association.paint_human.gaf %/resources/gene.dat %/resources/gene_node.dat %/resources/Homo_sapiens.chromosomal_location
-	python3 gene_info_from_gafs.py -a $*/resources/gene_association.paint_human.gaf resources/annot_human_genes_not_in_families_selected.gaf -g $*/resources/gene.dat -n $*/resources/gene_node.dat -c $*/resources/Homo_sapiens.chromosomal_location > $@
-
-.PRECIOUS: %/taxon_lkp.json
-%/taxon_lkp.json: %/human_iba_gene_info.json %/resources/species_list_15.tsv
-	python3 gene_info_taxon_lookup.py -g $*/human_iba_gene_info.json -s $*/resources/species_list_15.tsv > $@
-
-.PRECIOUS: %/full_go.json
-%/full_go.json: %/resources/go.obo %/bin/robot
-	$*/bin/robot export --input $*/resources/go.obo --header "ID|LABEL|hasOBONamespace" --format json --export $@
-
-.PRECIOUS: %/full_go_annotated.json
-%/full_go_annotated.json: %/goslim_generic.tsv %/full_go.json
-	python3 annotate_is_goslim_json_ontology.py -g $*/goslim_generic.tsv -p $*/full_go.json > $@
+.PRECIOUS: %/ibd_modules_organized.json
+%/ibd_modules_organized.json: %/level_one_terms.json
+	python3 organize_bp_modules_from_slim.py -m resources/test/ibd_clusters_genes_ibas.json -s resources/go_slim_terms.txt -t resources/level_one_terms.txt -p $*/level_one_terms.json -o /Users/ebertdu/panther/fullgo_paint_update/2022-12-06_fullgo/goparentchild_w_regulates.tsv -l /Users/ebertdu/panther/fullgo_paint_update/2022-12-06_fullgo/inputforGOClassification.tsv -j $@
 
 tests:
 	pytest test.py
