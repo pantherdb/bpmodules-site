@@ -170,6 +170,8 @@ if __name__ == "__main__":
             if nodes_w_leaf_genes_count == 0:
                 # Drop this entire BP module from the output
                 continue
+        for empty_leaf_node in nodes_with_empty_leaf_genes:
+            m["nodes"].remove(empty_leaf_node)  # This also alters original node count stat reported later
         slim_terms = ont_manager.generalize_slim_term(module_term)
         if slim_terms:
             if len(slim_terms) > 1:
