@@ -8,26 +8,34 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-m', '--bp_modules_json')
 parser.add_argument('-s', '--go_slim_file')
 parser.add_argument('-o', '--go_ontology_file', help="TSV of GO term parent(col1)-child(col2) relationships (is_a, part_of only)")
-parser.add_argument('-t', '--top_tier_terms_file', help="File of line-separated GO terms to use as top-tier terms")
+parser.add_argument('-t', '--level_one_terms_file', help="File of line-separated GO terms to use as level one terms")
+parser.add_argument('-p', '--other_ont_json', help="JSON of OTHER: terms to use for level one terms")
 parser.add_argument('-l', '--go_term_labels_file')
 parser.add_argument('-j', '--json_output_file')
 
+
 class OntologyManager:
-    def __init__(self, goslim_term_list: str, ontology: str, top_tier_terms_file: str):
+    def __init__(self, goslim_term_list: str, ontology: str, level_one_terms_file: str, other_terms_file: str):
         self.goslim_terms = {}
         with open(goslim_term_list) as gtl:
             for l in gtl.readlines():
                 self.goslim_terms[l.rstrip()] = []
 
         # Load top tier terms
-        self.top_tier_terms = {}
-        self.top_tier_terms_precedence = []
-        with open(top_tier_terms_file) as tttf:
-            for l in tttf.readlines():
+        self.level_one_terms = {}
+        self.level_one_terms_precedence = []
+        with open(level_one_terms_file) as l1tf:
+            for l in l1tf.readlines():
                 ttt = l.rstrip()
-                self.top_tier_terms[ttt] = {}
-                self.top_tier_terms_precedence.append(ttt)
-        self.slim_to_top_tier_lkp = {}
+                self.level_one_terms[ttt] = {}
+                self.level_one_terms_precedence.append(ttt)
+        self.slim_to_level_one_lkp = {}
+
+        self.other_terms_lkp_by_label = {}
+        with open(other_terms_file) as otf:
+            other_terms = json.load(otf)
+            for ot in other_terms:
+                self.other_terms_lkp_by_label[ot["term_label"]] = ot["term_id"]
 
         self.go_parents = {}
         with open(ontology) as of:
@@ -77,45 +85,45 @@ class OntologyManager:
         else:
             return [goterm]
 
-    def top_tier_term_precedence_index_for_term(self, goterm: str):
-        top_tier_terms = self.generalize_top_tier_term(goterm)
-        if top_tier_terms:
-            return self.top_tier_terms_precedence.index(top_tier_terms[0])
+    def level_one_term_precedence_index_for_term(self, goterm: str):
+        level_one_terms = self.generalize_level_one_term(goterm)
+        if level_one_terms:
+            return self.level_one_terms_precedence.index(level_one_terms[0])
         return 10000  # Some huge number so it sorts last
 
     def generalize_slim_term(self, goterm: str):
         generalized_slim_terms = self.generalize_term_from_list(self.goslim_terms, goterm)
         if len(generalized_slim_terms) > 1:
-            # First, try removing all top_tier_terms from generalized_slim_terms and see if anything is left
-            generalized_slim_terms_no_top_tier_terms = generalized_slim_terms.copy()
-            for top_tier_term in self.top_tier_terms_precedence:
-                if top_tier_term in generalized_slim_terms:
-                    generalized_slim_terms_no_top_tier_terms.remove(top_tier_term)
-            if len(generalized_slim_terms_no_top_tier_terms) == 1:
-                return generalized_slim_terms_no_top_tier_terms
-            elif len(generalized_slim_terms_no_top_tier_terms) > 1:
+            # First, try removing all level_one_terms from generalized_slim_terms and see if anything is left
+            generalized_slim_terms_no_level_one_terms = generalized_slim_terms.copy()
+            for level_one_term in self.level_one_terms_precedence:
+                if level_one_term in generalized_slim_terms:
+                    generalized_slim_terms_no_level_one_terms.remove(level_one_term)
+            if len(generalized_slim_terms_no_level_one_terms) == 1:
+                return generalized_slim_terms_no_level_one_terms
+            elif len(generalized_slim_terms_no_level_one_terms) > 1:
                 # If still multiples, order by their top tier term precedence and return first one
-                sorted_terms = sorted(generalized_slim_terms_no_top_tier_terms, key=lambda x: self.top_tier_term_precedence_index_for_term(x))
+                sorted_terms = sorted(generalized_slim_terms_no_level_one_terms, key=lambda x: self.level_one_term_precedence_index_for_term(x))
                 return [sorted_terms[0]]
             else:
                 # Gotta try something else
-                # Use self.top_tier_terms_precedence to determine which single slim term to keep
-                for top_tier_term in self.top_tier_terms_precedence:
-                    if top_tier_term in generalized_slim_terms:
-                        return [top_tier_term]
+                # Use self.level_one_terms_precedence to determine which single slim term to keep
+                for level_one_term in self.level_one_terms_precedence:
+                    if level_one_term in generalized_slim_terms:
+                        return [level_one_term]
         return generalized_slim_terms
 
-    def generalize_top_tier_term(self, goterm: str):
-        if goterm not in self.slim_to_top_tier_lkp:
-            generalized_top_tier_terms = self.generalize_term_from_list(self.top_tier_terms, goterm)
-            if len(generalized_top_tier_terms) > 1:
+    def generalize_level_one_term(self, goterm: str):
+        if goterm not in self.slim_to_level_one_lkp:
+            generalized_level_one_terms = self.generalize_term_from_list(self.level_one_terms, goterm)
+            if len(generalized_level_one_terms) > 1:
                 # If still multiples, order by their top tier term precedence and return first one
-                sorted_terms = sorted(generalized_top_tier_terms, key=lambda x: self.top_tier_term_precedence_index_for_term(x))
-                generalized_top_tier_term = [sorted_terms[0]]
+                sorted_terms = sorted(generalized_level_one_terms, key=lambda x: self.level_one_term_precedence_index_for_term(x))
+                generalized_level_one_term = [sorted_terms[0]]
             else:
-                generalized_top_tier_term = generalized_top_tier_terms
-            self.slim_to_top_tier_lkp[goterm] = generalized_top_tier_term
-        return self.slim_to_top_tier_lkp[goterm]
+                generalized_level_one_term = generalized_level_one_terms
+            self.slim_to_level_one_lkp[goterm] = generalized_level_one_term
+        return self.slim_to_level_one_lkp[goterm]
 
     def get_ancestors_in_list(self, term_list, term, hops: int = 0):
         # Returns None if no ancestor is in go_slim_terms
@@ -133,10 +141,10 @@ class OntologyManager:
 if __name__ == "__main__":
     args = parser.parse_args()
 
-    ont_manager = OntologyManager(args.go_slim_file, args.go_ontology_file, args.top_tier_terms_file)
+    ont_manager = OntologyManager(args.go_slim_file, args.go_ontology_file, args.level_one_terms_file, args.other_ont_json)
     print("goslim_terms", len(ont_manager.goslim_terms))
     print("go_parents", len(ont_manager.go_parents))
-    print("top_tier_terms", len(ont_manager.top_tier_terms))
+    print("level_one_terms", len(ont_manager.level_one_terms))
 
     term_labels = {}
     with open(args.go_term_labels_file) as gtlf:
@@ -151,8 +159,17 @@ if __name__ == "__main__":
     print(len(bp_modules))
     # Iterate through and put module in go_slim_terms key if key is_ancestor_of module_term
     module_leftovers = {}
+    modules_with_too_few_leaf_genes = []
     for m in bp_modules:
         module_term = m["module_term"]
+        # Look for nodes with empty leaf_genes
+        nodes_with_empty_leaf_genes = [node for node in m["nodes"] if not node["leaf_genes"]]
+        nodes_w_leaf_genes_count = len(m["nodes"]) - len(nodes_with_empty_leaf_genes)
+        if nodes_w_leaf_genes_count <= 1:
+            modules_with_too_few_leaf_genes.append(m)
+            if nodes_w_leaf_genes_count == 0:
+                # Drop this entire BP module from the output
+                continue
         slim_terms = ont_manager.generalize_slim_term(module_term)
         if slim_terms:
             if len(slim_terms) > 1:
@@ -169,21 +186,27 @@ if __name__ == "__main__":
                 module_leftovers[module_term] = []
             module_leftovers[module_term].append(m)
 
-    # Iterate through go_slim_terms and put in top_tier_terms key if top_tier_term is_ancestor_of slim_term
+    print("\t".join(["module_term", "num_nodes", "num_nodes_w_leaf_genes"]))
+    for m in modules_with_too_few_leaf_genes:
+        # Print out module_term, num of nodes, num of nodes w/ leaf_genes
+        print("\t".join([m["module_term"], term_labels.get(m["module_term"], ""), str(len(m["nodes"])), str(len([node for node in m["nodes"] if node["leaf_genes"]]))]))
+
+    # Iterate through go_slim_terms and put in level_one_terms key if level_one_term is_ancestor_of slim_term
     slim_term_leftovers = {}
     for slim_term, st_modules in ont_manager.goslim_terms.items():
-        is_descendant_of_top_tier_term = False
-        top_tier_terms = ont_manager.generalize_top_tier_term(slim_term)
-        if top_tier_terms:
-            for top_tier_term in top_tier_terms:
-                # if slim_term not in ont_manager.top_tier_terms[top_tier_term]:
-                #     ont_manager.top_tier_terms[top_tier_term][slim_term] = []
-                ont_manager.top_tier_terms[top_tier_term][slim_term] = st_modules
+        is_descendant_of_level_one_term = False
+        level_one_terms = ont_manager.generalize_level_one_term(slim_term)
+        if level_one_terms:
+            for level_one_term in level_one_terms:
+                # if slim_term not in ont_manager.level_one_terms[level_one_term]:
+                #     ont_manager.level_one_terms[level_one_term][slim_term] = []
+                ont_manager.level_one_terms[level_one_term][slim_term] = st_modules
         else:
             slim_term_leftovers[slim_term] = st_modules
 
-    ont_manager.top_tier_terms["other biological process"] = module_leftovers
-    print(len(ont_manager.top_tier_terms["other biological process"]))
+    other_bp_term = ont_manager.other_terms_lkp_by_label["other biological process"]
+    ont_manager.level_one_terms[other_bp_term] = module_leftovers
+    print(len(ont_manager.level_one_terms[other_bp_term]))
     distinct_leftover_modules = []
     for slim_term, modules in slim_term_leftovers.items():
         for m in modules:
@@ -194,7 +217,7 @@ if __name__ == "__main__":
     # Count total number of modules in the top tier terms dict
     total_modules = 0
     distinct_modules = []
-    for top_tier_term, slim_terms in ont_manager.top_tier_terms.items():
+    for level_one_term, slim_terms in ont_manager.level_one_terms.items():
         for slim_term, modules in slim_terms.items():
             total_modules += len(modules)
             for m in modules:
@@ -215,14 +238,15 @@ if __name__ == "__main__":
 
     if args.json_output_file:
         json_output_ds = []
-        for top_tier_term, slim_terms in ont_manager.top_tier_terms.items():
+        for level_one_term, slim_terms in ont_manager.level_one_terms.items():
             top_term_ds = {
-                "id": top_tier_term,
+                "id": level_one_term,
                 "categories": []
             }
             for st in slim_terms:
-                if st == top_tier_term:
-                    term_id = "other {}".format(term_labels[st])
+                if st == level_one_term:
+                    term_lbl = "other {}".format(term_labels[st].replace("_", " "))
+                    term_id = ont_manager.other_terms_lkp_by_label[term_lbl]
                 else:
                     term_id = st
                 slim_term_ds = {
