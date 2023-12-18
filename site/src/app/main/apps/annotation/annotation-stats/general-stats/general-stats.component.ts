@@ -32,6 +32,25 @@ export class GeneralStatsComponent implements OnInit, OnDestroy {
       customColors: []
     } */
 
+  single = [
+    {
+      "name": "Germany",
+      "value": 8940000
+    },
+    {
+      "name": "USA",
+      "value": 5000000
+    },
+    {
+      "name": "France",
+      "value": 7200000
+    },
+    {
+      "name": "UK",
+      "value": 6200000
+    }
+  ]
+
   existsPieOptions = {
     view: [500, 200],
     gradient: true,
