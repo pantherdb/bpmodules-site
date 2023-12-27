@@ -43,6 +43,8 @@ export class AnnotationService {
     uniqueList: Annotation[];
     onBPModulesChanged: BehaviorSubject<any>;
     onBPModuleChanged: BehaviorSubject<any>;
+
+    onCategoryChanged: BehaviorSubject<any>;
     leafGenesToCheck = genes
 
 
@@ -51,6 +53,7 @@ export class AnnotationService {
         private annotationGraphQLService: AnnotationGraphQLService) {
         this.onBPModulesChanged = new BehaviorSubject(null);
         this.onBPModuleChanged = new BehaviorSubject(null);
+        this.onCategoryChanged = new BehaviorSubject(null);
         this.onAnnotationsChanged = new BehaviorSubject(null);
         this.onGeneCountChanged = new BehaviorSubject(null);
         //this.onAnnotationGroupsChanged = new BehaviorSubject(null);
@@ -70,13 +73,20 @@ export class AnnotationService {
         return throwError(() => err);
     }
 
-    private jsonUrl = 'assets/sample.json';  // URL to JSON file
+    private jsonUrl = 'assets/clean_ibd_modules.json';  // URL to JSON file
+
 
 
     getJsonData() {
         this.httpClient.get<any>(this.jsonUrl).subscribe({
             next: (data) => {
-                const data1 = this.calculateMatchPercentagesAndColor(data);
+
+                const tree = this.buildTree(data);
+
+                console.log(tree);
+                const data1 = this.calculateMatchPercentagesAndColor(tree);
+
+                console.log(data1);
                 this.onBPModulesChanged.next(data1);
             },
             error: (err) => {
@@ -85,6 +95,54 @@ export class AnnotationService {
             }
         });
     }
+
+    buildTree(data: any[]): any[] {
+        const tree: any[] = [];
+
+        for (const item of data) {
+            let section = tree.find(s => s.section_id === item.section_id);
+            if (!section) {
+                section = {
+                    section_id: item.section_id,
+                    section_label: item.section_label,
+                    categories: []
+                };
+                tree.push(section);
+            }
+
+            let category = section.categories.find(c => c.category_id === item.category_id);
+            if (!category) {
+                category = {
+                    category_id: item.category_id,
+                    category_label: item.category_label,
+                    modules: []
+                };
+                section.categories.push(category);
+            }
+
+            let module = category.modules.find(m => m.module_id === item.module_id);
+            if (!module) {
+                module = {
+                    module_id: item.module_id,
+                    module_label: item.module_label,
+                    disposition: item.disposition,
+                    nodes: []
+                };
+                category.modules.push(module);
+            }
+
+            const node = {
+                node_id: item.node_id,
+                node_label: item.node_label,
+                terms: item.terms,
+                leaf_genes: item.leaf_genes
+            };
+            module.nodes.push(node);
+        }
+
+        return tree;
+    }
+
 
     private calculateMatchPercentagesAndColor(data: any[]): any[] {
         return data.map(item => ({

@@ -66,7 +66,7 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
   selectedGP: Gene
 
 
-  singles: [
+  ibdData = [
     {
       "name": "Germany",
       "value": 8940000
@@ -84,6 +84,8 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
       "value": 6200000
     }
   ]
+
+  categories = []
   view: any[] = [700, 400];
 
   // options
@@ -131,6 +133,19 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
         }
 
         this.bpModules = bpModules
+
+        this.categories = this.bpModules.map((bpModule) => {
+          return {
+            name: bpModule.label,
+            value: bpModule.count
+          }
+        });
+
+        // this.categories = this.transformData(this.bpModules)
+
+        this.annotationService.onCategoryChanged.next(bpModules)
+
+        //console.log(this.categories)
       });
 
 

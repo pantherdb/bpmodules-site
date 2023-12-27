@@ -1,13 +1,16 @@
-<pango-general-stats></pango-general-stats>
-
+<!-- <pango-general-stats [ibdData]="categories"></pango-general-stats>
+ -->
 <div *ngFor="let item of  bpModules" class="item">
-  <h2>{{ item.id }}</h2>
+  <h2>{{ item.section_label }}</h2>
   <div *ngFor="let category of item.categories" class="category">
-    <h3>{{ category.id }}</h3>
-    <div class="matrix">
-      <div class="square" *ngFor="let module of category.modules" [style.background-color]="module.grayscaleColor"
-        title="{{ module.module_term }}" (click)="openAnnotationSummary(module)">
-        <span>{{ module.module_term }}</span>
+    <h3>{{ category.category_label }}</h3>
+    <div class="pango-matrix">
+      <div class="pango-square" *ngFor="let module of category.modules" [style.background-color]="module.grayscaleColor"
+        title="{{ module.module_label }}" (click)="openAnnotationSummary(module)">
+
+        <div *ngIf="module.disposition" class="pango-positive"></div>
+        <div *ngIf="module.disposition" class="pango-negative"></div>
+        <span></span>
       </div>
     </div>
   </div>

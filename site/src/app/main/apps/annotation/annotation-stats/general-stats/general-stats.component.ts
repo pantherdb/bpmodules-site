@@ -32,27 +32,19 @@ export class GeneralStatsComponent implements OnInit, OnDestroy {
       customColors: []
     } */
 
-  single = [
-    {
-      "name": "Germany",
-      "value": 8940000
-    },
-    {
-      "name": "USA",
-      "value": 5000000
-    },
-    {
-      "name": "France",
-      "value": 7200000
-    },
-    {
-      "name": "UK",
-      "value": 6200000
-    }
-  ]
+  categories = []
+
+
+  onSelect(event): void {
+    console.log('Item clicked', JSON.parse(JSON.stringify(event)));
+  }
+
+
+
+  @Input('ibdData') ibdData;
 
   existsPieOptions = {
-    view: [500, 200],
+    view: [800, 800],
     gradient: true,
     legend: false,
     showLabels: true,
@@ -91,13 +83,19 @@ export class GeneralStatsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.annotationService.onAnnotationsAggsChanged
+    this.annotationService.onCategoryChanged
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((annotationStats: AnnotationStats) => {
-        if (annotationStats) {
-          this.annotationStats = annotationStats;
-          this.generateStats()
+      .subscribe((categories) => {
+        if (categories) {
+          this.categories = categories.map((bpModule) => {
+            return {
+              name: bpModule.label,
+              value: bpModule.count
+            }
+          });
         }
+
+        console.log("---", this.categories)
       });
 
   }
@@ -107,14 +105,6 @@ export class GeneralStatsComponent implements OnInit, OnDestroy {
     this._unsubscribeAll.complete();
   }
 
-  generateStats() {
-    const agg = this.annotationStats.termFrequency;
 
-    if (agg?.buckets) {
-      this.stats.annotationFrequencyBar = this.annotationService.buildAnnotationBar(agg.buckets)
-    }
-
-    this.stats.existsPie = this.annotationService.buildAnnotationBar(agg.buckets)
-  }
 
 }
