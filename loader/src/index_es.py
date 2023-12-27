@@ -19,20 +19,15 @@ logging.basicConfig(
 def main():
     parser = parse_arguments()
     
-    annotations_index = create_index(TableAggType.ANNOTATIONS.value)
-    bulk_load(parser.annotations_file, annotations_index)    
+    bpmodules_index = create_index(TableAggType.BPMODULES.value)
+    bulk_load(parser.bpmodules_file, bpmodules_index)    
     
-    genes_index = create_index(TableAggType.GENES.value)
-    bulk_load(parser.genes_file, genes_index)    
-
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-a', dest='annotations_file', required=True,
-                        type=file_path, help='Annotations Json')
+    parser.add_argument('-a', dest='bpmodules_file', required=True,
+                        type=file_path, help='BPMODULEs Json')
     
-    parser.add_argument('-g', dest='genes_file', required=True,
-                        type=file_path, help='Genes Json')
 
     return parser.parse_args()
 
@@ -63,4 +58,4 @@ if __name__ == "__main__":
     main()
 
 
-# python3 -m src.index_es -a downloads/human_iba_annotations_clean.json -g downloads/human_iba_genes_clean.json
+# python3 -m src.index_es -a downloads/human_iba_bpmodules_clean.json -g downloads/human_iba_genes_clean.json

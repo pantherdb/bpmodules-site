@@ -17,7 +17,7 @@ import { Gene } from '../../gene/models/gene.model';
   styleUrls: ['./annotation-group.component.scss'],
   // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
+export class AnnotationGroupComponent implements OnInit, OnDestroy {
   RightPanel = RightPanel;
   aspectMap = pangoData.aspectMap;
   evidenceTypeMap = pangoData.evidenceTypeMap;
@@ -52,11 +52,9 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
   genes: Gene[];
 
   displayedColumns = [
-    'expand',
-    'gene',
-    'mfs',
-    'bps',
-    'ccs',
+    'section',
+    'category',
+    'module',
   ];
 
   @Input('maxReferences') maxReferences = 2
@@ -64,26 +62,6 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
   @Input('options') options;
 
   selectedGP: Gene
-
-
-  ibdData = [
-    {
-      "name": "Germany",
-      "value": 8940000
-    },
-    {
-      "name": "USA",
-      "value": 5000000
-    },
-    {
-      "name": "France",
-      "value": 7200000
-    },
-    {
-      "name": "UK",
-      "value": 6200000
-    }
-  ]
 
   categories = []
   view: any[] = [700, 400];
@@ -94,10 +72,6 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
   showLabels: boolean = true;
   isDoughnut: boolean = false;
   legendPosition: string = 'below';
-
-  colorScheme = {
-    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
-  };
 
 
   private _unsubscribeAll: Subject<any>;
@@ -115,12 +89,6 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
 
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.annotationPage.currentValue) {
-      this.genes = this.annotationPage.annotations
-      this.dataSource = new MatTableDataSource<any>(this.genes);
-    }
-  }
 
   ngOnInit(): void {
 
@@ -145,6 +113,10 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
 
         this.annotationService.onCategoryChanged.next(bpModules)
 
+        const flattenedData = this.flattenData(bpModules);
+
+        this.dataSource = new MatTableDataSource<any>(flattenedData);
+
         //console.log(this.categories)
       });
 
@@ -152,6 +124,24 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
     if (this.options?.displayedColumns) {
       this.displayedColumns = this.options.displayedColumns
     }
+  }
+
+  flattenData(bpModules: any[]) {
+    const flattenedData = [];
+
+    bpModules.forEach(item => {
+      item.categories.forEach(category => {
+        category.modules.forEach(module => {
+          flattenedData.push({
+            section: item.section_label,
+            category: category.category_label,
+            module: module.module_label
+          });
+        });
+      });
+    });
+
+    return flattenedData
   }
 
 
