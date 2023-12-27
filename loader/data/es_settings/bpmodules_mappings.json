@@ -1,0 +1,229 @@
+{
+  "properties": {
+    "section_id": {
+      "type": "text",
+      "analyzer": "ngram_analyzer",
+      "search_analyzer": "standard",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "section_label": {
+      "type": "text",
+      "analyzer": "ngram_analyzer",
+      "search_analyzer": "standard",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "category_id": {
+      "type": "text",
+      "analyzer": "ngram_analyzer",
+      "search_analyzer": "standard",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "category_label": {
+      "type": "text",
+      "analyzer": "ngram_analyzer",
+      "search_analyzer": "standard",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "module_label": {
+      "type": "text",
+      "analyzer": "ngram_analyzer",
+      "search_analyzer": "standard",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "module_id": {
+      "type": "text",
+      "analyzer": "ngram_analyzer",
+      "search_analyzer": "standard",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "disposition_sources": {
+      "type": "nested",
+      "properties": {
+        "term_id": {
+          "type": "text",
+          "analyzer": "ngram_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "disposition": {
+          "type": "text",
+          "analyzer": "ngram_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    },
+    "disposition": {
+      "type": "text",
+      "analyzer": "ngram_analyzer",
+      "search_analyzer": "standard",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "disposition_target_id": {
+      "type": "text",
+      "analyzer": "ngram_analyzer",
+      "search_analyzer": "standard",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "node_id": {
+      "type": "text",
+      "analyzer": "ngram_analyzer",
+      "search_analyzer": "standard",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "node_label": {
+      "type": "text",
+      "analyzer": "ngram_analyzer",
+      "search_analyzer": "standard",
+      "fields": {
+        "keyword": {
+          "type": "keyword",
+          "ignore_above": 256
+        }
+      }
+    },
+    "terms": {
+      "type": "nested",
+      "properties": {
+        "term_id": {
+          "type": "text",
+          "analyzer": "ngram_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "term_label": {
+          "type": "text",
+          "analyzer": "ngram_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    },
+    "leaf_genes": {
+      "type": "nested",
+      "properties": {
+        "gene": {
+          "type": "text",
+          "analyzer": "ngram_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "gene_symbol": {
+          "type": "text",
+          "analyzer": "ngram_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "gene_name": {
+          "type": "text",
+          "analyzer": "ngram_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "taxon_id": {
+          "type": "text",
+          "analyzer": "ngram_analyzer",
+          "search_analyzer": "standard",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    },
+    "category_count": {
+      "type": "integer"
+    },
+    "module_count": {
+      "type": "integer"
+    },
+    "node_count": {
+      "type": "integer"
+    },
+    "name_suggest": {
+      "type": "completion"
+    }
+  }
+}

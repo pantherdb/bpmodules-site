@@ -123,17 +123,17 @@ def get_bpmodules(bpmodules_fp, terms_df, genes_df, term_dispositions_df):
                         'node_count': node_count
                     })
 
-            flat_df = pd.DataFrame(flattened_data)
+    flat_df = pd.DataFrame(flattened_data)
 
-            flat_df = flat_df.merge(terms_df, left_on='section_id', right_on='id', how='left', suffixes=('', '_section')).rename(columns={'label': 'section_label'})
-            flat_df = flat_df.merge(terms_df, left_on='category_id', right_on='id', how='left', suffixes=('', '_category')).rename(columns={'label': 'category_label'})
-            flat_df = flat_df.merge(terms_df, left_on='module_id', right_on='id', how='left', suffixes=('', '_module_term')).rename(columns={'label': 'module_label'})
-            flat_df = flat_df.merge(term_dispositions_df, left_on='module_id', right_on='id', how='left')
+    flat_df = flat_df.merge(terms_df, left_on='section_id', right_on='id', how='left', suffixes=('', '_section')).rename(columns={'label': 'section_label'})
+    flat_df = flat_df.merge(terms_df, left_on='category_id', right_on='id', how='left', suffixes=('', '_category')).rename(columns={'label': 'category_label'})
+    flat_df = flat_df.merge(terms_df, left_on='module_id', right_on='id', how='left', suffixes=('', '_module_term')).rename(columns={'label': 'module_label'})
+    flat_df = flat_df.merge(term_dispositions_df, left_on='module_id', right_on='id', how='left')
 
 
-            final_df = flat_df[DISPLAYED_COLUMNS]
-            
-            return final_df
+    final_df = flat_df[DISPLAYED_COLUMNS]
+    
+    return final_df
 
 
 if __name__ == "__main__":

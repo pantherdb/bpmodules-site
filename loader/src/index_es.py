@@ -20,12 +20,12 @@ def main():
     parser = parse_arguments()
     
     bpmodules_index = create_index(TableAggType.BPMODULES.value)
-    bulk_load(parser.bpmodules_file, bpmodules_index)    
+    bulk_load(parser.bpmodules_fp, bpmodules_index)    
     
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-a', dest='bpmodules_file', required=True,
+    parser.add_argument('-bp', dest='bpmodules_fp', required=True,
                         type=file_path, help='BPMODULEs Json')
     
 
@@ -57,5 +57,3 @@ def bulk_load(j_file, index_name):
 if __name__ == "__main__":
     main()
 
-
-# python3 -m src.index_es -a downloads/human_iba_bpmodules_clean.json -g downloads/human_iba_genes_clean.json
