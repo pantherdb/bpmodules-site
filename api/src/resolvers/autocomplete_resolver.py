@@ -3,9 +3,9 @@
 import pprint
 import typing
 from src.models.term_model import Term
-from src.resolvers.annotation_stats_resolver import get_response_meta
-from src.resolvers.annotation_resolver import get_annotations_query, get_genes_query
-from src.models.annotation_model import Annotation, AnnotationFilterArgs, AnnotationStats, AutocompleteType, Bucket, Frequency, Gene, GeneFilterArgs
+from src.resolvers.bpmodule_stats_resolver import get_response_meta
+from src.resolvers.bpmodule_resolver import get_bpmodules_query, get_genes_query
+from src.models.bpmodule_model import BPModule, BPModuleFilterArgs, BPModuleStats, AutocompleteType, Bucket, Frequency, Gene, GeneFilterArgs
 from src.config.settings import settings
 from src.config.es import  es
 
@@ -47,9 +47,9 @@ async def get_gene_autocomplete_query(keyword:str, filter_args:GeneFilterArgs):
     return query, collapse
 
 
-async def get_slim_term_autocomplete_query_multi(keyword:str, filter_args:AnnotationFilterArgs)->typing.List[Term]:
+async def get_slim_term_autocomplete_query_multi(keyword:str, filter_args:BPModuleFilterArgs)->typing.List[Term]:
   
-    filter_query = await get_annotations_query(filter_args)
+    filter_query = await get_bpmodules_query(filter_args)
     query = {
       "bool":{
         "filter":filter_query["bool"]["filter"],
@@ -117,9 +117,9 @@ async def get_slim_term_autocomplete_query_multi(keyword:str, filter_args:Annota
                          
     return terms
 
-async def get_slim_term_autocomplete_query(keyword:str, filter_args:AnnotationFilterArgs):
+async def get_slim_term_autocomplete_query(keyword:str, filter_args:BPModuleFilterArgs):
   
-    filter_query = await get_annotations_query(filter_args)
+    filter_query = await get_bpmodules_query(filter_args)
     query = {
        "bool": {
          "must": [
@@ -148,7 +148,7 @@ async def get_slim_term_autocomplete_query(keyword:str, filter_args:AnnotationFi
 
 
 async def main():
-    #results = await get_annotations()
+    #results = await get_bpmodules()
     #pprint.pp(results)
     pass
 

@@ -2,16 +2,16 @@
 # import asyncio
 import pprint
 import typing
-from src.resolvers.annotation_resolver import get_annotations_query, get_genes_query
-from src.models.annotation_model import  AnnotationFilterArgs, AnnotationStats, Bucket, Entity, Frequency, GeneFilterArgs, ResultCount
+from src.resolvers.bpmodule_resolver import get_bpmodules_query, get_genes_query
+from src.models.bpmodule_model import  BPModuleFilterArgs, BPModuleStats, Bucket, Entity, Frequency, GeneFilterArgs, ResultCount
 from src.config.settings import settings
 from src.config.es import  es
 
-async def get_annotations_count(filter_args:AnnotationFilterArgs):
+async def get_bpmodules_count(filter_args:BPModuleFilterArgs):
 
-    query = await get_annotations_query(filter_args)
+    query = await get_bpmodules_query(filter_args)
     resp = await es.count(
-          index=settings.PANGO_ANNOTATIONS_INDEX,
+          index=settings.PANGO_BPMODULES_INDEX,
           query=query,
     )
 
@@ -33,9 +33,9 @@ async def get_genes_count(filter_args:GeneFilterArgs):
     return results  
 
 
-async def get_annotations_stats(filter_args:AnnotationFilterArgs):
+async def get_bpmodules_stats(filter_args:BPModuleFilterArgs):
     
-    query = await get_annotations_query(filter_args)
+    query = await get_bpmodules_query(filter_args)
     aggs = {     
         "aspect_frequency": {
           "terms": {
@@ -63,7 +63,7 @@ async def get_annotations_stats(filter_args:AnnotationFilterArgs):
     
 
     resp = await es.search(
-          index=settings.PANGO_ANNOTATIONS_INDEX,
+          index=settings.PANGO_BPMODULES_INDEX,
           filter_path ='took,hits.total.value,aggregations',
           query=query,
           aggs=aggs,
@@ -90,7 +90,7 @@ async def get_annotations_stats(filter_args:AnnotationFilterArgs):
                         for bucket in freqs['buckets']]
             stats[k] = Frequency(buckets=buckets)
                          
-    results = AnnotationStats(**stats)
+    results = BPModuleStats(**stats)
         
     return results
 
@@ -154,7 +154,7 @@ def get_response_meta(bucket):
 
 
 async def main():
-    results = await get_annotations_stats()
+    results = await get_bpmodules_stats()
     pprint.pp(results)
 
 if __name__ == "__main__":
