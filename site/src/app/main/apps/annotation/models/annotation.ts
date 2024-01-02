@@ -48,14 +48,10 @@ export class GeneFilterArgs {
 }
 
 export class FilterArgs {
-    termIds: string[] = [];
-    termTypeIds: string[] = [];
-    slimTermIds: string[] = [];
-    evidenceTypeIds: string[] = [];
+    sectionIds: string[] = [];
+    categoryIds: string[] = [];
+    moduleIds: string[] = [];
     geneIds: string[] = [];
-    aspectIds: string[] = [];
-    withGeneIds: string[] = [];
-    referenceIds: string[] = [];
 }
 
 export class AnnotationCount {

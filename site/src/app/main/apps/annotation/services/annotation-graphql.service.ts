@@ -98,7 +98,7 @@ export class AnnotationGraphQLService {
       variables: {
         filterArgs: {
           geneIds: query.filterArgs.geneIds,
-          slimTermIds: query.filterArgs.slimTermIds
+          //slimTermIds: query.filterArgs.slimTermIds
         },
         pageArgs: query.pageArgs
       },
@@ -218,7 +218,7 @@ export class AnnotationGraphQLService {
       variables: {
         filterArgs: {
           geneIds: query.filterArgs.geneIds,
-          slimTermIds: query.filterArgs.slimTermIds
+          //slimTermIds: query.filterArgs.slimTermIds
         }
       },
       query: `query GetGenesCount($filterArgs: GeneFilterArgs) {
@@ -241,7 +241,7 @@ export class AnnotationGraphQLService {
       variables: {
         filterArgs: {
           geneIds: query.filterArgs.geneIds,
-          slimTermIds: query.filterArgs.slimTermIds
+          //slimTermIds: query.filterArgs.slimTermIds
         },
         autocompleteType: filter.autocompleteType,
         keyword

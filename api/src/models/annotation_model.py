@@ -59,6 +59,7 @@ class DispositionSource:
 
 @strawberry.type
 class Annotation:
+    id: str
     section_id: typing.Optional[str] = ''
     section_label: typing.Optional[str] = ''
     category_id: typing.Optional[str] = ''
@@ -70,11 +71,22 @@ class Annotation:
     disposition_target_id: typing.Optional[str]
     node_id: typing.Optional[str] = ''
     node_label: typing.Optional[str] = ''
-    terms: typing.List[Term]
-    leaf_genes: typing.List[Gene]
+    terms: typing.List[Term] 
+    leaf_genes: typing.List[Gene] 
     category_count: int
     module_count: int
     node_count: int
+    
+    def __init__(self, **kwargs):
+        for key, value in kwargs.items():
+            if key == 'terms' :
+                setattr(self, key, [Term(**value_k) for value_k in value if value_k != None])
+            elif key == 'disposition_sources':
+                setattr(self, key, [DispositionSource(**value_k) for value_k in value  if value_k != None])
+            elif key == 'leaf_genes':
+                setattr(self, key, [Gene(**value_k) for value_k in value  if value_k != None])
+            else:
+                setattr(self, key,  value)
  
 
 @strawberry.type
@@ -100,6 +112,7 @@ class AnnotationStats:
 class AnnotationFilterArgs:
     section_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
     category_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
+    module_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
     gene_ids: typing.Optional[typing.List[str]] = strawberry.UNSET,
 
 @strawberry.input

@@ -349,7 +349,7 @@ export class AnnotationService {
         const query = new Query()
 
         this.searchCriteria.slimTerms.forEach((term: Term) => {
-            query.filterArgs.slimTermIds.push(term.id);
+            // query.filterArgs.slimTermIds.push(term.id);
         });
 
         this.searchCriteria.genes.forEach((annotation: Annotation) => {
@@ -364,8 +364,8 @@ export class AnnotationService {
         this.getAnnotationsPage(query, 1);
         this.getAnnotationsCount(query)
 
-        this.getGenesCount(query)
-        this.queryAnnotationStats(query)
+        //this.getGenesCount(query)
+        //this.queryAnnotationStats(query)
         //this.getUniqueItems(query)
     }
 

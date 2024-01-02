@@ -106,7 +106,7 @@ def get_bpmodules(bpmodules_fp, terms_df, genes_df, term_dispositions_df):
                     node_id = node.get('ptn_id')
                     node_label = node.get('label')
                     
-                    term_info = [{'term_id': term, 'term_label': terms_df.loc[term, 'label']} for term in node.get('terms', []) if term in terms_df.index]
+                    term_info = [{'id': term, 'label': terms_df.loc[term, 'label']} for term in node.get('terms', []) if term in terms_df.index]
                     gene_info = [genes_df.loc[gene].to_dict() for gene in node.get('leaf_genes', []) if gene in genes_df.index]
 
                     flattened_data.append({

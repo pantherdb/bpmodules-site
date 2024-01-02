@@ -34,7 +34,7 @@ async def get_annotations(filter_args:AnnotationFilterArgs, page_args=PageArgs):
     )
 
     results = [Annotation(id=hit['_id'], **hit['_source']) for hit in resp.get('hits', {}).get('hits', [])]
-        
+   
     return results    
 
 
@@ -70,7 +70,7 @@ async def get_annotations_query(filter_args:AnnotationFilterArgs):
               })  
             
    
-
+    """ 
       if filter_args.slim_term_ids != None and len(filter_args.slim_term_ids)>0:
             filters.append( 
               {
@@ -82,7 +82,7 @@ async def get_annotations_query(filter_args:AnnotationFilterArgs):
                     }
                   }
                 }
-            })
+            }) """
          
   
    
