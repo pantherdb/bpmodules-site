@@ -3,12 +3,12 @@ import strawberry
 from strawberry.fastapi import GraphQLRouter
 from strawberry.schema.config import StrawberryConfig
 from strawberry.tools import merge_types
-from src.schemas.bpmodule_schema import BPModuleQuery
+from src.schemas.annotation_schema import AnnotationQuery
 from fastapi.middleware.cors import CORSMiddleware
 
-#Queries = merge_types("Queries", BPModuleQuery))
+#Queries = merge_types("Queries", AnnotationQuery))
 
-schema = strawberry.Schema(query=BPModuleQuery, config=StrawberryConfig(auto_camel_case=True))
+schema = strawberry.Schema(query=AnnotationQuery, config=StrawberryConfig(auto_camel_case=True))
 
 def create_app():    
 

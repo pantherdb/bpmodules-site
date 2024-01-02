@@ -58,7 +58,7 @@ class DispositionSource:
     disposition: str
 
 @strawberry.type
-class BPModule:
+class Annotation:
     section_id: typing.Optional[str] = ''
     section_label: typing.Optional[str] = ''
     category_id: typing.Optional[str] = ''
@@ -89,7 +89,7 @@ class Frequency:
     buckets: typing.List[Bucket]
     
 @strawberry.type
-class BPModuleStats:
+class AnnotationStats:
     term_type_frequency: Frequency 
     aspect_frequency: Frequency 
     evidence_type_frequency: Frequency
@@ -97,7 +97,7 @@ class BPModuleStats:
     
 
 @strawberry.input
-class BPModuleFilterArgs:
+class AnnotationFilterArgs:
     section_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
     category_ids: typing.Optional[typing.List[str]] = strawberry.UNSET
     gene_ids: typing.Optional[typing.List[str]] = strawberry.UNSET,

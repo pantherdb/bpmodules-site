@@ -5,7 +5,6 @@ import { ActivatedRoute } from '@angular/router';
 import { pangoData } from '@pango.common/data/config';
 import { RightPanel, LeftPanel } from '@pango.common/models/menu-panels';
 import { PangoMenuService } from '@pango.common/services/pango-menu.service';
-import { SearchType } from '@pango.search/models/search-criteria';
 import { PangoUtils } from '@pango/utils/pango-utils';
 import { Annotation } from 'app/main/apps/annotation/models/annotation';
 import { AnnotationPage } from 'app/main/apps/annotation/models/page';
@@ -82,8 +81,7 @@ export class GeneComponent implements OnInit, OnDestroy {
         this.geneId = params['gene'] || null;
 
         const annotation = new Annotation()
-        annotation.gene = this.geneId
-        this.annotationService.searchType = SearchType.ANNOTATIONS;
+        // annotation.gene = this.geneId
         this.annotationService.searchCriteria.clearSearch()
         this.annotationService.searchCriteria.genes = [annotation]
         this.annotationService.updateSearch();
@@ -102,7 +100,7 @@ export class GeneComponent implements OnInit, OnDestroy {
 
           const sortedAnnotations = orderBy(annotationPage.annotations, item => this.aspectOrder[item.term.aspect])
           this.annotations = sortedAnnotations;
-          this.hgncId = PangoUtils.getHGNC(this.annotation.longId);
+          //this.hgncId = PangoUtils.getHGNC(this.annotation.);
         } else {
           this.annotation = null
         }
@@ -135,7 +133,7 @@ export class GeneComponent implements OnInit, OnDestroy {
 
   }
 
-  getUcscLink(element: Annotation) {
+  getUcscLink(element: any) {
     const chr = `${element.coordinatesChrNum}:${element.coordinatesStart}-${element.coordinatesEnd}`
     return environment.ucscUrl + chr
   }
@@ -150,7 +148,7 @@ export class GeneComponent implements OnInit, OnDestroy {
     return gene;
   }
 
-  getFamilyLink(element: Annotation) {
+  getFamilyLink(element: any) {
 
     return `${environment.pantherFamilyUrl}book=${encodeURIComponent(element.pantherFamily)}&seq=${encodeURIComponent(element.longId)}`
   }

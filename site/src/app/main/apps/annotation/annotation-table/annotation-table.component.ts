@@ -99,7 +99,7 @@ export class AnnotationTableComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
-  getUcscLink(element: Annotation) {
+  getUcscLink(element: any) {
     const chr = `${element.coordinatesChrNum}:${element.coordinatesStart}-${element.coordinatesEnd}`
     return environment.ucscUrl + chr
   }
@@ -114,7 +114,7 @@ export class AnnotationTableComponent implements OnInit, OnDestroy, OnChanges {
     return gene;
   }
 
-  getFamilyLink(element: Annotation) {
+  getFamilyLink(element: any) {
 
     return `${environment.pantherFamilyUrl}book=${encodeURIComponent(element.pantherFamily)}&seq=${encodeURIComponent(element.longId)}`
   }

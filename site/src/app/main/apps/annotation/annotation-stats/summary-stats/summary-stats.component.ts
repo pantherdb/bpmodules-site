@@ -116,13 +116,9 @@ export class SummaryStatsComponent implements OnInit, OnDestroy {
   }
 
   onSelectAspect(event) {
-    this.annotationService.searchCriteria[SearchFilterType.ASPECTS] = [event.name];
-    this.annotationService.updateSearch();
   }
 
   onSelectEvidenceType(event) {
-    this.annotationService.searchCriteria[SearchFilterType.EVIDENCE_TYPES] = [event.name];
-    this.annotationService.updateSearch();
   }
 
   onSelectSlimTerm(event) {

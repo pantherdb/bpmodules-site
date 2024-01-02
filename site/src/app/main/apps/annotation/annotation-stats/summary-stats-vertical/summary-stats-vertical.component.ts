@@ -28,7 +28,6 @@ export class SummaryStatsVerticalComponent implements OnInit, OnDestroy {
     showLabels: false,
     isDoughnut: false,
     maxLabelLength: 20,
-    onSelect: this.onSelectAspect.bind(this)
 
   }
 
@@ -54,7 +53,6 @@ export class SummaryStatsVerticalComponent implements OnInit, OnDestroy {
     showLabels: false,
     isDoughnut: false,
     maxLabelLength: 20,
-    onSelect: this.onSelectEvidenceType.bind(this)
   }
 
 
@@ -98,15 +96,7 @@ export class SummaryStatsVerticalComponent implements OnInit, OnDestroy {
     this._unsubscribeAll.complete();
   }
 
-  onSelectAspect(event) {
-    this.annotationService.searchCriteria[SearchFilterType.ASPECTS] = [event.name];
-    this.annotationService.updateSearch();
-  }
 
-  onSelectEvidenceType(event) {
-    this.annotationService.searchCriteria[SearchFilterType.EVIDENCE_TYPES] = [event.name];
-    this.annotationService.updateSearch();
-  }
 
   onSelectSlimTerm(event) {
     if (event.extra?.id) {

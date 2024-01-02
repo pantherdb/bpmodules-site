@@ -5,7 +5,7 @@ import { BehaviorSubject, map, Observable, throwError } from 'rxjs';
 import { Client } from 'elasticsearch-browser';
 import { AnnotationPage, Query } from '../models/page';
 import { cloneDeep, find, orderBy, uniqBy } from 'lodash';
-import { SearchCriteria, SearchType } from '@pango.search/models/search-criteria';
+import { SearchCriteria } from '@pango.search/models/search-criteria';
 import { AnnotationCount, AnnotationStats, Bucket, FilterArgs, Annotation, AutocompleteFilterArgs, Term } from '../models/annotation';
 import { AnnotationGraphQLService } from './annotation-graphql.service';
 import { pangoData } from '@pango.common/data/config';
@@ -37,7 +37,6 @@ export class AnnotationService {
     selectedQuery;
     queryOriginal;
     query: Query = new Query();
-    searchType = SearchType.ANNOTATIONS
 
     private client: Client;
     uniqueList: Annotation[];
@@ -354,30 +353,17 @@ export class AnnotationService {
         });
 
         this.searchCriteria.genes.forEach((annotation: Annotation) => {
-            query.filterArgs.geneIds.push(annotation.gene);
+            // query.filterArgs.geneIds.push(annotation.gene);
         });
 
-        this.searchCriteria.aspects.forEach((aspect: string) => {
-            query.filterArgs.aspectIds.push(aspect);
-        });
-        this.searchCriteria.termTypes.forEach((value) => {
-            query.filterArgs.termTypeIds.push(value);
-        });
-
-        this.searchCriteria.evidenceTypes.forEach((evidenceType: string) => {
-            query.filterArgs.evidenceTypeIds.push(evidenceType);
-        });
 
 
         this.query = query;
 
-        if (this.searchType === SearchType.ANNOTATION_GROUP) {
-            this.getGenesPage(query, 1);
 
-        } else {
-            this.getAnnotationsPage(query, 1);
-            this.getAnnotationsCount(query)
-        }
+        this.getAnnotationsPage(query, 1);
+        this.getAnnotationsCount(query)
+
         this.getGenesCount(query)
         this.queryAnnotationStats(query)
         //this.getUniqueItems(query)

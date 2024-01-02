@@ -29,8 +29,7 @@
         <ngx-charts-pie-chart piechart-remove-margins [results]="stats.aspectPie" [view]="aspectPieOptions.view"
           [gradient]="aspectPieOptions.gradient" [legend]="aspectPieOptions.legend"
           [maxLabelLength]="aspectPieOptions.maxLabelLength" [labels]="aspectPieOptions.showLabels"
-          [doughnut]="aspectPieOptions.isDoughnut" [customColors]="customColors"
-          (select)="aspectPieOptions.onSelect($event)">
+          [doughnut]="aspectPieOptions.isDoughnut" [customColors]="customColors">
         </ngx-charts-pie-chart>
 
         <div class="pango-stat" fxLayout="column" fxLayoutAlign="start stretch">
@@ -62,7 +61,7 @@
           [view]="evidenceTypePieOptions.view" [gradient]="evidenceTypePieOptions.gradient"
           [legend]="evidenceTypePieOptions.legend" [maxLabelLength]="evidenceTypePieOptions.maxLabelLength"
           [labels]="evidenceTypePieOptions.showLabels" [doughnut]="evidenceTypePieOptions.isDoughnut"
-          [customColors]="customEvidenceColors" (select)="evidenceTypePieOptions.onSelect($event)">
+          [customColors]="customEvidenceColors">
         </ngx-charts-pie-chart>
 
         <div class="pango-stat" fxLayout="column" fxLayoutAlign="start stretch">

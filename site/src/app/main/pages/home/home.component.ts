@@ -9,7 +9,7 @@ import { AnnotationService } from 'app/main/apps/annotation/services/annotation.
 import { pangoData } from '@pango.common/data/config';
 import { AnnotationPage } from 'app/main/apps/annotation/models/page';
 import { Subject, takeUntil } from 'rxjs';
-import { SearchFilterType, SearchType } from '@pango.search/models/search-criteria';
+import { SearchFilterType } from '@pango.search/models/search-criteria';
 
 @Component({
   selector: 'app-home',
@@ -62,7 +62,6 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.annotationService.searchType = SearchType.ANNOTATION_GROUP;
     this.annotationService.searchCriteria.clearSearch()
     // this.annotationService.searchCriteria.termTypes = [pangoData.termTypeMap.known.id]
     this.annotationService.updateSearch();

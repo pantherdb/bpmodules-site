@@ -10,7 +10,7 @@ import { pangoData } from '@pango.common/data/config';
 import { AnnotationPage } from 'app/main/apps/annotation/models/page';
 import { Subject, takeUntil } from 'rxjs';
 import { Annotation } from 'app/main/apps/annotation/models/annotation';
-import { SearchType } from '@pango.search/models/search-criteria';
+
 
 @Component({
   selector: 'app-home-annotations',
@@ -51,9 +51,7 @@ export class HomeAnnotationsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.annotationService.searchType = SearchType.ANNOTATIONS;
     this.annotationService.searchCriteria.clearSearch()
-    this.annotationService.searchCriteria.termTypes = [pangoData.termTypeMap.known.id]
     this.annotationService.updateSearch();
 
     this.pangoMenuService.setLeftDrawer(this.leftDrawer);

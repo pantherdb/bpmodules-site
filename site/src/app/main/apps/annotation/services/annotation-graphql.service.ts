@@ -48,64 +48,44 @@ export class AnnotationGraphQLService {
       },
       query: `query GetAnnotations($filterArgs: AnnotationFilterArgs, $pageArgs: PageArgs) {
                 annotations(filterArgs:$filterArgs, pageArgs:$pageArgs) {
-                    gene
-                    geneName
-                    geneSymbol
-                    longId
-                    pantherFamily
-                    taxonAbbr
-                    taxonLabel
-                    taxonId
-                    coordinatesChrNum
-                    coordinatesStart
-                    coordinatesEnd
-                    coordinatesStrand
-                    term {
-                      id
-                      aspect
-                      isGoslim
-                      label
-                      displayId
-                    } 
-                    slimTerms {
-                      aspect
-                      id
-                      isGoslim
-                      label
-                      displayId
-                    } 
-                    evidenceType
-                    evidence {
-                      withGeneId {
-                        gene
-                        geneName
-                        geneSymbol
-                        taxonAbbr
-                        taxonLabel
-                        taxonId
-                        coordinatesChrNum
-                        coordinatesStart
-                        coordinatesEnd
-                        coordinatesStrand
-                      }
-                      references {
-                        pmid
-                        title
-                        date
-                      }
-                    }
-                    groups
-                                                         
+                  sectionId
+                  sectionLabel
+                  categoryId
+                  categoryLabel
+                  moduleLabel
+                  moduleId
+                  dispositionSources {
+                    termId
+                    disposition
                   }
+                  disposition
+                  dispositionTargetId
+                  nodeId
+                  nodeLabel
+                  terms {
+                    id
+                    label
+                  }
+                  leafGenes {
+                    gene
+                    geneSymbol
+                    geneName
+                    taxonId
+                    pantherFamily
+                    longId
+                  }
+                  categoryCount
+                  moduleCount
+                  nodeCount                 
+                                                         
+                }
             }`
     }
 
     return this.pangoGraphQLService.query(options).pipe(
       map((response: any) => {
         return response.annotations.map((annotation: Annotation) => {
-          annotation.detailedGroups = annotation.groups.map((group) => {
-            return this.findGroup(group);
-          })
+
           return annotation
         }) as Annotation[];
       }));
@@ -156,12 +136,6 @@ export class AnnotationGraphQLService {
     return this.pangoGraphQLService.query(options).pipe(
       map((response: any) => {
         return response.genes.map((gene: Gene) => {
-
-          const groupedTerms = this.groupTerms(gene.terms)
-
-          gene.mfs = groupedTerms[GOAspect.MOLECULAR_FUNCTION]
-          gene.bps = groupedTerms[GOAspect.BIOLOGICAL_PROCESS]
-          gene.ccs = groupedTerms[GOAspect.CELLULAR_COMPONENT]
           gene.hgncId = PangoUtils.getHGNC(gene.longId);
           gene.maxTerms = 2;
           gene.expanded = false;
@@ -352,18 +326,6 @@ export class AnnotationGraphQLService {
 
   }
 
-  groupTerms(terms: Term[]) {
-    const grouped = terms.reduce((acc, term) => {
-      if (!acc[term.aspect]) {
-        acc[term.aspect] = [];
-      }
-      acc[term.aspect].push(term);
-      return acc;
-    }, {});
-
-    return grouped;
-
-  }
 
 }
 

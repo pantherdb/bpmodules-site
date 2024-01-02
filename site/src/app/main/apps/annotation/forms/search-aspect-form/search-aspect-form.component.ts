@@ -35,17 +35,6 @@ export class SearchAspectFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-
-    this.filterForm.get('aspects')!.valueChanges.pipe(
-      takeUntil(this._unsubscribeAll),
-      distinctUntilChanged(),
-      debounceTime(1000),
-    ).subscribe((aspect) => {
-      this.annotationService.searchCriteria[SearchFilterType.ASPECTS] = aspect
-        ? [aspect]
-        : [];
-      this.annotationService.updateSearch();
-    });
   }
 
   ngOnDestroy(): void {
@@ -62,15 +51,15 @@ export class SearchAspectFormComponent implements OnInit, OnDestroy {
 
   toggleSelection(filterType: string, value) {
 
-    switch (filterType) {
-
-      case SearchFilterType.TERM_TYPES:
-        this.annotationService.searchCriteria[SearchFilterType.EVIDENCE_TYPES] = [];
-        break;
-      case SearchFilterType.EVIDENCE_TYPES:
-        this.annotationService.searchCriteria[SearchFilterType.TERM_TYPES] = [];
-        break;
-    }
+    /*  switch (filterType) {
+ 
+       case SearchFilterType.TERM_TYPES:
+         this.annotationService.searchCriteria[SearchFilterType.EVIDENCE_TYPES] = [];
+         break;
+       case SearchFilterType.EVIDENCE_TYPES:
+         this.annotationService.searchCriteria[SearchFilterType.TERM_TYPES] = [];
+         break;
+     } */
 
     this.annotationService.searchCriteria[filterType] = this.annotationService.searchCriteria[filterType]?.[0] === value ?
       [] : [value];

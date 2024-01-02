@@ -72,46 +72,42 @@ export class Term {
     id: string;
     label: string;
     displayId: string;
-    aspect: string;
-    isGoSlim: boolean;
-
-    // for display
-    evidenceType
-
 }
 
-export class Reference {
-    pmid: string;
-    title: string;
-    authors: string[] = [];
-    date: string;
+
+export class DispositionSource {
+    termId?: string;
+    disposition?: string;
 }
 
-export class Evidence {
-    with_gene_ids: Gene;
-    reference: Reference[] = [];
+export class LeafGene {
+    gene?: string;
+    geneSymbol?: string;
+    geneName?: string;
+    taxonId?: string;
+    pantherFamily?: string;
+    longId?: string;
 }
 
 export class Annotation {
-    gene: string;
-    geneSymbol: string;
-    geneName: string;
-    longId: string;
-    pantherFamily: string;
-    taxonAbbr: string;
-    taxonLabel: string;
-    taxonId: string;
-    coordinatesChrNum: string
-    coordinatesStart: number
-    coordinatesEnd: number
-    coordinatesStrand: number
-    term: Term;
-    slimTerms: Term[];
-    evidenceType: string;
-    evidence: Evidence[] = [];
-    groups: string[] = [];
-    detailedGroups: Group[] = [];
+    sectionId?: string;
+    sectionLabel?: string;
+    categoryId?: string;
+    categoryLabel?: string;
+    moduleLabel?: string;
+    moduleId?: string;
+    dispositionSources: DispositionSource[] = [];
+    disposition?: string;
+    dispositionTargetId?: string;
+    nodeId?: string;
+    nodeLabel?: string;
+    terms: Term[] = [];
+    leafGenes: LeafGene[] = [];
+    categoryCount?: number;
+    moduleCount?: number;
+    nodeCount?: number;
 }
+
 
 export class Bucket {
     key: string

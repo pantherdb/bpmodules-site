@@ -55,8 +55,7 @@ export class CategoryStatsComponent implements OnInit, OnDestroy {
         getColor('purple', 500)
       ]
 
-    },
-    onSelect: this.onSelectAspect.bind(this)
+    }
 
   }
 
@@ -91,8 +90,7 @@ export class CategoryStatsComponent implements OnInit, OnDestroy {
         getColor('teal', 500),
         getColor('orange', 500),
       ]
-    },
-    onSelect: this.onSelectEvidenceType.bind(this)
+    }
   }
 
   termFrequencyBarOptions = {
@@ -184,16 +182,6 @@ export class CategoryStatsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
-  }
-
-  onSelectAspect(event) {
-    this.annotationService.searchCriteria[SearchFilterType.ASPECTS] = [event.name];
-    this.annotationService.updateSearch();
-  }
-
-  onSelectEvidenceType(event) {
-    this.annotationService.searchCriteria[SearchFilterType.EVIDENCE_TYPES] = [event.name];
-    this.annotationService.updateSearch();
   }
 
   onSelectSlimTerm(event) {

@@ -76,14 +76,6 @@
             <mat-icon matChipRemove>cancel</mat-icon>
           </mat-chip>
 
-          <mat-chip *ngIf="annotationService.searchCriteria[SearchFilterType.ASPECTS].length>0"
-            class="pango-filter-chip" [removable]="true" (removed)="removeFilter(SearchFilterType.ASPECTS)"
-            matTooltip="{{annotationService.searchCriteria.aspectsTooltip}}" [matTooltipPosition]="'below'"
-            [matTooltipShowDelay]="2000">
-            Aspects <span> ({{
-              annotationService.searchCriteria[SearchFilterType.ASPECTS].length}})</span>
-            <mat-icon matChipRemove>cancel</mat-icon>
-          </mat-chip>
 
         </div>
         <pango-summary-stats></pango-summary-stats>
