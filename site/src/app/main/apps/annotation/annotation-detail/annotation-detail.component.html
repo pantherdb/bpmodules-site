@@ -10,18 +10,19 @@
   </div>
   <div class="pango-drawer-body" fxLayout="row" fxLayoutAlign="start start" pangoPerfectScrollbar>
     <div *ngIf="module" class="module-display">
-      <div class="module-header">Module Term: {{ module.module_term }}</div>
-      <div *ngFor="let node of module.nodes" class="node">
+      <div class="module-header">Module Term: {{ module.moduleLabel }}</div>
+      <p><strong>Matched:</strong> {{module.matchPercentage}}%</p>
+      <div *ngFor="let node of module.nodes" class="node" [ngClass]="{'matched-node': node.matched}">
         <h4>{{ node.label }}</h4>
-        <p><strong>PTN ID:</strong> {{ node.ptn_id }}</p>
+        <p><strong>PTN ID:</strong> {{ node.ptnId }}</p>
         <div>
           <strong>Terms:</strong>
-          <span class="terms" *ngFor="let term of node.terms">{{ term }}</span>
+          <span class="terms" *ngFor="let term of node.terms">{{ term.label }}</span>
         </div>
         <div>
           <strong>Leaf Genes:</strong>
-          <span class="genes" *ngFor="let gene of node.leaf_genes" [ngClass]="{'matched-gene': isGeneMatched(gene)}">{{
-            gene }}</span>
+          <span class="genes" *ngFor="let gene of node.leafGenes" [ngClass]="{'matched-gene': isGeneMatched(gene)}">{{
+            gene.gene }}</span>
         </div>
       </div>
     </div>

@@ -40,8 +40,6 @@ export class AnnotationService {
 
     private client: Client;
     uniqueList: Annotation[];
-    onBPModulesChanged: BehaviorSubject<any>;
-    onBPModuleChanged: BehaviorSubject<any>;
 
     onCategoryChanged: BehaviorSubject<any>;
     leafGenesToCheck = genes
@@ -50,8 +48,7 @@ export class AnnotationService {
     constructor(
         private httpClient: HttpClient,
         private annotationGraphQLService: AnnotationGraphQLService) {
-        this.onBPModulesChanged = new BehaviorSubject(null);
-        this.onBPModuleChanged = new BehaviorSubject(null);
+        this.onAnnotationChanged = new BehaviorSubject(null);
         this.onCategoryChanged = new BehaviorSubject(null);
         this.onAnnotationsChanged = new BehaviorSubject(null);
         this.onGeneCountChanged = new BehaviorSubject(null);
@@ -60,7 +57,6 @@ export class AnnotationService {
         this.onAutocompleteChanged = new BehaviorSubject(null);
         this.onAnnotationsAggsChanged = new BehaviorSubject(null);
         this.onDistinctAggsChanged = new BehaviorSubject(null);
-        this.onAnnotationChanged = new BehaviorSubject(null);
         this.onSearchCriteriaChanged = new BehaviorSubject(null);
         this.onSelectedGeneChanged = new BehaviorSubject(null);
         this.searchCriteria = new SearchCriteria();
@@ -72,58 +68,41 @@ export class AnnotationService {
         return throwError(() => err);
     }
 
-    private jsonUrl = 'assets/clean_ibd_modules.json';  // URL to JSON file
+    //private jsonUrl = 'assets/clean_ibd_modules.json';  // URL to JSON file
 
 
 
-    getJsonData() {
-        this.httpClient.get<any>(this.jsonUrl).subscribe({
-            next: (data) => {
 
-                const tree = this.buildTree(data);
 
-                console.log(tree);
-                const data1 = this.calculateMatchPercentagesAndColor(tree);
-
-                console.log(data1);
-                this.onBPModulesChanged.next(data1);
-            },
-            error: (err) => {
-                // Handle error here
-                console.error('Error fetching data:', err);
-            }
-        });
-    }
-
-    buildTree(data: any[]): any[] {
+    buildTree(data: Annotation[]): any[] {
         const tree: any[] = [];
 
         for (const item of data) {
-            let section = tree.find(s => s.section_id === item.section_id);
+            let section = tree.find(s => s.sectionId === item.sectionId);
             if (!section) {
                 section = {
-                    section_id: item.section_id,
-                    section_label: item.section_label,
+                    sectionId: item.sectionId,
+                    sectionLabel: item.sectionLabel,
                     categories: []
                 };
                 tree.push(section);
             }
 
-            let category = section.categories.find(c => c.category_id === item.category_id);
+            let category = section.categories.find(c => c.categoryId === item.categoryId);
             if (!category) {
                 category = {
-                    category_id: item.category_id,
-                    category_label: item.category_label,
+                    categoryId: item.categoryId,
+                    categoryLabel: item.categoryLabel,
                     modules: []
                 };
                 section.categories.push(category);
             }
 
-            let module = category.modules.find(m => m.module_id === item.module_id);
+            let module = category.modules.find(m => m.moduleId === item.moduleId);
             if (!module) {
                 module = {
-                    module_id: item.module_id,
-                    module_label: item.module_label,
+                    moduleId: item.moduleId,
+                    moduleLabel: item.moduleLabel,
                     disposition: item.disposition,
                     nodes: []
                 };
@@ -131,10 +110,10 @@ export class AnnotationService {
             }
 
             const node = {
-                node_id: item.node_id,
-                node_label: item.node_label,
+                nodeId: item.nodeId,
+                nodeLabel: item.nodeLabel,
                 terms: item.terms,
-                leaf_genes: item.leaf_genes
+                leafGenes: item.leafGenes
             };
             module.nodes.push(node);
         }
@@ -150,20 +129,35 @@ export class AnnotationService {
                 ...category,
                 modules: category.modules.map(module => {
                     const totalNodes = module.nodes.length;
-                    const matchingNodesCount = module.nodes.filter(node =>
-                        node.leaf_genes.some(gene => this.leafGenesToCheck.includes(gene))
-                    ).length;
-                    const matchPercentage = totalNodes > 0 ? (matchingNodesCount / totalNodes) * 100 : 0;
+                    let matchingNodesCount = 0;
+
+                    const updatedNodes = module.nodes.map(node => {
+                        const isMatched = node.leafGenes.some(leafGene =>
+                            this.leafGenesToCheck.includes(leafGene.gene)
+                        );
+
+                        if (isMatched) matchingNodesCount++;
+
+                        return {
+                            ...node,
+                            matched: isMatched
+                        };
+                    });
+
+                    const matchPercentage = totalNodes > 0 ? Math.round((matchingNodesCount / totalNodes) * 100) : 0;
                     const grayscaleColor = this.getGrayscaleColor(matchPercentage);
+
                     return {
                         ...module,
+                        nodes: updatedNodes, // Updated nodes with matched property
                         matchPercentage,
-                        grayscaleColor // Add the calculated color
+                        grayscaleColor
                     };
                 })
             }))
         }));
     }
+
 
     private getGrayscaleColor(percentage: number): string {
         const intensity = Math.round(255 - (255 * percentage / 100));
@@ -190,8 +184,8 @@ export class AnnotationService {
         return this.annotationGraphQLService.getAnnotationsExportAllQuery(this.query)
     }
 
-    setDetail(bpModule) {
-        this.onBPModuleChanged.next(bpModule);
+    setDetail(annotation) {
+        this.onAnnotationChanged.next(annotation);
     }
 
     getAnnotationsPage(query: Query, page: number): any {
@@ -203,11 +197,20 @@ export class AnnotationService {
         return this.annotationGraphQLService.getAnnotationsQuery(query).subscribe(
             {
                 next: (annotations: Annotation[]) => {
+
+                    const tree = this.buildTree(annotations);
+
+                    console.log(tree);
+                    const data1 = this.calculateMatchPercentagesAndColor(tree);
+
+                    console.log(data1);
+
                     this.annotationPage = Object.assign(Object.create(Object.getPrototypeOf(this.annotationPage)), this.annotationPage);
+
 
                     this.annotationPage.query = query;
                     this.annotationPage.updatePage()
-                    this.annotationPage.annotations = annotations;
+                    this.annotationPage.annotations = data1;
                     //  this.annotationPage.aggs = response.aggregations;
                     this.annotationPage.query.source = query.source;
 

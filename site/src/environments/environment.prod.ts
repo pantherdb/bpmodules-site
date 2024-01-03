@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  annotationResultsSize: 50,
+  annotationResultsSize: 10_000,
   amigoTermUrl: "http://amigo.geneontology.org/amigo/term/",
   pubmedUrl: "https://www.ncbi.nlm.nih.gov/pubmed/",
   taxonApiUrl: 'https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=',

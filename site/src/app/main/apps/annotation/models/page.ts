@@ -14,7 +14,7 @@ export class Page {
 export class Query {
     source: string[];
     from = 0;
-    size = 50;
+    size = 100000;
     filterArgs: FilterArgs = new FilterArgs()
     pageArgs = new PageArgs()
     pageNumber = 0;

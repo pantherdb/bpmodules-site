@@ -7,6 +7,7 @@ import { Annotation } from '../models/annotation';
 
 
 import { AnnotationService } from '../services/annotation.service';
+import { Gene } from '../../gene/models/gene.model';
 
 @Component({
   selector: 'pango-annotation-detail',
@@ -28,20 +29,20 @@ export class AnnotationDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.annotationService.onBPModuleChanged
+    this.annotationService.onAnnotationChanged
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((bpModule) => {
-        if (!bpModule) {
+      .subscribe((annotation) => {
+        if (!annotation) {
           return
         }
-        this.module = bpModule
+        this.module = annotation
 
-        // console.log(this.bpModule)
+        // console.log(this.annotation)
       });
   }
 
-  isGeneMatched(gene: string): boolean {
-    return this.annotationService.leafGenesToCheck.includes(gene);
+  isGeneMatched(gene: Gene): boolean {
+    return this.annotationService.leafGenesToCheck.includes(gene.gene);
   }
 
   ngOnDestroy(): void {

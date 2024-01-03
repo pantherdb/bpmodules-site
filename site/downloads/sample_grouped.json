@@ -1,0 +1,128 @@
+[
+  {
+    "section": {
+      "section_id": "GO:0071840",
+      "section_label": "cellular component organization or biogenesis"
+    },
+    "category": [
+      {
+        "category_id": "GO:0034330",
+        "category_label": "cell junction organization"
+      }
+    ]
+  },
+  {
+    "section": {
+      "section_id": "GO:0008152",
+      "section_label": "metabolic process",
+    }
+  }
+]
+
+
+
+
+{
+  "section_id": "GO:0071840",
+  "section_label": "cellular component organization or biogenesis",
+  "category_id": "GO:0034330",
+  "category_label": "cell junction organization",
+  "module_label": "tight junction assembly",
+  "module_id": "GO:0120192",
+  "disposition_sources": [],
+  "disposition": null,
+  "disposition_target_id": null,
+  "node_id": "PTN007679700",
+  "node_label": "PATJ HOMOLOG",
+  "terms": [
+    {
+      "term_id": "GO:0120192",
+      "term_label": "tight junction assembly"
+    }
+  ],
+  "leaf_genes": [
+    {
+      "gene": "UniProtKB:O75970",
+      "gene_symbol": "MPDZ",
+      "gene_name": "Multiple PDZ domain protein",
+      "taxon_id": "9606",
+      "panther_family": null,
+      "long_id": null
+    },
+    {
+      "gene": "UniProtKB:Q8NI35",
+      "gene_symbol": "PATJ",
+      "gene_name": "InaD-like protein",
+      "taxon_id": "9606",
+      "panther_family": null,
+      "long_id": null
+    }
+  ],
+  "category_count": 7,
+  "module_count": 7,
+  "node_count": 9
+},
+{
+  "section_id": "GO:0071840",
+  "section_label": "cellular component organization or biogenesis",
+  "category_id": "GO:0034330",
+  "category_label": "cell junction organization",
+  "module_label": "tight junction assembly",
+  "module_id": "GO:0120192",
+  "disposition_sources": [],
+  "disposition": null,
+  "disposition_target_id": null,
+  "node_id": "PTN002698193",
+  "node_label": "LIPOLYSIS-STIMULATED LIPOPROTEIN RECEPTOR",
+  "terms": [
+    {
+      "term_id": "GO:1904274",
+      "term_label": "tricellular tight junction assembly"
+    }
+  ],
+  "leaf_genes": [
+    {
+      "gene": "UniProtKB:Q86X29",
+      "gene_symbol": "LSR",
+      "gene_name": "Lipolysis-stimulated lipoprotein receptor",
+      "taxon_id": "9606",
+      "panther_family": null,
+      "long_id": null
+    }
+  ],
+  "category_count": 7,
+  "module_count": 7,
+  "node_count": 9
+},
+{
+  "section_id": "GO:0008152",
+  "section_label": "metabolic process",
+  "category_id": "GO:0034330",
+  "category_label": "cell junction organization",
+  "module_label": "tight junction assembly",
+  "module_id": "GO:0120192",
+  "disposition_sources": [],
+  "disposition": null,
+  "disposition_target_id": null,
+  "node_id": "PTN002731222",
+  "node_label": "PROTEIN POF1B",
+  "terms": [
+    {
+      "term_id": "GO:0070830",
+      "term_label": "bicellular tight junction assembly"
+    }
+  ],
+  "leaf_genes": [
+    {
+      "gene": "UniProtKB:Q8WVV4",
+      "gene_symbol": "POF1B",
+      "gene_name": "Protein POF1B",
+      "taxon_id": "9606",
+      "panther_family": null,
+      "long_id": null
+    }
+  ],
+  "category_count": 7,
+  "module_count": 7,
+  "node_count": 9
+},

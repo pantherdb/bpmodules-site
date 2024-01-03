@@ -87,10 +87,10 @@ export class GeneralStatsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((categories) => {
         if (categories) {
-          this.categories = categories.map((bpModule) => {
+          this.categories = categories.map((annotation) => {
             return {
-              name: bpModule.label,
-              value: bpModule.count
+              name: annotation.label,
+              value: annotation.count
             }
           });
         }

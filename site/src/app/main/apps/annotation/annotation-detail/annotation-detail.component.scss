@@ -10,9 +10,14 @@ $accent: map-get($theme, accent);
   }
 
   .matched-gene {
-    background-color: #28a745 !important;
+    background-color: #106323 !important;
     color: #f2f2f2;
   }
+
+  .matched-node {
+    background-color: #a5d8b1 !important;
+  }
+
   .module-display {
     border: 1px solid #ddd;
     padding: 20px;

@@ -26,7 +26,7 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy {
   columns: any[] = [];
   count = 0
 
-  bpModules: any[] = []
+  annotations: any[] = []
 
   amigoTermUrl = environment.amigoTermUrl
   pubmedUrl = environment.pubmedUrl
@@ -85,64 +85,39 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy {
 
     this._unsubscribeAll = new Subject();
 
-    this.annotationService.getJsonData()
-
   }
 
 
   ngOnInit(): void {
 
-    this.annotationService.onBPModulesChanged
+    this.annotationService.onAnnotationsChanged
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((bpModules) => {
-        if (!bpModules) {
-          this.bpModules = []
-          return
+      .subscribe((annotationPage: AnnotationPage) => {
+        console.log('annotationPage', annotationPage)
+        if (annotationPage) {
+          this.annotations = annotationPage.annotations
+        } else {
+          this.annotations = []
         }
 
-        this.bpModules = bpModules
-
-        this.categories = this.bpModules.map((bpModule) => {
+        this.categories = this.annotations.map((annotation) => {
           return {
-            name: bpModule.label,
-            value: bpModule.count
+            name: annotation.label,
+            value: annotation.count
           }
         });
 
-        // this.categories = this.transformData(this.bpModules)
+        // this.categories = this.transformData(this.annotations)
 
-        this.annotationService.onCategoryChanged.next(bpModules)
+        //this.annotationService.onCategoryChanged.next(annotations)
 
-        const flattenedData = this.flattenData(bpModules);
-
-        this.dataSource = new MatTableDataSource<any>(flattenedData);
-
-        //console.log(this.categories)
       });
-
 
     if (this.options?.displayedColumns) {
       this.displayedColumns = this.options.displayedColumns
     }
   }
 
-  flattenData(bpModules: any[]) {
-    const flattenedData = [];
-
-    bpModules.forEach(item => {
-      item.categories.forEach(category => {
-        category.modules.forEach(module => {
-          flattenedData.push({
-            section: item.section_label,
-            category: category.category_label,
-            module: module.module_label
-          });
-        });
-      });
-    });
-
-    return flattenedData
-  }
 
 
   toggleExpand(gene: Gene) {
@@ -207,7 +182,7 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy {
   }
 
   openAnnotationSummary(term) {
-    this.annotationService.onBPModuleChanged.next(term)
+    this.annotationService.onAnnotationChanged.next(term)
     this.pangoMenuService.selectRightPanel(RightPanel.annotationDetail);
     this.pangoMenuService.openRightDrawer()
   }

@@ -54,19 +54,44 @@ $accent: map-get($theme, accent);
     margin-bottom: 20px;
   }
 
+  .pango-section {
+    padding: 0 12px;
+    margin-bottom: 20px;
+  }
+
+  .pango-section-title {
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 1.5em;
+  }
+
+  .pango-category-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .pango-category-title {
+    padding-right: 8px;
+    font-size: 10px;
+    color: #555;
+    @include deep-width(150px);
+    text-align: right;
+  }
+
   .pango-matrix {
-    width: 600px;
     display: grid;
-    grid-template-columns: repeat(auto-fill, 50px); /* Create columns of 50px */
-    grid-auto-rows: 50px; /* Each row is 50px high */
-    gap: 10px;
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(50px, 1fr)
+    ); /* Responsive columns */
+    grid-auto-rows: 50px;
+    gap: 0px;
   }
 
   .pango-square {
     position: relative;
     border: 1px solid black;
-    width: 50px;
-    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -79,7 +104,6 @@ $accent: map-get($theme, accent);
       right: 0;
       height: 50%;
       width: 50%;
-      border: #000 solid 1px;
       background-color: #4caf50;
     }
 
@@ -89,7 +113,6 @@ $accent: map-get($theme, accent);
       right: 0;
       height: 50%;
       width: 50%;
-      border: #000 solid 1px;
       background-color: #b9434d;
     }
   }
