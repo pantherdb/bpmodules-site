@@ -49,7 +49,7 @@ export class AnnotationSummaryComponent implements OnInit, OnDestroy {
   }
 
   getStats(field) {
-    this.pangoMenuService.selectRightPanel(RightPanel.annotationStats);
+    this.pangoMenuService.selectRightPanel(RightPanel.STATS);
     this.pangoMenuService.openRightDrawer();
   }
 

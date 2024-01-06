@@ -1,0 +1,61 @@
+<div fxLayout="column" fxLayoutAlign="start stretch" class="pango-drawer w-100-p h-100-p">
+  <div class="pango-drawer-header" fxLayout="row" fxLayoutAlign="start center">
+    <span class="pango-drawer-header-title">
+      Selected Annotation</span>
+    <span fxFlex></span>
+    <button mat-stroked-button (click)="close()" class="pango-rounded-button pango-sm" color="primary"
+      aria-label="Close dialog">
+      <mat-icon>close</mat-icon> Close
+    </button>
+  </div>
+  <div class="pango-drawer-body" fxLayout="row" fxLayoutAlign="start start" pangoPerfectScrollbar>
+
+
+    <div class="w-100-p p-8" fxFlex="60px" fxLayout="row" fxLayoutAlign="start center">
+      <label for="pango-upload-config" fxLayout="row" fxLayoutAlign="start center" class="pango-file-upload">
+        <button mat-raised-button class="pango-sm pango-file-button">
+          Upload Config
+        </button>
+      </label>
+      <input #configFileInput type="file" id="pango-upload-config"
+        (click)="$event.target.value = '';configFileInput.value = null" value=""
+        (change)="annotationService.onGeneFileSelected($event)" class="pango-file-upload" />
+
+
+      <!--    <button (click)='annotationService.downloadConfig()' type="button" mat-raised-button color=""
+        class="pango-sm mr-8">Export
+        Config</button> -->
+      <span fxFlex></span>
+    </div>
+
+
+
+    <ul>
+      <li *ngFor="let entry of entries">{{ entry.name }}: {{ entry.content }}</li>
+    </ul>
+
+    <div *ngIf="module" class="module-display">
+      <div class="module-header">Module Term: {{ module.moduleLabel }}</div>
+      <p><strong>Matched:</strong> {{module.matchPercentage}}%</p>
+      <div *ngFor="let node of module.nodes" class="node" [ngClass]="{'matched-node': node.matched}">
+        <h4>{{ node.label }}</h4>
+        <p><strong>PTN ID:</strong> {{ node.ptnId }}</p>
+        <div>
+          <strong>Terms:</strong>
+          <span class="terms" *ngFor="let term of node.terms">{{ term.label }}</span>
+        </div>
+        <div>
+          <strong>Leaf Genes:</strong>
+          <span class="genes" *ngFor="let gene of node.leafGenes" [ngClass]="{'matched-gene': isGeneMatched(gene)}">{{
+            gene.gene }}</span>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  <!--   <div fxLayout="row" fxLayoutAlign="start center" class="pango-drawer-footer pango-submit-row">
+    <span fxFlex></span>
+    <button (click)='close()' type="button" mat-raised-button color="" class="mr-8">Close</button>
+  </div> -->
+</div>

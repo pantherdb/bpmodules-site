@@ -84,6 +84,17 @@ export class HomeComponent implements OnInit {
     this.leftDrawer.close()
   }
 
+  openBrowser() {
+    this.pangoMenuService.selectLeftPanel(LeftPanel.BROWSER);
+    this.pangoMenuService.openLeftDrawer()
+  }
+
+  openGeneList() {
+    this.pangoMenuService.selectLeftPanel(LeftPanel.GENE_LIST);
+    this.pangoMenuService.openLeftDrawer()
+  }
+
+
   clearAllFilters() {
     this.annotationService.searchCriteria.clearSearch()
     this.annotationService.updateSearch();

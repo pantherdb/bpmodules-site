@@ -8,7 +8,7 @@ import { LeftPanel, MiddlePanel, RightPanel } from '@pango.common/models/menu-pa
 })
 export class PangoMenuService {
 
-  selectedLeftPanel: LeftPanel = LeftPanel.annotationSearch;
+  selectedLeftPanel: LeftPanel = LeftPanel.BROWSER;
   selectedMiddlePanel: MiddlePanel;
   selectedRightPanel: RightPanel
 

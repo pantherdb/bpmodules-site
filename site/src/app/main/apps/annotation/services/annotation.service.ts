@@ -1,17 +1,18 @@
 import { environment } from 'environments/environment';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, map, Observable, throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Client } from 'elasticsearch-browser';
 import { AnnotationPage, Query } from '../models/page';
-import { cloneDeep, find, orderBy, uniqBy } from 'lodash';
+import { orderBy } from 'lodash';
 import { SearchCriteria } from '@pango.search/models/search-criteria';
-import { AnnotationCount, AnnotationStats, Bucket, FilterArgs, Annotation, AutocompleteFilterArgs, Term } from '../models/annotation';
+import { AnnotationCount, AnnotationStats, Bucket, Annotation, AutocompleteFilterArgs, Term } from '../models/annotation';
 import { AnnotationGraphQLService } from './annotation-graphql.service';
 import { pangoData } from '@pango.common/data/config';
 import { Gene } from '../../gene/models/gene.model';
 
 import genes from '@pango.common/data/genes1.json';
+import { AnnotationDialogService } from './dialog.service';
 
 @Injectable({
     providedIn: 'root',
@@ -47,7 +48,9 @@ export class AnnotationService {
 
     constructor(
         private httpClient: HttpClient,
-        private annotationGraphQLService: AnnotationGraphQLService) {
+        private annotationGraphQLService: AnnotationGraphQLService,
+        private annotationDialogService: AnnotationDialogService
+    ) {
         this.onAnnotationChanged = new BehaviorSubject(null);
         this.onCategoryChanged = new BehaviorSubject(null);
         this.onAnnotationsChanged = new BehaviorSubject(null);
@@ -371,6 +374,102 @@ export class AnnotationService {
         //this.queryAnnotationStats(query)
         //this.getUniqueItems(query)
     }
+
+    onGeneFileSelected(event: Event): void {
+        const input = event.target as HTMLInputElement;
+
+        if (input.files && input.files.length > 0) {
+            const file = input.files[0];
+
+            // Check if file size is less than 20 MB
+            if (file.size <= 20 * 1024 * 1024) {
+                this.readFile(file);
+            } else {
+                alert("File size must be less than 20 MB");
+            }
+        }
+    }
+
+    readFile(file: File): void {
+        const self = this
+        const fileReader = new FileReader();
+
+        const success = (comments) => {
+            if (comments) {
+                console.log(comments)
+            }
+        };
+        fileReader.onload = (e) => {
+            const text = fileReader.result as string;
+            const lines = text.split(/\r\n|\n/);
+            // Process the lines as needed
+
+            self.annotationDialogService.openUploadGenesDialog(lines, success);
+            console.log(lines);
+        };
+        fileReader.readAsText(file);
+    }
+
+
+
+
+    onConfigFileChange(event) {
+        const self = this;
+        let reader = new FileReader();
+        //console.log(event, control)
+
+        if (event.target.files && event.target.files.length) {
+            const [file] = event.target.files;
+            reader.readAsText(file);
+
+            reader.onload = () => {
+                try {
+                    const searchCriteria = JSON.parse(reader.result as string);
+                    //document.getElementById('elementid').value = "";
+                    if (searchCriteria && searchCriteria._source) {
+                        //self.doFileSelection(searchCriteria._source, self.treeControl.dataNodes, self.checklistSelection);
+
+                    } else {
+                        alert("wrong file format")
+                    }
+                } catch (exception) {
+                    alert("invalid file")
+                }
+            };
+        }
+    }
+
+    downloadConfig() {/*
+    const annotations = this.checklistSelection.selected as any[];
+    const source = annotations.reduce((annotationString, item) => {
+      return annotationString + ' ' + item.id
+    }, []);
+
+    if (source.length > 0) {
+      this.annotationService.downloadConfig(source.trim());
+    } else {
+      this.snpDialogService.openMessageToast('Select at least one annotation from the tree', 'OK');
+    }*/
+        /*    const annotations = this.checklistSelection.selected as any[];
+           const source = annotations.map((item: AnnotationFlatNode) => {
+               return item.name; //item.leaf ? item.name : false;
+           }, []);
+           if (source.length > 0) {
+               this.saveConfig(JSON.stringify({ "_source": source }));
+           } else {
+             //  this.confirmDialogService.openConfirmDialog(
+                   'No Selection Found', 'Select at least one annotation from the tree');
+           } */
+    }
+
+    saveConfig(configText: string) {
+        var blob = new Blob([configText], { type: "text/plain;charset=utf-8" });
+        //  saveAs(blob, "config.txt");
+    }
+
+
+
+
 
     buildSummaryTree(aggs) {
 

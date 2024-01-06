@@ -45,6 +45,8 @@ import { faCheckCircle, faTimesCircle } from '@fortawesome/free-regular-svg-icon
 import { faGithub, faFacebook, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
 
 const appRoutes: Routes = [
     {
@@ -70,6 +72,8 @@ const appRoutes: Routes = [
         LayoutModule,
         RouterModule,
         MatSidenavModule,
+        MatSnackBarModule,
+        MatDialogModule,
         PangoProgressBarModule,
 
         //Pango App

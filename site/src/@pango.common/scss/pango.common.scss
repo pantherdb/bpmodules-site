@@ -14,6 +14,12 @@ $pango-primary-color-text: #4a8bfc;
 $pango-primary-color-2: #484f61;
 $pango-header-border-bottom: $pango-accent-color solid 1px;
 
+button {
+  &.pango-file-button {
+    pointer-events: none;
+  }
+}
+
 .pango-disabled {
   pointer-events: none;
   opacity: 0.3;

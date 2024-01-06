@@ -20,6 +20,8 @@ import { NgxPieChartRemoveMarginsDirective } from '@pango.common/directives/piec
 import { TermFormComponent } from './annotation/forms/term-form/term-form.component';
 import { GeneFormComponent } from './annotation/forms/gene-form/gene-form.component';
 import { AnnotationTreeComponent } from './annotation/annotation-tree/annotation-tree.component';
+import { GeneListComponent } from './annotation/gene-list/gene-list.component';
+import { UploadGenesDialogComponent } from './annotation/dialogs/upload-genes/upload-genes.component';
 
 const routes = [];
 
@@ -43,6 +45,8 @@ const routes = [];
         AnnotationFiltersComponent,
         AnnotationGroupComponent,
         AnnotationTreeComponent,
+        GeneListComponent,
+        UploadGenesDialogComponent
     ],
     imports: [
         RouterModule.forChild(routes),
@@ -67,7 +71,9 @@ const routes = [];
         TermFormComponent,
         SearchAspectFormComponent,
         AnnotationFiltersComponent,
-        AnnotationTreeComponent
+        AnnotationTreeComponent,
+        GeneListComponent,
+        UploadGenesDialogComponent
     ],
     providers: []
 })

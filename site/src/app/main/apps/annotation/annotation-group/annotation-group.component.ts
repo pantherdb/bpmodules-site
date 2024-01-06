@@ -157,7 +157,7 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy {
   }
 
   selectAnnotation(row) {
-    this.pangoMenuService.selectRightPanel(RightPanel.annotationDetail);
+    this.pangoMenuService.selectRightPanel(RightPanel.DETAIL);
     this.pangoMenuService.openRightDrawer();
     this.annotationService.onAnnotationChanged.next(row);
   }
@@ -172,23 +172,23 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy {
   }
 
   openAnnotationSearch() {
-    this.pangoMenuService.selectRightPanel(RightPanel.annotationSearch);
+    this.pangoMenuService.selectRightPanel(RightPanel.SEARCH);
     this.pangoMenuService.openRightDrawer()
   }
 
   openAnnotationTable() {
-    this.pangoMenuService.selectRightPanel(RightPanel.annotationTable);
+    this.pangoMenuService.selectRightPanel(RightPanel.TABLE);
     this.pangoMenuService.closeRightDrawer()
   }
 
   openAnnotationSummary(term) {
     this.annotationService.onAnnotationChanged.next(term)
-    this.pangoMenuService.selectRightPanel(RightPanel.annotationDetail);
+    this.pangoMenuService.selectRightPanel(RightPanel.DETAIL);
     this.pangoMenuService.openRightDrawer()
   }
 
   openAnnotationStats() {
-    this.pangoMenuService.selectRightPanel(RightPanel.annotationStats);
+    this.pangoMenuService.selectRightPanel(RightPanel.STATS);
     this.pangoMenuService.openRightDrawer();
   }
 }

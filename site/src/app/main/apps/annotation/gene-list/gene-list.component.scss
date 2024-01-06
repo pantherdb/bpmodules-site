@@ -1,0 +1,164 @@
+@import "src/@pango/scss/pango";
+@import "src/@pango.common/scss/pango.common";
+
+$primary: map-get($theme, primary);
+$accent: map-get($theme, accent);
+
+:host {
+  .pango-drawer {
+    @include deep-width(500px !important);
+  }
+
+  .pthr-file-upload-header {
+    height: 35px;
+
+    button {
+      @include deep-height(35px);
+
+      &.pthr-file-button {
+        pointer-events: none;
+      }
+    }
+
+    label {
+      padding: 0;
+    }
+
+    .pthr-file-upload-title {
+      margin-left: 4px;
+      color: #888;
+      font-weight: bold;
+    }
+  }
+
+  .matched-gene {
+    background-color: #106323 !important;
+    color: #f2f2f2;
+  }
+
+  .matched-node {
+    background-color: #a5d8b1 !important;
+  }
+
+  .module-display {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-top: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .module-header {
+    background-color: #e7f5ff;
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #0056b3;
+  }
+
+  .node {
+    background-color: #fff;
+    border: 1px solid #eee;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .node h4 {
+    color: #007bff;
+    margin-bottom: 10px;
+  }
+
+  .node p {
+    margin-bottom: 8px;
+    line-height: 1.6;
+  }
+
+  .terms,
+  .genes {
+    background-color: #f2f2f2;
+    padding: 8px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
+  }
+
+  .pango-annotation-detail-row {
+    padding: 5px 10px;
+    border-bottom: #888 solid 1px;
+    font-size: 12px;
+
+    .pango-no-info {
+      padding: 10px 10px;
+      font-size: 10px;
+    }
+
+    .pango-cell-section {
+      //border-bottom: #aaa solid 1px;
+      padding: 5px 0;
+    }
+
+    .pango-cell-inner-section {
+      padding-left: 30px;
+    }
+
+    .pango-title {
+      color: #999;
+      font-size: 18px;
+      font-weight: bold;
+      padding: 12px 0;
+    }
+
+    .pango-description {
+      word-break: break-all;
+    }
+
+    .pango-item {
+      padding: 4px 0;
+      border-bottom: #ccc solid 1px;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    .pango-cell-title {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .pango-cell-description {
+      font-size: 12px;
+    }
+    .pango-cell-description-2 {
+      font-size: 14px;
+    }
+
+    mat-chip {
+      text-align: center;
+      @include deep-height(22px);
+      @include deep-width(22px);
+      font-size: 10px;
+      font-weight: bold;
+      padding: 2px;
+      &.MF {
+        border: $pango-mf solid 1px;
+        color: darken($pango-mf, 10%);
+      }
+
+      &.BP {
+        border: $pango-bp solid 1px;
+        color: darken($pango-bp, 10%);
+      }
+
+      &.CC {
+        border: $pango-cc solid 1px;
+        color: darken($pango-cc, 10%);
+      }
+    }
+  }
+}

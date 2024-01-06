@@ -1,4 +1,25 @@
 <div class="w-100-p" fxLayout="row" fxLayoutAlign="start start">
+  <div class="pango-sidemenu" fxLayout="column" fxLayoutAlign="start center">
+    <div class="pango-sidemenu-header" fxLayout="row" fxLayoutAlign="center center">
+      Tools
+    </div>
+    <button mat-icon-button color="" class="pango-rounded-button"
+      [ngClass]="{'pango-active': pangoMenuService.selectedLeftPanel === LeftPanel.BROWSER}" (click)="openBrowser()"
+      matTooltip="Search and Filter" [matTooltipPosition]="'after'" [matTooltipShowDelay]="1500">
+      <fa-icon [icon]="['fas', 'filter']"></fa-icon>
+      <div class="pango-label">
+        Filter
+      </div>
+    </button>
+    <button mat-icon-button color="" class="pango-rounded-button"
+      [ngClass]="{'pango-active': pangoMenuService.selectedLeftPanel === LeftPanel.GENE_LIST}" (click)="openGeneList()"
+      matTooltip="snps summary" [matTooltipPosition]="'after'" [matTooltipShowDelay]="1500">
+      <fa-icon [icon]="['fas', 'list']"></fa-icon>
+      <div class="pango-label">
+        My Genes
+      </div>
+    </button>
+  </div>
   <mat-drawer-container class="w-100-p h-100-p" fxLayout="row" fxLayoutAlign="start start" autosize>
     <mat-drawer #leftDrawer class="pango-left-drawer" mode="side" position="start" opened="true">
       <div fxLayout="column" fxLayoutAlign="start stretch" class="pango-drawer h-100-p">
@@ -17,9 +38,14 @@
           </button>
         </div>
         <div class="pango-drawer-body">
-          <pango-category-stats></pango-category-stats>
 
-          <pango-annotation-tree></pango-annotation-tree>
+
+          <div class="h-100-p" [ngSwitch]="pangoMenuService.selectedLeftPanel">
+            <pango-annotation-tree [panelDrawer]="feftDrawer" *ngSwitchCase="LeftPanel.BROWSER">
+            </pango-annotation-tree>
+            <pango-gene-list [panelDrawer]="feftDrawer" *ngSwitchCase="LeftPanel.GENE_LIST">
+            </pango-gene-list>
+          </div>
         </div>
       </div>
     </mat-drawer>
@@ -89,7 +115,7 @@
     </mat-drawer-content>
     <mat-drawer #rightDrawer class="pango-right-drawer" mode="over" position="end">
       <div class="h-100-p" [ngSwitch]="pangoMenuService.selectedRightPanel">
-        <pango-annotation-detail [panelDrawer]="rightDrawer" *ngSwitchCase="RightPanel.annotationDetail">
+        <pango-annotation-detail [panelDrawer]="rightDrawer" *ngSwitchCase="RightPanel.DETAIL">
         </pango-annotation-detail>
       </div>
     </mat-drawer>

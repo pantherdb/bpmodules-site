@@ -4,7 +4,7 @@
       Tools
     </div>
     <button mat-icon-button color="" class="pango-rounded-button"
-      [ngClass]="{'pango-active': pangoMenuService.selectedRightPanel === RightPanel.annotationSearch}"
+      [ngClass]="{'pango-active': pangoMenuService.selectedRightPanel === RightPanel.SEARCH}"
       (click)="openAnnotationSearch()" matTooltip="Search and Filter" [matTooltipPosition]="'after'"
       [matTooltipShowDelay]="1500">
       <fa-icon [icon]="['fas', 'filter']"></fa-icon>
@@ -13,7 +13,7 @@
       </div>
     </button>
     <button mat-icon-button color="" class="pango-rounded-button"
-      [ngClass]="{'pango-active': pangoMenuService.selectedRightPanel === RightPanel.annotationSummary}"
+      [ngClass]="{'pango-active': pangoMenuService.selectedRightPanel === RightPanel.SUMMARY}"
       (click)="openAnnotationSummary()" matTooltip="annotations summary" [matTooltipPosition]="'after'"
       [matTooltipShowDelay]="1500">
       <fa-icon [icon]="['fas', 'list']"></fa-icon>
@@ -22,7 +22,7 @@
       </div>
     </button>
     <button mat-icon-button color="" class="pango-rounded-button"
-      [ngClass]="{'pango-active': pangoMenuService.selectedRightPanel === RightPanel.annotationStats}"
+      [ngClass]="{'pango-active': pangoMenuService.selectedRightPanel === RightPanel.STATS}"
       (click)="openAnnotationStats()" matTooltip="Results Statistics" [matTooltipPosition]="'after'"
       [matTooltipShowDelay]="1500">
       <fa-icon [icon]="['fas', 'chart-bar']"></fa-icon>

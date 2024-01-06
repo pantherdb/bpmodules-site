@@ -126,7 +126,11 @@ export class AnnotationStats {
 
 
 //For Tree
-
+export enum TreeNodeType {
+    SECTION = "section",
+    CATEGORY = "category",
+    MODULE = "module"
+}
 
 export class AnnotationNode {
     id: number;

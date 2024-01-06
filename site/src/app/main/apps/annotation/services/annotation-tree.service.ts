@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of as observableOf } from 'rxjs';
 import { saveAs } from 'file-saver';
-import { Annotation, AnnotationNode, AnnotationFlatNode, AnnotationTreeNode } from './../models/annotation'
+import { Annotation, AnnotationNode, AnnotationFlatNode, AnnotationTreeNode, TreeNodeType } from './../models/annotation'
 import { find } from 'lodash';
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
@@ -295,21 +295,21 @@ export class AnnotationTreeService {
     return tree.map(section => ({
       label: section.sectionLabel,
       id: section.sectionId,
+      type: TreeNodeType.SECTION,
       count: section.categories.length,
       children: section.categories.map(category => ({
         id: category.categoryId,
         label: category.categoryLabel,
+        type: TreeNodeType.CATEGORY,
         count: category.modules.length,
         children: category.modules.map(module => ({
           id: module.moduleId,
           label: module.moduleLabel,
+          type: TreeNodeType.MODULE,
           count: module.nodes.length
         }))
       }))
     }));
   }
-
-
-
 
 }

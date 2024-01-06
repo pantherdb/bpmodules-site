@@ -16,7 +16,7 @@
     </mat-drawer-content>
     <mat-drawer #rightDrawer class="pango-right-drawer" mode="over" position="end">
       <div class="h-100-p" [ngSwitch]="pangoMenuService.selectedRightPanel">
-        <pango-annotation-detail [panelDrawer]="rightDrawer" *ngSwitchCase="RightPanel.annotationDetail">
+        <pango-annotation-detail [panelDrawer]="rightDrawer" *ngSwitchCase="RightPanel.DETAIL">
         </pango-annotation-detail>
       </div>
     </mat-drawer>
