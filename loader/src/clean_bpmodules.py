@@ -30,11 +30,19 @@ def main():
     term_dispositions_df = get_term_dispositions_map(parser.term_dispositions_fp)
     genes_df = get_genes_map(parser.genes_fp)
     bpmodules_df = get_bpmodules(parser.bpmodules_fp, terms_df, genes_df, term_dispositions_df)
-    bpmodule_json = bpmodules_df.to_json(orient="records", default_handler=None)
-    json_str = json.loads(bpmodule_json)
+    unique_genes_df = get_unique_leaf_genes(bpmodules_df)
+    
+    dataframes_and_paths = [
+        (bpmodules_df, ospath.join('.', parser.clean_bpmodules_fp)),
+        (unique_genes_df, ospath.join('.', parser.unique_genes_fp))
+]
 
-    write_to_json(json_str, ospath.join('.', parser.clean_bpmodules_fp), indent=2)
-
+    for df, filepath in dataframes_and_paths:
+        df_json = df.to_json(orient="records", default_handler=None)
+        json_str = json.loads(df_json)
+        write_to_json(json_str, filepath, indent=2)
+        
+        
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
@@ -48,6 +56,8 @@ def parse_arguments():
                         type=file_path, help='Genes Json')
     parser.add_argument('-o', dest='clean_bpmodules_fp', required=True,
                          help='Output of Clean bpmodule')
+    parser.add_argument('-ug', dest='unique_genes_fp', required=True,
+                         help='Output of unique genes')
 
     return parser.parse_args()
 
@@ -134,6 +144,15 @@ def get_bpmodules(bpmodules_fp, terms_df, genes_df, term_dispositions_df):
     final_df = flat_df[DISPLAYED_COLUMNS]
     
     return final_df
+
+
+def get_unique_leaf_genes(final_df):
+    leaf_genes_list = final_df['leaf_genes'].tolist()
+    flattened_leaf_genes = [gene for sublist in leaf_genes_list if sublist for gene in sublist]
+    df_leaf_genes = pd.DataFrame(flattened_leaf_genes)
+    df_unique_leaf_genes = df_leaf_genes.drop_duplicates(subset=['gene'])
+
+    return df_unique_leaf_genes
 
 
 if __name__ == "__main__":

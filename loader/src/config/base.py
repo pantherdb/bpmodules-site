@@ -5,6 +5,7 @@ from os.path import isdir, isfile
 
 class TableAggType(Enum):
     BPMODULES='bpmodules'
+    GENES='genes'
 
 
 def file_path(path):

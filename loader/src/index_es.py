@@ -20,13 +20,18 @@ def main():
     parser = parse_arguments()
     
     bpmodules_index = create_index(TableAggType.BPMODULES.value)
-    bulk_load(parser.bpmodules_fp, bpmodules_index)    
+    genes_index = create_index(TableAggType.GENES.value)
+    
+    bulk_load(parser.bpmodules_fp, bpmodules_index)   
+    bulk_load(parser.genes_fp, genes_index)     
     
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('-bp', dest='bpmodules_fp', required=True,
-                        type=file_path, help='BPMODULEs Json')
+                        type=file_path, help='bpmodules Json')
+    parser.add_argument('-g', dest='genes_fp', required=True,
+                        type=file_path, help='Genes Json')
     
 
     return parser.parse_args()
