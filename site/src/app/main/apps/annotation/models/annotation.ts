@@ -123,3 +123,38 @@ export class AnnotationStats {
     evidenceTypeFrequency: Frequency;
     slimTermFrequency: Frequency;
 }
+
+
+//For Tree
+
+
+export class AnnotationNode {
+    id: number;
+    name: string;
+    label: string;
+    level: number;
+    visible?: boolean;
+    expandable: boolean;
+    count: number;
+    children?: AnnotationNode[];
+}
+
+export class AnnotationFlatNode {
+    label: string;
+    visible?: boolean;
+    expandable: boolean;
+    level: number;
+    count: number;
+    constructor(
+        public id: number,
+        public name: string,
+    ) { }
+
+}
+
+export interface AnnotationTreeNode {
+    name: string;
+    id: string;
+    count: number;
+    children?: AnnotationTreeNode[];
+}

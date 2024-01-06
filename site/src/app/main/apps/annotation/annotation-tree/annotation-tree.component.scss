@@ -1,0 +1,62 @@
+@use "@angular/material" as mat;
+@import "src/@pango/scss/pango";
+@import "src/@pango.common/scss/pango.common";
+
+:host {
+  width: 100%; //white-space:nowrap;
+  height: 100%;
+
+  button {
+    &.pango-sm {
+      font-size: 12px;
+    }
+  }
+
+  .pango-sidenav {
+    position: relative;
+    @include deep-width(100%);
+    @include deep-height(100%);
+    background-color: #fff;
+    border-right: #ddd solid 1px;
+    z-index: 10;
+
+    @include media-breakpoint("gt-md") {
+    }
+  }
+
+  .pango-tree-container {
+    padding: 5px;
+    padding-bottom: 200px;
+  }
+
+  .pango-tree-node {
+    @include deep-height(40px);
+    font-size: 14px;
+    color: #000;
+    padding-right: 12px;
+
+    .pango-icon-button {
+      @include deep-height(25px);
+      @include deep-width(25px);
+      line-height: 25px;
+      color: #aaa;
+    }
+
+    .pango-tree-icon {
+      color: #000;
+      font-size: 14px;
+    }
+
+    .pango-annotation-row {
+      padding: 8px 5px;
+
+      .pango-title {
+        word-break: break-all;
+      }
+    }
+
+    &:hover {
+      background-color: rgba(#000000, 0.1);
+    }
+  }
+}
