@@ -24,11 +24,11 @@ export class AnnotationDialogService {
         });
     }
 
-    openUploadGenesDialog(predicate, success: Function): void {
+    openUploadGenesDialog(geneIds, success: Function): void {
         this.dialogRef = this._matDialog.open(UploadGenesDialogComponent, {
             panelClass: 'pango-upload-genes-dialog',
             data: {
-                predicate
+                geneIds
             },
             width: '600px',
         });

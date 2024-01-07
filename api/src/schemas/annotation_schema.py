@@ -1,6 +1,8 @@
 import strawberry
 from pydantic import typing
 from strawberry.types import Info
+from src.models.gene_model import GeneFilterArgs
+from src.resolvers.genes_resolver import get_genes
 from src.models.term_model import Term
 from src.resolvers.annotation_stats_resolver import get_annotations_count, get_annotations_stats
 from src.resolvers.autocomplete_resolver import get_autocomplete, get_slim_term_autocomplete_query_multi
@@ -37,3 +39,8 @@ class AnnotationQuery:
         return await get_slim_term_autocomplete_query_multi(keyword, filter_args)
  
  
+    # Genes
+    @strawberry.field
+    async def genes(self, info:Info, filter_args:typing.Optional[GeneFilterArgs]=None, 
+      page_args:typing.Optional[PageArgs] = None) -> typing.List[Gene]:
+        return await get_genes(filter_args, page_args)

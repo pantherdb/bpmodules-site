@@ -35,4 +35,18 @@ export class AnnotationPage extends Page {
 
 }
 
+export class GenePage extends Page {
+
+    query;
+    genes: any;
+    aggs: any;
+
+    updatePage() {
+        this.pageNumber = this.query.pageArgs.page;
+        this.size = this.query.pageArgs.size;
+    }
+
+
+}
+
 

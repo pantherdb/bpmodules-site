@@ -4,7 +4,10 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
+import { AnnotationService } from '../../services/annotation.service';
+import { GenePage, Query } from '../../models/page';
+import { Gene } from '../../../gene/models/gene.model';
 
 @Component({
   selector: 'app-upload-genes',
@@ -21,25 +24,44 @@ export class UploadGenesDialogComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator, { static: true })
   paginator: MatPaginator;
 
-  dataSource = new MatTableDataSource<any>();
+  dataSource = new MatTableDataSource<Gene>();
 
   displayedColumns = [
     'gene',
+    'geneName',
     'geneSymbol',
-    'termId',
-    'termLabel'
+
   ];
+  genePage: GenePage;
 
 
   constructor(
     private _matDialogRef: MatDialogRef<UploadGenesDialogComponent>,
+    public annotationService: AnnotationService,
     @Inject(MAT_DIALOG_DATA) private _data: any,
   ) {
     this._unsubscribeAll = new Subject();
 
+
+    const query = new Query()
+    query.filterArgs.geneIds = _data.geneIds
+    this.annotationService.getGenesPage(query, 1);
   }
 
   ngOnInit() {
+
+    this.annotationService.onGenesChanged
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((genePage: GenePage) => {
+        if (genePage) {
+          this.genePage = genePage;
+          this.dataSource = new MatTableDataSource<any>(this.genePage.genes);
+        } else {
+          this.genePage = null
+          this.dataSource = new MatTableDataSource<any>([]);
+        }
+      });
+
   }
 
   ngOnDestroy(): void {

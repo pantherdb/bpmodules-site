@@ -106,29 +106,7 @@ export class AnnotationGraphQLService {
           genes(filterArgs:$filterArgs, pageArgs:$pageArgs) {
               gene
               geneName
-              geneSymbol
-              longId
-              pantherFamily
-              taxonAbbr
-              taxonLabel
-              taxonId
-              coordinatesChrNum
-              coordinatesStart
-              coordinatesEnd
-              coordinatesStrand
-              terms {
-                id
-                aspect
-                label
-                displayId
-                evidenceType
-              } 
-              slimTerms {
-                aspect
-                id
-                label
-                displayId    
-              }         
+              geneSymbol                 
            }
         }`
     }
@@ -136,9 +114,6 @@ export class AnnotationGraphQLService {
     return this.pangoGraphQLService.query(options).pipe(
       map((response: any) => {
         return response.genes.map((gene: Gene) => {
-          gene.hgncId = PangoUtils.getHGNC(gene.longId);
-          gene.maxTerms = 2;
-          gene.expanded = false;
 
           return gene
         }) as Gene[];

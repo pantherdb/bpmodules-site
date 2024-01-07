@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Client } from 'elasticsearch-browser';
-import { AnnotationPage, Query } from '../models/page';
+import { AnnotationPage, GenePage, Query } from '../models/page';
 import { orderBy } from 'lodash';
 import { SearchCriteria } from '@pango.search/models/search-criteria';
 import { AnnotationCount, AnnotationStats, Bucket, Annotation, AutocompleteFilterArgs, Term } from '../models/annotation';
@@ -27,13 +27,20 @@ export class AnnotationService {
     onAutocompleteChanged: BehaviorSubject<AnnotationPage>;
     onUniqueListChanged: BehaviorSubject<any>;
     onAnnotationsAggsChanged: BehaviorSubject<AnnotationStats>;
-    onDistinctAggsChanged: BehaviorSubject<AnnotationStats>;
     onAnnotationChanged: BehaviorSubject<any>;
+
+    onGenesChanged: BehaviorSubject<any>;
+
+
+    onDistinctAggsChanged: BehaviorSubject<AnnotationStats>;
     onSearchCriteriaChanged: BehaviorSubject<any>;
 
     onSelectedGeneChanged: BehaviorSubject<Gene>;
     searchCriteria: SearchCriteria;
     annotationPage: AnnotationPage = new AnnotationPage();
+    genePage: GenePage = new GenePage();
+
+
     loading = false;
     selectedQuery;
     queryOriginal;
@@ -46,14 +53,17 @@ export class AnnotationService {
     leafGenesToCheck = genes
 
 
+
     constructor(
         private httpClient: HttpClient,
         private annotationGraphQLService: AnnotationGraphQLService,
         private annotationDialogService: AnnotationDialogService
     ) {
-        this.onAnnotationChanged = new BehaviorSubject(null);
+
         this.onCategoryChanged = new BehaviorSubject(null);
         this.onAnnotationsChanged = new BehaviorSubject(null);
+        this.onAnnotationChanged = new BehaviorSubject(null);
+        this.onGenesChanged = new BehaviorSubject(null);
         this.onGeneCountChanged = new BehaviorSubject(null);
         //this.onAnnotationGroupsChanged = new BehaviorSubject(null);
         this.onUniqueListChanged = new BehaviorSubject(null);
@@ -238,17 +248,18 @@ export class AnnotationService {
             {
                 next: (genes: Gene[]) => {
                     //const annotationData = annotations
-                    this.annotationPage = Object.assign(Object.create(Object.getPrototypeOf(this.annotationPage)), this.annotationPage);
-                    this.annotationPage.query = query;
-                    this.annotationPage.updatePage()
-                    this.annotationPage.annotations = genes;
-                    // this.annotationPage.aggs = response.aggregations;
-                    this.annotationPage.query.source = query.source;
+                    this.genePage = Object.assign(Object.create(Object.getPrototypeOf(this.genePage)), this.genePage);
+                    this.genePage.query = query;
+                    this.genePage.updatePage()
+                    this.genePage.genes = genes;
+                    // this.genePage.aggs = response.aggregations;
+                    this.genePage.query.source = query.source;
 
-                    this.onAnnotationsChanged.next(this.annotationPage);
+                    this.onGenesChanged.next(this.genePage);
 
                     self.loading = false;
                 }, error: (err) => {
+                    console.log(err)
                     self.loading = false;
                 }
             });
@@ -382,15 +393,15 @@ export class AnnotationService {
             const file = input.files[0];
 
             // Check if file size is less than 20 MB
-            if (file.size <= 20 * 1024 * 1024) {
-                this.readFile(file);
+            if (file.size <= 50 * 1024 * 1024) {
+                this.readGeneFile(file);
             } else {
-                alert("File size must be less than 20 MB");
+                alert("File size must be less than 50 MB");
             }
         }
     }
 
-    readFile(file: File): void {
+    readGeneFile(file: File): void {
         const self = this
         const fileReader = new FileReader();
 
@@ -402,10 +413,13 @@ export class AnnotationService {
         fileReader.onload = (e) => {
             const text = fileReader.result as string;
             const lines = text.split(/\r\n|\n/);
-            // Process the lines as needed
 
-            self.annotationDialogService.openUploadGenesDialog(lines, success);
-            console.log(lines);
+            const trimmedLines = lines.map(line => line.trim());
+            const uniqueLines = new Set(trimmedLines);
+            const geneIds = Array.from(uniqueLines).filter(line => line !== '');
+
+            self.annotationDialogService.openUploadGenesDialog(geneIds, success);
+            console.log(geneIds);
         };
         fileReader.readAsText(file);
     }
