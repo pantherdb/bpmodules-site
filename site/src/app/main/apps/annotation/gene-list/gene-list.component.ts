@@ -3,7 +3,7 @@ import { MatDrawer } from '@angular/material/sidenav';
 import { pangoData } from '@pango.common/data/config';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { Annotation } from '../models/annotation';
+import { Annotation, GeneList } from '../models/annotation';
 
 
 import { AnnotationService } from '../services/annotation.service';
@@ -61,9 +61,8 @@ export class GeneListComponent implements OnInit, OnDestroy {
 
   selectedGeneIndex: number | null = null;
 
-  selectGene(index: number): void {
-    this.selectedGeneIndex = index;
-    // Additional logic for when a gene is selected
+  selectGene(geneList: GeneList): void {
+    this.annotationService.selectGeneList(geneList)
   }
 
   editGene(gene: any): void {

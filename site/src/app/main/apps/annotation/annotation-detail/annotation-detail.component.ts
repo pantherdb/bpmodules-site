@@ -42,7 +42,8 @@ export class AnnotationDetailComponent implements OnInit, OnDestroy {
   }
 
   isGeneMatched(gene: Gene): boolean {
-    return this.annotationService.leafGenesToCheck.includes(gene.gene);
+    return false
+    //return this.annotationService.leafGenesToCheck.includes(gene.gene);
   }
 
   ngOnDestroy(): void {

@@ -24,21 +24,33 @@
   </div>
   <div class="pango-drawer-body" fxLayout="column" fxLayoutAlign="start start" pangoPerfectScrollbar>
 
+
     <div class="pango-gene-display w-100-p">
       <div class="pango-gene-header">My Genes</div>
-
-      <div *ngFor="let node of annotationService.geneList; let i = index" class="pango-node"
-        [class.pango-selected]="selectedGeneIndex === i">
-        <p>{{ node.description }}</p>
-        <div>
-          <strong>{{ node.count }}</strong> Genes
-        </div>
-        <div class="pango-gene-actions">
-          <button mat-button (click)="selectGene(i)" class="pango-select-btn">Select</button>
-          <button mat-button (click)="editGene(node)" class="pango-edit-btn">Edit</button>
+      <div class="cards" fxLayout="column" fxLayoutAlign="start stretch">
+        <div *ngFor="let gene of annotationService.geneList"
+          [class.selected]="gene.id === annotationService.selectedGeneList?.id" class="card plan">
+          <div class="inner">
+            <span class="pricing">
+              <span>{{gene.count}} <small>/ 7000</small></span>
+            </span>
+            <h2 class="title">{{gene.description}}</h2>
+            <p class="info">Gene information goes here</p>
+            <ul class="features">
+              <li><span>Feature 1</span></li>
+              <li><span>Feature 2</span></li>
+            </ul>
+            <div class="action-buttons">
+              <button (click)="selectGene(gene)" class="button pango-select-btn">Select</button>
+              <button (click)="editGene(gene)" class="button pango-edit-btn">Edit</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
+
+
 
 
   </div>

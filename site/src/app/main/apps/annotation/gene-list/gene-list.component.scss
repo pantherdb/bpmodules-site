@@ -4,6 +4,30 @@
 $primary: map-get($theme, primary);
 $accent: map-get($theme, accent);
 
+// Basic
+$white: #fff;
+$black: #000;
+
+// Greys
+$ash: #eaeef6;
+$charcoal: #a0a0a0;
+$void: #141b22;
+
+// Beige/Browns
+$fair-pink: #ffedec;
+$apricot: #fbc8be;
+$coffee: #754d42;
+$del-rio: #917072;
+
+// Greens
+$java: #1fcac5;
+
+// Purples
+$titan-white: #f1eeff;
+$cold-purple: #a69fd6;
+$indigo: #6558d3;
+$governor: #4133b7;
+
 :host {
   .pango-drawer {
     @include deep-width(100% !important);
@@ -30,49 +54,104 @@ $accent: map-get($theme, accent);
       font-weight: bold;
     }
   }
+  @import url("https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&display=swap");
 
-  .matched-gene {
-    background-color: #106323 !important;
-    color: #f2f2f2;
-  }
-
-  .matched-node {
-    background-color: #a5d8b1 !important;
+  // Basic styles
+  .pango-gene-display {
+    font-family: "Spline Sans", sans-serif;
+    line-height: 1.5;
+    background-color: $ash;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .pango-gene-header {
-    font-size: 1.2em;
-    margin-bottom: 10px;
-    /* Other styles */
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    text-align: center;
+    color: $coffee;
   }
 
-  .pango-node {
-    padding: 10px;
-    border: 1px solid #ddd;
-    margin-bottom: 5px;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    /* Other styles */
-  }
-
-  .pango-node.pango-selected {
-    background-color: #e0f7fa; /* Highlight color for selected gene */
-  }
-
-  .pango-node p {
-    margin: 5px 0;
-  }
-
-  .pango-gene-actions {
+  // Card layout for genes
+  .cards {
     display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2.5rem;
+    width: 100%;
   }
 
-  .pango-select-btn,
-  .pango-edit-btn {
-    padding: 5px 10px;
+  .card.plan {
+    border-radius: 16px;
+    box-shadow: 0 30px 30px -25px rgba($indigo, 0.25);
+    max-width: 300px;
+    background-color: $white;
+  }
+
+  .inner {
+    padding: 20px;
+    position: relative;
+  }
+
+  .pricing {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: $apricot;
+    border-radius: 50px;
+    padding: 10px;
+    font-weight: 600;
+    color: $coffee;
+    small {
+      color: $del-rio;
+      font-size: 0.75em;
+      margin-left: 0.25em;
+    }
+  }
+
+  .title {
+    font-weight: 600;
+    color: $coffee;
+    margin: 20px 0;
+  }
+
+  .info {
+    color: $charcoal;
+    margin-bottom: 20px;
+  }
+
+  .features {
+    list-style: none;
+    padding: 0;
+  }
+
+  .features li {
+    margin-bottom: 10px;
+    color: $java; /* Adjust as needed */
+  }
+
+  .action-buttons {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .button {
+    background-color: $indigo;
+    color: $white;
+    border-radius: 20px;
+    padding: 10px 15px;
+    margin: 5px;
     cursor: pointer;
-    /* Other styles */
+    transition: background-color 0.2s;
+  }
+
+  .button:hover {
+    background-color: darken($indigo, 10%);
+  }
+
+  // Add styles for selected genes if needed
+  .selected {
+    border: 2px solid $java; /* Or your choice of highlight color */
   }
 }

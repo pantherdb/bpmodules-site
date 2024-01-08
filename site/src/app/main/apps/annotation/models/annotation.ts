@@ -162,3 +162,10 @@ export interface AnnotationTreeNode {
     count: number;
     children?: AnnotationTreeNode[];
 }
+
+export class GeneList {
+    id: string;
+    description: string;
+    genes: Gene[] = [];
+    count: number
+}
