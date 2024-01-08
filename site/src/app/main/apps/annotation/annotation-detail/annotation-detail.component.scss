@@ -18,7 +18,7 @@ $accent: map-get($theme, accent);
     background-color: #a5d8b1 !important;
   }
 
-  .module-display {
+  .pango-module-display {
     border: 1px solid #ddd;
     padding: 20px;
     margin-top: 20px;
@@ -27,7 +27,7 @@ $accent: map-get($theme, accent);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .module-header {
+  .pango-module-header {
     background-color: #e7f5ff;
     padding: 10px 15px;
     border-radius: 6px;

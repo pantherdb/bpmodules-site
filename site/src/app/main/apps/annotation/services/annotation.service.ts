@@ -29,7 +29,11 @@ export class AnnotationService {
     onAnnotationsAggsChanged: BehaviorSubject<AnnotationStats>;
     onAnnotationChanged: BehaviorSubject<any>;
 
+
+    // GEnes
     onGenesChanged: BehaviorSubject<any>;
+    onGeneListChanged: BehaviorSubject<any>;
+    onSelectedGeneListChanged: BehaviorSubject<any>;
 
 
     onDistinctAggsChanged: BehaviorSubject<AnnotationStats>;
@@ -51,6 +55,7 @@ export class AnnotationService {
 
     onCategoryChanged: BehaviorSubject<any>;
     leafGenesToCheck = genes
+    geneList: any[] = [];
 
 
 
@@ -64,7 +69,10 @@ export class AnnotationService {
         this.onAnnotationsChanged = new BehaviorSubject(null);
         this.onAnnotationChanged = new BehaviorSubject(null);
         this.onGenesChanged = new BehaviorSubject(null);
+
+        this.onGeneListChanged = new BehaviorSubject(null);
         this.onGeneCountChanged = new BehaviorSubject(null);
+        this.onSelectedGeneListChanged = new BehaviorSubject(null);
         //this.onAnnotationGroupsChanged = new BehaviorSubject(null);
         this.onUniqueListChanged = new BehaviorSubject(null);
         this.onAutocompleteChanged = new BehaviorSubject(null);
@@ -405,9 +413,11 @@ export class AnnotationService {
         const self = this
         const fileReader = new FileReader();
 
-        const success = (comments) => {
-            if (comments) {
-                console.log(comments)
+        const success = (geneData) => {
+            if (geneData) {
+                console.log(geneData)
+
+                self.geneList.push(geneData);
             }
         };
         fileReader.onload = (e) => {
@@ -419,7 +429,6 @@ export class AnnotationService {
             const geneIds = Array.from(uniqueLines).filter(line => line !== '');
 
             self.annotationDialogService.openUploadGenesDialog(geneIds, success);
-            console.log(geneIds);
         };
         fileReader.readAsText(file);
     }

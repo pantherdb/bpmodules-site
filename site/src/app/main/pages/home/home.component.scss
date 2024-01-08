@@ -49,12 +49,16 @@ $primary: map-get($theme, primary);
   }
 
   .pango-left-drawer {
-    width: 380px;
+    // width: 380px;
     border-right: #111 solid 1px;
 
     .pango-menu-section {
       width: 100%;
     }
+  }
+
+  .pango-browser-drawer {
+    @include deep-width(300px !important);
   }
 
   pango-summary-stats {
@@ -63,6 +67,11 @@ $primary: map-get($theme, primary);
   }
 
   pango-gene-form {
+    @include deep-width(300px !important);
+    display: block;
+  }
+
+  pango-gene-list {
     @include deep-width(300px !important);
     display: block;
   }

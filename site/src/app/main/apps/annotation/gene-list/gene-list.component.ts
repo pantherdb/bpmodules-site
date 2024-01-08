@@ -22,53 +22,12 @@ export class GeneListComponent implements OnInit, OnDestroy {
 
   annotation: Annotation;
   private _unsubscribeAll: Subject<any>;
-  module: any;
+  geneList: any;
   constructor(
     public annotationService: AnnotationService) {
     this._unsubscribeAll = new Subject();
   }
 
-
-  entryName: string = '';
-  selectedFile: File | null = null;
-  entries: Array<{ name: string; content: string }> = [];
-
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-
-    if (input.files?.length) {
-      this.selectedFile = input.files[0];
-    }
-  }
-
-  uploadFile(): void {
-    if (this.selectedFile) {
-      const fileReader = new FileReader();
-      fileReader.onload = (e) => {
-        this.entries.push({
-          name: this.entryName,
-          content: fileReader.result as string
-        });
-        this.entryName = ''; // Reset the entry name
-      };
-      fileReader.readAsText(this.selectedFile);
-    }
-  }
-
-  onFileChange(event) {
-    const reader = new FileReader();
-    // const ids = this.annotationForm.controls.uploadList['controls'].ids;
-
-    if (event.target.files && event.target.files.length) {
-      const [file] = event.target.files;
-      reader.readAsText(file);
-
-      reader.onload = () => {
-        console.log((reader.result as any).length)
-        // ids.setValue(reader.result);
-      };
-    }
-  }
 
   ngOnInit(): void {
     this.annotationService.onAnnotationChanged
@@ -77,19 +36,39 @@ export class GeneListComponent implements OnInit, OnDestroy {
         if (!annotation) {
           return
         }
-        this.module = annotation
+        this.geneList = annotation
+
+        // console.log(this.annotation)
+      });
+
+
+    this.annotationService.onGeneListChanged
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((geneList) => {
+        if (!geneList) {
+          return
+        }
+        this.geneList = geneList
 
         // console.log(this.annotation)
       });
   }
-
-  isGeneMatched(gene: Gene): boolean {
-    return this.annotationService.leafGenesToCheck.includes(gene.gene);
-  }
-
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
+  }
+
+
+  selectedGeneIndex: number | null = null;
+
+  selectGene(index: number): void {
+    this.selectedGeneIndex = index;
+    // Additional logic for when a gene is selected
+  }
+
+  editGene(gene: any): void {
+    // Logic to edit the gene
+    // This could involve opening a dialog or navigating to another view
   }
 
   close() {

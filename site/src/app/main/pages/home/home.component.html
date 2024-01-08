@@ -22,32 +22,34 @@
   </div>
   <mat-drawer-container class="w-100-p h-100-p" fxLayout="row" fxLayoutAlign="start start" autosize>
     <mat-drawer #leftDrawer class="pango-left-drawer" mode="side" position="start" opened="true">
-      <div fxLayout="column" fxLayoutAlign="start stretch" class="pango-drawer h-100-p">
-        <div class="pango-drawer-header" fxLayout="row" fxLayoutAlign="start center">
-          <span class="pango-drawer-header-title"> Filter Options</span>
-          <span fxFlex></span>
-          <button mat-stroked-button type="button" color="warn" class="pango-rounded-button pango-xs mr-8"
-            (click)="clearAllFilters()">
-            Clear All Filters
-          </button>
-          <button mat-stroked-button (click)="closeLeftDrawer()" class="pango-rounded-button pango-xs" color="primary"
-            aria-label="Close dialog"
-            matTooltip="Expand your viewing space by hiding the filter panel and focus on the results. To bring back the panel, simply click the menu icon [hamburger icon] located at the top left corner."
-            [matTooltipPosition]="'above'" [matTooltipShowDelay]="3000">
-            Close
-          </button>
-        </div>
-        <div class="pango-drawer-body">
+      <ng-container [ngSwitch]="pangoMenuService.selectedLeftPanel">
 
+        <div *ngSwitchCase="LeftPanel.BROWSER" fxLayout="column" fxLayoutAlign="start stretch"
+          class="pango-browser-drawer pango-drawer h-100-p">
+          <div class="pango-drawer-header" fxLayout="row" fxLayoutAlign="start center">
+            <span class="pango-drawer-header-title"> Filter Options</span>
+            <span fxFlex></span>
+            <button mat-stroked-button type="button" color="warn" class="pango-rounded-button pango-xs mr-8"
+              (click)="clearAllFilters()">
+              Clear All Filters
+            </button>
+            <button mat-stroked-button (click)="closeLeftDrawer()" class="pango-rounded-button pango-xs" color="primary"
+              aria-label="Close dialog"
+              matTooltip="Expand your viewing space by hiding the filter panel and focus on the results. To bring back the panel, simply click the menu icon [hamburger icon] located at the top left corner."
+              [matTooltipPosition]="'above'" [matTooltipShowDelay]="3000">
+              Close
+            </button>
+          </div>
+          <div class="pango-drawer-body">
 
-          <div class="h-100-p" [ngSwitch]="pangoMenuService.selectedLeftPanel">
-            <pango-annotation-tree [panelDrawer]="feftDrawer" *ngSwitchCase="LeftPanel.BROWSER">
+            <pango-annotation-tree>
             </pango-annotation-tree>
-            <pango-gene-list [panelDrawer]="feftDrawer" *ngSwitchCase="LeftPanel.GENE_LIST">
-            </pango-gene-list>
+
           </div>
         </div>
-      </div>
+        <pango-gene-list class="h-100-p" [panelDrawer]="leftDrawer" *ngSwitchCase="LeftPanel.GENE_LIST">
+        </pango-gene-list>
+      </ng-container>
     </mat-drawer>
     <mat-drawer-content #scrollbarRef class="pango-section-body w-100-p">
       <div class="w-100-p" fxLayout="column" fxLayoutAlign="start stretch">

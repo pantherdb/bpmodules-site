@@ -5,6 +5,36 @@ $primary: map-get($theme, primary);
 $accent: map-get($theme, accent);
 
 :host {
+  .pango-dialog-body {
+    margin: 0;
+    padding: 0;
+    @include deep-width(100%);
+  }
+
+  .mat-dialog-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Adjust as necessary */
+  }
+
+  /* Dialog Header */
+  .pango-dialog-header {
+    flex-shrink: 0; /* Prevent the header from shrinking */
+  }
+
+  /* Dialog Content (Scrollable) */
+  .pango-dialog-content {
+    overflow-y: auto; /* Makes content scrollable */
+    flex-grow: 1; /* Content takes up the remaining space */
+  }
+
+  /* Dialog Footer */
+  .pango-dialog-footer {
+    flex-shrink: 0; /* Prevent the footer from shrinking */
+  }
+  .mat-dialog-container {
+    padding: 0;
+  }
   .pango-no-info {
     font-size: 16px;
   }

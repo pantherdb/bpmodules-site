@@ -9,6 +9,8 @@ import { AnnotationService } from '../../services/annotation.service';
 import { GenePage, Query } from '../../models/page';
 import { Gene } from '../../../gene/models/gene.model';
 
+import { v4 as uuid } from 'uuid';
+
 @Component({
   selector: 'app-upload-genes',
   templateUrl: './upload-genes.component.html',
@@ -16,8 +18,7 @@ import { Gene } from '../../../gene/models/gene.model';
 })
 export class UploadGenesDialogComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any>;
-  commentsFormGroup: FormGroup;
-  commentsFormArray: FormArray
+  geneFormGroup: FormGroup;
 
   @ViewChild(MatTable) table: MatTable<any>
 
@@ -50,6 +51,8 @@ export class UploadGenesDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
+    this.geneFormGroup = this.createGeneForm();
+
     this.annotationService.onGenesChanged
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((genePage: GenePage) => {
@@ -69,8 +72,23 @@ export class UploadGenesDialogComponent implements OnInit, OnDestroy {
     this._unsubscribeAll.complete();
   }
 
+  createGeneForm() {
+    return new FormGroup({
+      description: new FormControl(),
+    })
+
+  }
+
+
   save() {
-    const value = this.commentsFormGroup.value['commentsFormArray'];
+
+    const id = uuid()
+    const description = this.geneFormGroup.value['description'] ?? 'My Genes';
+
+    const genes = this.genePage.genes
+    const count = genes.length
+    const value = { id, description, count, genes }
+    console.log('value', value)
     this._matDialogRef.close(value);
   }
 

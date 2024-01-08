@@ -9,8 +9,8 @@
     </button>
   </div>
   <div class="pango-drawer-body" fxLayout="row" fxLayoutAlign="start start" pangoPerfectScrollbar>
-    <div *ngIf="module" class="module-display">
-      <div class="module-header">Module Term: {{ module.moduleLabel }}</div>
+    <div *ngIf="module" class="pango-module-display">
+      <div class="pango-module-header">Module Term: {{ module.moduleLabel }}</div>
       <p><strong>Matched:</strong> {{module.matchPercentage}}%</p>
       <div *ngFor="let node of module.nodes" class="node" [ngClass]="{'matched-node': node.matched}">
         <h4>{{ node.label }}</h4>
