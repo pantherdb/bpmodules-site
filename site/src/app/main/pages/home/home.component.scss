@@ -12,7 +12,7 @@ $primary: map-get($theme, primary);
     @include deep-width(60px);
     // @include mat-elevation(2);
     border-right: #999 solid 1px;
-    background-color: #6a8095;
+    background-color: $pango-primary-color-light;
 
     .pango-sidemenu-header {
       width: 100%;
@@ -94,9 +94,9 @@ $primary: map-get($theme, primary);
   padding: 20px;
   background-image: linear-gradient(
       to right,
-      #00174f,
-      rgba(#00174f, 0.8),
-      rgba(#00174f, 0.5)
+      $pango-primary-color-light,
+      rgba($pango-primary-color, 0.8),
+      rgba($pango-primary-color-light, 0.5)
     ),
     url("~assets/images/gene.jpeg");
   background-blend-mode: initial;
@@ -104,7 +104,7 @@ $primary: map-get($theme, primary);
   background-position: top;
   position: relative;
   flex: 1 0 auto;
-  height: 270px;
+  height: 170px;
   min-width: 800px;
   max-height: 400px;
   //text-align: center;
@@ -262,7 +262,8 @@ $primary: map-get($theme, primary);
 }
 
 .pango-section-body {
-  background-color: $pango-background;
+  min-height: 1000px;
+  background-color: #fff;
 }
 
 .pango-middle-panel {

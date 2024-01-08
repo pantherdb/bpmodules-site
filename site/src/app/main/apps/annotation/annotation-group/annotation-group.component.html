@@ -4,7 +4,7 @@
 
 <div class="w-100-p" fxLayout="column" fxLayoutAlign="start center">
   <div class="w-100-p pango-section" *ngFor="let item of annotations" fxLayout="row" fxLayoutAlign="start center">
-    <h2 class="pango-section-title">{{ item.sectionLabel }}</h2>
+    <div class="pango-section-title pango-truncate">{{ item.sectionLabel }}</div>
     <div fxFlex="" fxLayout="column" fxLayoutAlign="start center">
       <div *ngFor="let category of item.categories" class="pango-category-row w-100-p" fxLayout="row"
         fxLayoutAlign="start center">

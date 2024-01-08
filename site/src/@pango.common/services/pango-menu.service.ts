@@ -8,7 +8,7 @@ import { LeftPanel, MiddlePanel, RightPanel } from '@pango.common/models/menu-pa
 })
 export class PangoMenuService {
 
-  selectedLeftPanel: LeftPanel = LeftPanel.BROWSER;
+  selectedLeftPanel: LeftPanel = LeftPanel.GENE_LIST;
   selectedMiddlePanel: MiddlePanel;
   selectedRightPanel: RightPanel
 

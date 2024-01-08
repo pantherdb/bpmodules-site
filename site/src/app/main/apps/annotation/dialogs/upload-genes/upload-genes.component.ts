@@ -74,7 +74,7 @@ export class UploadGenesDialogComponent implements OnInit, OnDestroy {
 
   createGeneForm() {
     return new FormGroup({
-      description: new FormControl(),
+      description: new FormControl(this._data.description),
     })
 
   }

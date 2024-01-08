@@ -4,6 +4,14 @@
       Tools
     </div>
     <button mat-icon-button color="" class="pango-rounded-button"
+      [ngClass]="{'pango-active': pangoMenuService.selectedLeftPanel === LeftPanel.GENE_LIST}" (click)="openGeneList()"
+      matTooltip="My uploaded Gene List" [matTooltipPosition]="'after'" [matTooltipShowDelay]="1500">
+      <fa-icon [icon]="['fas', 'list']"></fa-icon>
+      <div class="pango-label">
+        My Genes
+      </div>
+    </button>
+    <button mat-icon-button color="" class="pango-rounded-button"
       [ngClass]="{'pango-active': pangoMenuService.selectedLeftPanel === LeftPanel.BROWSER}" (click)="openBrowser()"
       matTooltip="Search and Filter" [matTooltipPosition]="'after'" [matTooltipShowDelay]="1500">
       <fa-icon [icon]="['fas', 'filter']"></fa-icon>
@@ -11,14 +19,7 @@
         Filter
       </div>
     </button>
-    <button mat-icon-button color="" class="pango-rounded-button"
-      [ngClass]="{'pango-active': pangoMenuService.selectedLeftPanel === LeftPanel.GENE_LIST}" (click)="openGeneList()"
-      matTooltip="snps summary" [matTooltipPosition]="'after'" [matTooltipShowDelay]="1500">
-      <fa-icon [icon]="['fas', 'list']"></fa-icon>
-      <div class="pango-label">
-        My Genes
-      </div>
-    </button>
+
   </div>
   <mat-drawer-container class="w-100-p h-100-p" fxLayout="row" fxLayoutAlign="start start" autosize>
     <mat-drawer #leftDrawer class="pango-left-drawer" mode="side" position="start" opened="true">
@@ -96,8 +97,6 @@
               annotationService.searchCriteria[SearchFilterType.SLIM_TERMS].length}})</span>
             <mat-icon matChipRemove>cancel</mat-icon>
           </mat-chip>
-
-
         </div>
         <!--  <pango-summary-stats></pango-summary-stats> -->
         <pango-annotation-group class="w-100-p" [annotationPage]="annotationPage"></pango-annotation-group>

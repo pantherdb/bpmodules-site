@@ -1,18 +1,22 @@
 @use "@angular/material" as mat;
 $primary: map-get($theme, primary);
 $accent: map-get($theme, accent);
-//$pango-background: map-get($mat-blue, 400);
-$pango-background: map-get($mat-blue-grey, 50);
-$pango-toolbar-color: #173672;
-$pango-primary-color: #173672;
+$pango-background: #e8d6c0;
+$pango-toolbar-color: #754d42;
+$pango-primary-color: #754d42;
 $pango-header-color: $pango-primary-color;
 $pango-accent-color: #c0c03d;
 $pango-primary-color-accent: #8b9dc3;
 $pango-primary-color-lighter: #f2cf9d;
-$pango-primary-color-light: rgba(#c597a3, 0.3);
+$pango-primary-color-light: #917072;
 $pango-primary-color-text: #4a8bfc;
 $pango-primary-color-2: #484f61;
 $pango-header-border-bottom: $pango-accent-color solid 1px;
+
+$fair-pink: #ffedec;
+$apricot: #fbc8be;
+$coffee: #754d42;
+$del-rio: #917072;
 
 button {
   &.pango-file-button {

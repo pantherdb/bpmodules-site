@@ -510,6 +510,7 @@ export class AnnotationService {
             }
         };
 
+
         fileReader.onload = (e) => {
             const text = fileReader.result as string;
 
@@ -521,8 +522,9 @@ export class AnnotationService {
             const trimmedLines = lines.map(line => line.trim());
             const uniqueLines = new Set(trimmedLines);
             const geneIds = Array.from(uniqueLines).filter(line => line !== '');
+            const data = { geneIds, description: file.name }
 
-            self.annotationDialogService.openUploadGenesDialog(geneIds, success);
+            self.annotationDialogService.openUploadGenesDialog(data, success);
         };
 
         fileReader.readAsText(file);

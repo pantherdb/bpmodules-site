@@ -51,44 +51,46 @@ $accent: map-get($theme, accent);
     }
   }
   .module-container {
-    margin-bottom: 20px;
+    //margin-bottom: 20px;
   }
 
   .pango-section {
-    padding: 24px 12px;
-    margin-bottom: 20px;
+    display: relative;
+    //padding: 24px 12px;
+    // margin-bottom: 20px;
   }
 
   .pango-section-title {
     @include deep-width(150px);
     margin-bottom: 10px;
     color: #333;
-    font-size: 1.5em;
-    transform: rotate(-90deg);
-    transform-origin: top left; // Adjust the transform origin
+    font-size: 1em;
+    //  transform: rotate(-90deg);
+    // transform-origin: top left; // Adjust the transform origin
   }
 
   .pango-category-row {
+    position: relative; // Needed for absolute positioning of children
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
-  }
 
-  .pango-category-title {
-    padding-right: 8px;
-    font-size: 10px;
-    color: #555;
-    width: 150px; // Adjusted from deep-width mixin
-    transform: rotate(-30deg);
-    transform-origin: 0 100%; // Adjust the transform origin
-    text-align: right;
-    display: inline-block; // Adjust display to enable transform
-    margin-bottom: -50px; // Adjust this value to align properly after rotation
-    margin-top: -50px; // Adjust this value as needed
+    .pango-category-title {
+      //    transform: rotate(-30deg) translateX(100%); // Rotate and then shift leftwards
+      // transform-origin: top left; // Rotate around the top left corner
+      font-size: 10px;
+      color: #555;
+      background-color: white; // Optional, for readability
+      width: 150px; // Set a fixed width
+      text-align: right;
+      z-index: 1; // Above other content
+    }
   }
 
   .pango-matrix {
-    width: 5000px;
+    padding-left: 12px;
+    flex-grow: 1;
+    //margin-left: 150px;
+    width: 2000px;
     display: grid;
     grid-template-columns: repeat(
       auto-fill,
