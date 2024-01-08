@@ -182,6 +182,7 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy {
   }
 
   openAnnotationSummary(term) {
+    console.log('term', term)
     this.annotationService.onAnnotationChanged.next(term)
     this.pangoMenuService.selectRightPanel(RightPanel.DETAIL);
     this.pangoMenuService.openRightDrawer()

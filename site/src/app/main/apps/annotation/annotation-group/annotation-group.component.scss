@@ -55,14 +55,17 @@ $accent: map-get($theme, accent);
   }
 
   .pango-section {
-    padding: 0 12px;
+    padding: 24px 12px;
     margin-bottom: 20px;
   }
 
   .pango-section-title {
+    @include deep-width(150px);
     margin-bottom: 10px;
     color: #333;
     font-size: 1.5em;
+    transform: rotate(-90deg);
+    transform-origin: top left; // Adjust the transform origin
   }
 
   .pango-category-row {
@@ -75,17 +78,23 @@ $accent: map-get($theme, accent);
     padding-right: 8px;
     font-size: 10px;
     color: #555;
-    @include deep-width(150px);
+    width: 150px; // Adjusted from deep-width mixin
+    transform: rotate(-30deg);
+    transform-origin: 0 100%; // Adjust the transform origin
     text-align: right;
+    display: inline-block; // Adjust display to enable transform
+    margin-bottom: -50px; // Adjust this value to align properly after rotation
+    margin-top: -50px; // Adjust this value as needed
   }
 
   .pango-matrix {
+    width: 5000px;
     display: grid;
     grid-template-columns: repeat(
       auto-fill,
-      minmax(50px, 1fr)
+      minmax(30px, 1fr)
     ); /* Responsive columns */
-    grid-auto-rows: 50px;
+    grid-auto-rows: 30px;
     gap: 0px;
   }
 
@@ -99,21 +108,21 @@ $accent: map-get($theme, accent);
     overflow: hidden;
 
     .pango-positive {
+      border: #489470 solid 1px;
       position: absolute;
       top: 0;
       right: 0;
       height: 50%;
       width: 50%;
-      background-color: #4caf50;
     }
 
     .pango-negative {
+      border: #d46565 solid 1px;
       position: absolute;
       bottom: 0;
       right: 0;
       height: 50%;
       width: 50%;
-      background-color: #b9434d;
     }
   }
 }

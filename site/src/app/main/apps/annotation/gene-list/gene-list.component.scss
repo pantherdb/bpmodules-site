@@ -4,10 +4,6 @@
 $primary: map-get($theme, primary);
 $accent: map-get($theme, accent);
 
-// Basic
-$white: #fff;
-$black: #000;
-
 // Greys
 $ash: #eaeef6;
 $charcoal: #a0a0a0;
@@ -73,20 +69,11 @@ $governor: #4133b7;
     color: $coffee;
   }
 
-  // Card layout for genes
-  .cards {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2.5rem;
-    width: 100%;
-  }
-
   .card.plan {
+    overflow: hidden;
     border-radius: 16px;
     box-shadow: 0 30px 30px -25px rgba($indigo, 0.25);
-    max-width: 300px;
-    background-color: $white;
+    background-color: #fff;
   }
 
   .inner {
@@ -138,7 +125,7 @@ $governor: #4133b7;
 
   .button {
     background-color: $indigo;
-    color: $white;
+    color: #fff;
     border-radius: 20px;
     padding: 10px 15px;
     margin: 5px;

@@ -29,10 +29,6 @@
           <div class="pango-drawer-header" fxLayout="row" fxLayoutAlign="start center">
             <span class="pango-drawer-header-title"> Filter Options</span>
             <span fxFlex></span>
-            <button mat-stroked-button type="button" color="warn" class="pango-rounded-button pango-xs mr-8"
-              (click)="clearAllFilters()">
-              Clear All Filters
-            </button>
             <button mat-stroked-button (click)="closeLeftDrawer()" class="pango-rounded-button pango-xs" color="primary"
               aria-label="Close dialog"
               matTooltip="Expand your viewing space by hiding the filter panel and focus on the results. To bring back the panel, simply click the menu icon [hamburger icon] located at the top left corner."
@@ -41,10 +37,8 @@
             </button>
           </div>
           <div class="pango-drawer-body">
-
             <pango-annotation-tree>
             </pango-annotation-tree>
-
           </div>
         </div>
         <pango-gene-list class="h-100-p" [panelDrawer]="leftDrawer" *ngSwitchCase="LeftPanel.GENE_LIST">
@@ -56,17 +50,14 @@
         <div class="pango-header accent w-100-p" fxLayout="column" fxLayoutAlign="start start">
 
           <h1>
-            Functions of Human Genes
+            Pango BP Modules
           </h1>
           <h2>
-            The table below shows functional characteristics of protein-coding genes that are supported by scientific
-            evidence. You can filter the list to find a specific gene or function category.</h2>
-          <h3>
-            Functional characteristics are described using terms from the Gene Ontology, and describe three distinct
-            aspects of gene function: molecular function, biological process, and cellular component.
-          </h3>
+            This tool is designed for analysis of single-cell RNA-seq data. It takes an input list of genes that are
+            expressed in a cell, and converts it to a set of “active modules” that are potentially operating in that
+            cell..</h2>
+
           <div class="w-100-p" fxLayout="row" fxLayoutAlign="start center">
-            <pango-gene-form> </pango-gene-form>
             <h3 class="ml-12">
               See any missing or incorrect functions? <a href="https://help.geneontology.org/" target="_blank">Let us
                 know!</a>
@@ -108,7 +99,7 @@
 
 
         </div>
-        <pango-summary-stats></pango-summary-stats>
+        <!--  <pango-summary-stats></pango-summary-stats> -->
         <pango-annotation-group class="w-100-p" [annotationPage]="annotationPage"></pango-annotation-group>
       </div>
       <div class="w-100-p">

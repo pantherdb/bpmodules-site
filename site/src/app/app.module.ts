@@ -39,6 +39,7 @@ import {
     faCaretDown,
     faCaretRight,
     faAngleDoubleDown,
+    faTrash,
     faAngleDoubleUp, faUndo, faSave, faExclamationTriangle, faAngleDoubleLeft, faAngleDoubleRight, faAngleLeft, faAngleRight, faCode, faFileCode, faSearchPlus, faTable, faChartBar, faList, faBars, faFilter, faMicroscope, faFlask
 } from '@fortawesome/free-solid-svg-icons';
 import { faCheckCircle, faTimesCircle } from '@fortawesome/free-regular-svg-icons';
@@ -119,6 +120,7 @@ export class AppModule {
             faLink,
             faList,
             faListAlt,
+            faMicroscope,
             faPaw,
             faPen,
             faPlus,
@@ -129,11 +131,12 @@ export class AppModule {
             faTable,
             faTasks,
             faTimesCircle,
+            faTrash,
             faTwitter,
             faUndo,
             faUser,
             faUsers,
-            faMicroscope
+
         );
     }
 }

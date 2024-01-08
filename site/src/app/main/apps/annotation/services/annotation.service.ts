@@ -108,53 +108,141 @@ export class AnnotationService {
 
     }
 
-    buildTree(data: Annotation[]): any[] {
-        const tree: any[] = [];
-
-        for (const item of data) {
-            let section = tree.find(s => s.sectionId === item.sectionId);
-            if (!section) {
-                section = {
-                    sectionId: item.sectionId,
-                    sectionLabel: item.sectionLabel,
-                    categories: []
-                };
-                tree.push(section);
-            }
-
-            let category = section.categories.find(c => c.categoryId === item.categoryId);
-            if (!category) {
-                category = {
-                    categoryId: item.categoryId,
-                    categoryLabel: item.categoryLabel,
-                    modules: []
-                };
-                section.categories.push(category);
-            }
-
-            let module = category.modules.find(m => m.moduleId === item.moduleId);
-            if (!module) {
-                module = {
-                    moduleId: item.moduleId,
-                    moduleLabel: item.moduleLabel,
-                    disposition: item.disposition,
-                    nodes: []
-                };
-                category.modules.push(module);
-            }
-
-            const node = {
-                nodeId: item.nodeId,
-                nodeLabel: item.nodeLabel,
-                terms: item.terms,
-                leafGenes: item.leafGenes
+    private _findOrCreateSection(tree, item) {
+        let section = tree.find(s => s.sectionId === item.sectionId);
+        if (!section) {
+            section = {
+                sectionId: item.sectionId,
+                sectionLabel: item.sectionLabel,
+                categories: []
             };
-            module.nodes.push(node);
+            tree.push(section);
+        }
+        return section;
+    }
+
+    private _findOrCreateCategory(section, item) {
+        let category = section.categories.find(c => c.categoryId === item.categoryId);
+        if (!category) {
+            category = {
+                categoryId: item.categoryId,
+                categoryLabel: item.categoryLabel,
+                modules: []
+            };
+            section.categories.push(category);
+        }
+        return category;
+    }
+
+    private _findOrCreateModule(category, item) {
+        let module = category.modules.find(m => m.moduleId === item.moduleId);
+        if (!module) {
+            module = {
+                moduleId: item.moduleId,
+                moduleLabel: item.moduleLabel,
+                disposition: item.disposition,
+                nodes: [],
+                // Temporarily store termIds, to be processed later
+                dispositionSourcesTermIds: item.dispositionSources?.map(ds => ds.termId) || []
+            };
+            category.modules.push(module);
+        }
+        return module;
+    }
+
+    private _findOrCreateNode(module, item) {
+        const node = {
+            nodeId: item.nodeId,
+            nodeLabel: item.nodeLabel,
+            terms: item.terms,
+            leafGenes: item.leafGenes
+        };
+        module.nodes.push(node);
+    }
+
+    buildTree(data) {
+        const tree = [];
+
+        // First Pass: Build the tree structure
+        for (const item of data) {
+            const section = this._findOrCreateSection(tree, item);
+            const category = this._findOrCreateCategory(section, item);
+            const module = this._findOrCreateModule(category, item);
+            this._findOrCreateNode(module, item); // Add nodes here
+        }
+
+        // Second Pass: Set refAnnotation
+        for (const item of data) {
+            const section = tree.find(s => s.sectionId === item.sectionId);
+            const category = section?.categories.find(c => c.categoryId === item.categoryId);
+            const module = category?.modules.find(m => m.moduleId === item.moduleId);
+
+            if (module && item.dispositionSources) {
+                module.dispositionSources = item.dispositionSources.map(ds => {
+                    const refModule = this._findModuleByTermId(tree, ds.termId);
+                    return { ...ds, refAnnotation: refModule || null };
+                });
+            }
         }
 
         return tree;
     }
 
+    private _findModuleByTermId(tree, termId) {
+        for (const section of tree) {
+            for (const category of section.categories) {
+                for (const module of category.modules) {
+                    if (module.moduleId === termId) {
+                        return module;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private calculateMatchForNodes(nodes, geneSymbols) {
+        let matchingNodesCount = 0;
+
+        const updatedNodes = nodes.map(node => {
+            const isMatched = node.leafGenes.some(leafGene =>
+                geneSymbols.includes(leafGene.geneSymbol)
+            );
+
+            if (isMatched) matchingNodesCount++;
+
+            return {
+                ...node,
+                matched: isMatched
+            };
+        });
+
+        return { updatedNodes, matchingNodesCount };
+    }
+
+    private updateRefAnnotations(dispositionSources, geneSymbols) {
+        return dispositionSources.map(ds => {
+            if (ds.refAnnotation && ds.refAnnotation.nodes) {
+                const { updatedNodes, matchingNodesCount } = this.calculateMatchForNodes(ds.refAnnotation.nodes, geneSymbols);
+                const totalRefNodes = updatedNodes.length;
+                const refMatchPercentage = totalRefNodes > 0 ? Math.round((matchingNodesCount / totalRefNodes) * 100) : 0;
+                const refGrayscaleColor = totalRefNodes > 0 ? (ds.disposition === "negative" ? '#0F0' : '#F00') : 'transparent';
+
+
+                return {
+                    ...ds,
+                    refAnnotation: {
+                        ...ds.refAnnotation,
+                        nodes: updatedNodes,
+                        matchPercentage: refMatchPercentage,
+                        grayscaleColor: refGrayscaleColor
+                    },
+                    matched: matchingNodesCount > 0  // Update matched based on the updatedNodes
+                };
+            }
+            return ds;
+        });
+    }
 
     private calculateMatchPercentages(data: any[], geneSymbols: string[]): any[] {
         return data.map(item => ({
@@ -162,28 +250,16 @@ export class AnnotationService {
             categories: item.categories.map(category => ({
                 ...category,
                 modules: category.modules.map(module => {
-                    const totalNodes = module.nodes.length;
-                    let matchingNodesCount = 0;
-
-                    const updatedNodes = module.nodes.map(node => {
-                        const isMatched = node.leafGenes.some(leafGene =>
-                            geneSymbols.includes(leafGene.geneSymbol)
-                        );
-
-                        if (isMatched) matchingNodesCount++;
-
-                        return {
-                            ...node,
-                            matched: isMatched
-                        };
-                    });
-
-                    const matchPercentage = totalNodes > 0 ? Math.round((matchingNodesCount / totalNodes) * 100) : 0;
+                    const { updatedNodes, matchingNodesCount } = this.calculateMatchForNodes(module.nodes, geneSymbols);
+                    const matchPercentage = module.nodes.length > 0 ? Math.round((matchingNodesCount / module.nodes.length) * 100) : 0;
                     const grayscaleColor = this.getGrayscaleColor(matchPercentage);
+
+                    const updatedDispositionSources = this.updateRefAnnotations(module.dispositionSources, geneSymbols);
 
                     return {
                         ...module,
-                        nodes: updatedNodes, // Updated nodes with matched property
+                        nodes: updatedNodes,
+                        dispositionSources: updatedDispositionSources,
                         matchPercentage,
                         grayscaleColor
                     };
@@ -191,6 +267,7 @@ export class AnnotationService {
             }))
         }));
     }
+
 
 
     private getGrayscaleColor(percentage: number): string {
