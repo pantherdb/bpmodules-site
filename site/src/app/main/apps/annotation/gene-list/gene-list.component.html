@@ -26,31 +26,30 @@
 
 
     <div class="pango-gene-display w-100-p">
-      <div class="pango-gene-header">My Genes</div>
-      <div class="cards" fxLayout="column" fxLayoutAlign="start stretch">
-        <div *ngFor="let gene of annotationService.geneList"
-          [class.selected]="gene.id === annotationService.selectedGeneList?.id" class="card plan">
-          <div class="inner">
-            <span class="pricing">
-              <span>{{gene.count}} <small>/ 6567</small></span>
-            </span>
-            <h2 class="title">{{gene.description}}</h2>
+      <div fxLayout="column" fxLayoutAlign="start stretch">
+        <div *ngFor="let gene of annotationService.geneList" (click)="selectGene(gene)"
+          [class.selected]="gene.id === annotationService.selectedGeneList?.id" class="pango-card-gene mb-4">
+          <div class="pango-gene-count">
+            <span>{{gene.count}} <small>/ 6567</small></span>
+          </div>
 
+          <h4 class="pango-title">{{gene.description}}</h4>
+          <span fxFlex=""> </span>
 
-            <button class="pango-rounded-button pango-half-button pango-r pango-xs pango-action-button mr-4"
-              mat-stroked-button (click)="selectGene(gene)" color="primary">
-              <fa-icon class="pango-icon pango-selected-icon" [icon]="['far', 'check-circle']"></fa-icon>
-            </button>
-            <button class="pango-rounded-button pango-half-button pango-m pango-xs pango-action-button mr-4"
+          <div class="pango-actions" fxLayout="row" fxLayoutAlign="start center">
+            <button fxFlex="50%"
+              class="pango-rounded-button pango-half-button pango-r pango-xs pango-action-button mr-4"
               mat-stroked-button (click)=editGene(gene) color="primary">
               <fa-icon class="pango-icon pango-selected-icon" [icon]="['fas', 'pen']"></fa-icon>
             </button>
-            <button class="pango-rounded-button pango-half-button pango-l pango-xs pango-action-button mr-4"
+            <button fxFlex="50%"
+              class="pango-rounded-button pango-half-button pango-l pango-xs pango-action-button mr-4"
               mat-stroked-button (click)="editGene(gene)" color="primary" matTooltip="Save Model Changes"
               [matTooltipPosition]="'below'" [matTooltipShowDelay]="1000">
               <fa-icon class="pango-icon pango-selected-icon" [icon]="['fas', 'trash']"></fa-icon>
             </button>
           </div>
+
         </div>
       </div>
     </div>

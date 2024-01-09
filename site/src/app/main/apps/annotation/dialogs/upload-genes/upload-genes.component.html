@@ -10,15 +10,12 @@
     </mat-toolbar-row>
   </mat-toolbar>
   <div class="pango-dialog-content">
-
     <ng-container name="geneFormGroup" [formGroup]="geneFormGroup">
-
-
       <mat-form-field class="w-100-p">
         <mat-label>File Name</mat-label>
         <input matInput formControlName="description" placeholder="File Name" />
       </mat-form-field>
-      <div *ngIf="dataSource" class="w-100-p" fxLayout="column" fxLayoutAlign="start start">
+      <div class="w-100-p" fxLayout="column" fxLayoutAlign="start start">
 
         <table fxFlex="1 1 auto" mat-table [dataSource]="dataSource" class="pango-annotation-table">
           <ng-container matColumnDef="gene">
@@ -78,9 +75,14 @@
           </tr>
 
         </table>
-        <mat-paginator *ngIf="annotationPage?.total>0" class="pango-paginator pango-drawer-footer" #paginator
+        <!--     <mat-paginator *ngIf="annotationPage?.total>0" class="pango-paginator pango-drawer-footer" #paginator
           [length]="annotationPage.total" [pageIndex]="annotationPage.pageNumber" [pageSize]="annotationPage.size"
           (page)="pageEvent = $event; setPage($event)">
+        </mat-paginator> -->
+
+
+        <mat-paginator #paginator class="pango-paginator pango-drawer-footer" [length]="dataSource.data.length"
+          [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]">
         </mat-paginator>
       </div>
     </ng-container>

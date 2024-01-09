@@ -60,6 +60,8 @@ export class AnnotationService {
     geneList: GeneList[] = [];
     selectedGeneList: GeneList;
     rawAnnotations: Annotation[];
+    geneLookup: Gene[];
+    annotationTree: any[];
 
 
 
@@ -95,7 +97,7 @@ export class AnnotationService {
                 return gene.geneSymbol
             })
 
-            this.addGeneMatch(annotations, geneSymbols, this.query)
+            this.addGeneMatch(this.annotationTree, geneSymbols, this.query)
 
         });
 
@@ -108,57 +110,6 @@ export class AnnotationService {
 
     }
 
-    private _findOrCreateSection(tree, item) {
-        let section = tree.find(s => s.sectionId === item.sectionId);
-        if (!section) {
-            section = {
-                sectionId: item.sectionId,
-                sectionLabel: item.sectionLabel,
-                categories: []
-            };
-            tree.push(section);
-        }
-        return section;
-    }
-
-    private _findOrCreateCategory(section, item) {
-        let category = section.categories.find(c => c.categoryId === item.categoryId);
-        if (!category) {
-            category = {
-                categoryId: item.categoryId,
-                categoryLabel: item.categoryLabel,
-                modules: []
-            };
-            section.categories.push(category);
-        }
-        return category;
-    }
-
-    private _findOrCreateModule(category, item) {
-        let module = category.modules.find(m => m.moduleId === item.moduleId);
-        if (!module) {
-            module = {
-                moduleId: item.moduleId,
-                moduleLabel: item.moduleLabel,
-                disposition: item.disposition,
-                nodes: [],
-                // Temporarily store termIds, to be processed later
-                dispositionSourcesTermIds: item.dispositionSources?.map(ds => ds.termId) || []
-            };
-            category.modules.push(module);
-        }
-        return module;
-    }
-
-    private _findOrCreateNode(module, item) {
-        const node = {
-            nodeId: item.nodeId,
-            nodeLabel: item.nodeLabel,
-            terms: item.terms,
-            leafGenes: item.leafGenes
-        };
-        module.nodes.push(node);
-    }
 
     buildTree(data) {
         const tree = [];
@@ -188,116 +139,8 @@ export class AnnotationService {
         return tree;
     }
 
-    private _findModuleByTermId(tree, termId) {
-        for (const section of tree) {
-            for (const category of section.categories) {
-                for (const module of category.modules) {
-                    if (module.moduleId === termId) {
-                        return module;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private calculateMatchForNodes(nodes, geneSymbols) {
-        let matchingNodesCount = 0;
-
-        const updatedNodes = nodes.map(node => {
-            const isMatched = node.leafGenes.some(leafGene =>
-                geneSymbols.includes(leafGene.geneSymbol)
-            );
-
-            if (isMatched) matchingNodesCount++;
-
-            return {
-                ...node,
-                matched: isMatched
-            };
-        });
-
-        return { updatedNodes, matchingNodesCount };
-    }
-
-    private updateRefAnnotations(dispositionSources, geneSymbols) {
-        return dispositionSources.map(ds => {
-            if (ds.refAnnotation && ds.refAnnotation.nodes) {
-                const { updatedNodes, matchingNodesCount } = this.calculateMatchForNodes(ds.refAnnotation.nodes, geneSymbols);
-                const totalRefNodes = updatedNodes.length;
-                const refMatchPercentage = totalRefNodes > 0 ? Math.round((matchingNodesCount / totalRefNodes) * 100) : 0;
-                const refGrayscaleColor = totalRefNodes > 0 ? (ds.disposition === "negative" ? '#0F0' : '#F00') : 'transparent';
 
 
-                return {
-                    ...ds,
-                    refAnnotation: {
-                        ...ds.refAnnotation,
-                        nodes: updatedNodes,
-                        matchPercentage: refMatchPercentage,
-                        grayscaleColor: refGrayscaleColor
-                    },
-                    matched: matchingNodesCount > 0  // Update matched based on the updatedNodes
-                };
-            }
-            return ds;
-        });
-    }
-
-    private calculateMatchPercentages(data: any[], geneSymbols: string[]): any[] {
-        return data.map(item => ({
-            ...item,
-            categories: item.categories.map(category => ({
-                ...category,
-                modules: category.modules.map(module => {
-                    const { updatedNodes, matchingNodesCount } = this.calculateMatchForNodes(module.nodes, geneSymbols);
-                    const matchPercentage = module.nodes.length > 0 ? Math.round((matchingNodesCount / module.nodes.length) * 100) : 0;
-                    const grayscaleColor = this.getGrayscaleColor(matchPercentage);
-
-                    const updatedDispositionSources = this.updateRefAnnotations(module.dispositionSources, geneSymbols);
-
-                    return {
-                        ...module,
-                        nodes: updatedNodes,
-                        dispositionSources: updatedDispositionSources,
-                        matchPercentage,
-                        grayscaleColor
-                    };
-                })
-            }))
-        }));
-    }
-
-
-
-    private getGrayscaleColor(percentage: number): string {
-        const intensity = Math.round(255 - (255 * percentage / 100));
-        return `rgb(${intensity}, ${intensity}, ${intensity})`;
-    }
-
-
-
-    getAnnotationsExport(page: number): any {
-        const self = this;
-        self.loading = true;
-
-        this.searchCriteria.clearSearch()
-        this.searchCriteria = new SearchCriteria();
-
-        self.getAnnotationsPage(this.query, page);
-        self.getAnnotationsCount(this.query);
-        self.queryAnnotationStats(this.query);
-    }
-
-    getAnnotationsExportAll(): any {
-        const self = this;
-        self.loading = true;
-        return this.annotationGraphQLService.getAnnotationsExportAllQuery(this.query)
-    }
-
-    setDetail(annotation) {
-        this.onAnnotationChanged.next(annotation);
-    }
 
     getAnnotationsPage(query: Query, page: number): any {
         const self = this;
@@ -312,6 +155,10 @@ export class AnnotationService {
 
                     this.rawAnnotations = annotations;
 
+                    this.annotationTree = this.buildTree(annotations);
+
+                    this.geneLookup = this._findUniqueLeafGenes(annotations);
+
                     this.onRawAnnotationsChanged.next(this.rawAnnotations);
 
                     self.loading = false;
@@ -322,9 +169,9 @@ export class AnnotationService {
     }
 
 
-    addGeneMatch(annotations: Annotation[], geneSymbols: string[], query: Query) {
-        const tree = this.buildTree(annotations);
-        const matchedAnnotations = this.calculateMatchPercentages(tree, geneSymbols);
+    addGeneMatch(annotationTree, geneSymbols: string[], query: Query) {
+
+        const matchedAnnotations = this.calculateMatchPercentages(annotationTree, geneSymbols);
 
         this.annotationPage.query = query;
         this.annotationPage.updatePage()
@@ -359,32 +206,6 @@ export class AnnotationService {
                     self.loading = false;
                 }, error: (err) => {
                     console.log(err)
-                    self.loading = false;
-                }
-            });
-    }
-
-    getAnnotationsExportPage(query: Query, page: number): any {
-        const self = this;
-        self.loading = true;
-        query.pageArgs.page = (page - 1);
-        query.pageArgs.size = this.annotationResultsSize;
-        this.query = query;
-        return this.annotationGraphQLService.getAnnotationsQuery(query).subscribe(
-            {
-                next: (annotations: Annotation[]) => {
-                    const annotationData = annotations
-
-                    this.annotationPage.query = query;
-                    this.annotationPage.updatePage()
-                    this.annotationPage.annotations = annotationData;
-                    //  this.annotationPage.aggs = response.aggregations;
-                    this.annotationPage.query.source = query.source;
-
-                    this.onAnnotationsChanged.next(this.annotationPage);
-
-                    self.loading = false;
-                }, error: (err) => {
                     self.loading = false;
                 }
             });
@@ -522,7 +343,9 @@ export class AnnotationService {
             const trimmedLines = lines.map(line => line.trim());
             const uniqueLines = new Set(trimmedLines);
             const geneIds = Array.from(uniqueLines).filter(line => line !== '');
-            const data = { geneIds, description: file.name }
+
+            const genes = self._findMatchingGenes(geneIds, self.geneLookup);
+            const data = { genes, description: file.name }
 
             self.annotationDialogService.openUploadGenesDialog(data, success);
         };
@@ -733,6 +556,169 @@ export class AnnotationService {
         const sorted = orderBy(stats, ['value'], ['desc'])
         return sorted
     }
+
+    // Privates
+
+    private _findOrCreateSection(tree, item) {
+        let section = tree.find(s => s.sectionId === item.sectionId);
+        if (!section) {
+            section = {
+                sectionId: item.sectionId,
+                sectionLabel: item.sectionLabel,
+                categories: []
+            };
+            tree.push(section);
+        }
+        return section;
+    }
+
+    private _findOrCreateCategory(section, item) {
+        let category = section.categories.find(c => c.categoryId === item.categoryId);
+        if (!category) {
+            category = {
+                categoryId: item.categoryId,
+                categoryLabel: item.categoryLabel,
+                modules: []
+            };
+            section.categories.push(category);
+        }
+        return category;
+    }
+
+    private _findOrCreateModule(category, item) {
+        let module = category.modules.find(m => m.moduleId === item.moduleId);
+        if (!module) {
+            module = {
+                moduleId: item.moduleId,
+                moduleLabel: item.moduleLabel,
+                disposition: item.disposition,
+                nodes: [],
+                // Temporarily store termIds, to be processed later
+                dispositionSourcesTermIds: item.dispositionSources?.map(ds => ds.termId) || []
+            };
+            category.modules.push(module);
+        }
+        return module;
+    }
+
+    private _findOrCreateNode(module, item) {
+        const node = {
+            nodeId: item.nodeId,
+            nodeLabel: item.nodeLabel,
+            terms: item.terms,
+            leafGenes: item.leafGenes
+        };
+        module.nodes.push(node);
+    }
+
+
+    private _findModuleByTermId(tree, termId) {
+        for (const section of tree) {
+            for (const category of section.categories) {
+                for (const module of category.modules) {
+                    if (module.moduleId === termId) {
+                        return module;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private calculateMatchForNodes(nodes, geneSymbols) {
+        let matchingNodesCount = 0;
+
+        const updatedNodes = nodes.map(node => {
+            const isMatched = node.leafGenes.some(leafGene =>
+                geneSymbols.includes(leafGene.geneSymbol)
+            );
+
+            if (isMatched) matchingNodesCount++;
+
+            return {
+                ...node,
+                matched: isMatched
+            };
+        });
+
+        return { updatedNodes, matchingNodesCount };
+    }
+
+    private updateRefAnnotations(dispositionSources, geneSymbols) {
+        return dispositionSources.map(ds => {
+            if (ds.refAnnotation && ds.refAnnotation.nodes) {
+                const { updatedNodes, matchingNodesCount } = this.calculateMatchForNodes(ds.refAnnotation.nodes, geneSymbols);
+                const totalRefNodes = updatedNodes.length;
+                const refMatchPercentage = totalRefNodes > 0 ? Math.round((matchingNodesCount / totalRefNodes) * 100) : 0;
+                const refGrayscaleColor = totalRefNodes > 0 ? (ds.disposition === "negative" ? '#0F0' : '#F00') : 'transparent';
+
+
+                return {
+                    ...ds,
+                    refAnnotation: {
+                        ...ds.refAnnotation,
+                        nodes: updatedNodes,
+                        matchPercentage: refMatchPercentage,
+                        grayscaleColor: refGrayscaleColor
+                    },
+                    matched: matchingNodesCount > 0  // Update matched based on the updatedNodes
+                };
+            }
+            return ds;
+        });
+    }
+
+    private calculateMatchPercentages(data: any[], geneSymbols: string[]): any[] {
+        return data.map(item => ({
+            ...item,
+            categories: item.categories.map(category => ({
+                ...category,
+                modules: category.modules.map(module => {
+                    const { updatedNodes, matchingNodesCount } = this.calculateMatchForNodes(module.nodes, geneSymbols);
+                    const matchPercentage = module.nodes.length > 0 ? Math.round((matchingNodesCount / module.nodes.length) * 100) : 0;
+                    const grayscaleColor = this._getGrayscaleColor(matchPercentage);
+
+                    const updatedDispositionSources = this.updateRefAnnotations(module.dispositionSources, geneSymbols);
+
+                    return {
+                        ...module,
+                        nodes: updatedNodes,
+                        dispositionSources: updatedDispositionSources,
+                        matchPercentage,
+                        grayscaleColor
+                    };
+                })
+            }))
+        }));
+    }
+
+
+
+    private _getGrayscaleColor(percentage: number): string {
+        const intensity = Math.round(255 - (255 * percentage / 100));
+        return `rgb(${intensity}, ${intensity}, ${intensity})`;
+    }
+
+    private _findUniqueLeafGenes(data: Annotation[]) {
+        const uniqueGenesMap = new Map();
+
+        data.forEach(item => {
+            item.leafGenes.forEach(leafGene => {
+                if (!uniqueGenesMap.has(leafGene.geneSymbol)) {
+                    uniqueGenesMap.set(leafGene.geneSymbol, leafGene);
+                }
+            });
+        });
+
+        return Array.from(uniqueGenesMap.values());
+    }
+
+    private _findMatchingGenes(geneList: string[], leafGenes: Gene[]) {
+        return leafGenes.filter(leafGene =>
+            geneList.includes(leafGene.gene) || geneList.includes(leafGene.geneSymbol)
+        );
+    }
+
 
 
 }

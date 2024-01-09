@@ -58,7 +58,6 @@ export class AnnotationTableLongComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.annotationService.getAnnotationsExport(1);
     this.annotationService.onAnnotationsChanged
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((annotationPage: AnnotationPage) => {
@@ -72,13 +71,7 @@ export class AnnotationTableLongComponent implements OnInit, OnDestroy {
   }
 
   downloadAll() {
-    this.annotationService.getAnnotationsExportAll().subscribe((annotationPage: AnnotationPage) => {
-      if (annotationPage) {
 
-      } else {
-
-      }
-    });
   }
 
   downloadFile() {
