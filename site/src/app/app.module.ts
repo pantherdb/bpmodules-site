@@ -48,6 +48,7 @@ import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 const appRoutes: Routes = [
     {
@@ -65,6 +66,7 @@ const appRoutes: Routes = [
         BrowserAnimationsModule,
         HttpClientModule,
         HttpClientJsonpModule,
+        ScrollingModule,
         RouterModule.forRoot(appRoutes),
 
         // Pango Main and Shared modules

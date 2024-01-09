@@ -28,7 +28,7 @@
     <div class="pango-gene-display w-100-p">
       <div fxLayout="column" fxLayoutAlign="start stretch">
         <div *ngFor="let gene of annotationService.geneList" (click)="selectGene(gene)"
-          [class.selected]="gene.id === annotationService.selectedGeneList?.id" class="pango-card-gene mb-4">
+          [class.selected]="gene.id === annotationService.selectedGeneList?.id" class="pango-card-gene">
           <div class="pango-gene-count">
             <span>{{gene.count}} <small>/ 6567</small></span>
           </div>

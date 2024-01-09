@@ -58,9 +58,10 @@ $governor: #4133b7;
 
   .pango-card-gene {
     position: relative;
-    padding: 50px 5px 5px 5px;
+    margin-bottom: 12px;
+    padding: 40px 5px 10px 5px;
     overflow: hidden;
-    border: 2px solid #bbb;
+    border: 1px solid #bbb;
     background-color: #f7f7f7;
     height: 80px;
     @include mat.elevation(2);

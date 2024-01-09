@@ -14,18 +14,17 @@ $accent: map-get($theme, accent);
   .mat-dialog-container {
     display: flex;
     flex-direction: column;
-    height: 100%; /* Adjust as necessary */
+    height: 100%;
   }
 
-  /* Dialog Header */
   .pango-dialog-header {
-    flex-shrink: 0; /* Prevent the header from shrinking */
+    flex-shrink: 0;
   }
 
-  /* Dialog Content (Scrollable) */
   .pango-dialog-content {
-    overflow-y: auto; /* Makes content scrollable */
-    flex-grow: 1; /* Content takes up the remaining space */
+    padding: 12px;
+    overflow-y: auto;
+    flex-grow: 1;
   }
 
   /* Dialog Footer */
@@ -38,17 +37,37 @@ $accent: map-get($theme, accent);
   .pango-no-info {
     font-size: 16px;
   }
-  .pango-form-field-container {
-    position: relative;
-    .pango-delete-float-button {
-      margin-top: 5px;
-      // z-index: 0;
-      visibility: hidden;
-    }
-    &:hover {
-      .pango-delete-float-button {
-        visibility: visible;
-      }
-    }
+  .gene-table {
+    width: 100%;
+  }
+
+  .gene-header,
+  .gene-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .gene-header {
+    background-color: #f0f0f0; /* Header background */
+    font-weight: bold;
+  }
+
+  .gene-column {
+    flex: 1;
+    padding: 0 10px;
+    text-align: left; /* Align text to the left */
+    border-bottom: 1px solid #ddd;
+    font-size: 12px;
+  }
+
+  .example-viewport {
+    height: 100%;
+    width: 100%;
+    border: 1px solid #ddd;
+  }
+
+  .gene-row {
+    height: 50px; /* Match itemSize */
   }
 }

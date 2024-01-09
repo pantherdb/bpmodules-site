@@ -22,6 +22,7 @@ import { GeneFormComponent } from './annotation/forms/gene-form/gene-form.compon
 import { AnnotationTreeComponent } from './annotation/annotation-tree/annotation-tree.component';
 import { GeneListComponent } from './annotation/gene-list/gene-list.component';
 import { UploadGenesDialogComponent } from './annotation/dialogs/upload-genes/upload-genes.component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 const routes = [];
 
@@ -53,6 +54,7 @@ const routes = [];
         NgxChartsModule,
         PangoSharedModule,
         PangoConfirmDialogModule,
+        ScrollingModule
     ],
     exports: [
         NgxPieChartRemoveMarginsDirective,
