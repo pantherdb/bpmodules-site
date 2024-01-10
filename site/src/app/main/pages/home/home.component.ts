@@ -6,16 +6,12 @@ import { MatDrawer } from '@angular/material/sidenav';
 import { PangoMenuService } from '@pango.common/services/pango-menu.service';
 import { LeftPanel, MiddlePanel, RightPanel } from '@pango.common/models/menu-panels';
 import { AnnotationService } from 'app/main/apps/annotation/services/annotation.service';
+import { AnnotationBreadcrumbsService } from 'app/main/apps/annotation/services/annotation-breadcrumbs.service';
 import { pangoData } from '@pango.common/data/config';
 import { AnnotationPage } from 'app/main/apps/annotation/models/page';
 import { Subject, takeUntil } from 'rxjs';
 import { SearchFilterType } from '@pango.search/models/search-criteria';
-
-
-interface BreadcrumbItem {
-  label: string;
-  level: number;  // Add a level property
-}
+import { BreadcrumbLevel } from 'app/main/apps/annotation/models/category-breadcrumb.model';
 
 @Component({
   selector: 'app-home',
@@ -60,6 +56,7 @@ export class HomeComponent implements OnInit {
   private _unsubscribeAll: Subject<any>;
 
   constructor(public pangoMenuService: PangoMenuService,
+    public breadcrumbsService: AnnotationBreadcrumbsService,
     public annotationService: AnnotationService) {
 
     this._unsubscribeAll = new Subject();
@@ -117,27 +114,20 @@ export class HomeComponent implements OnInit {
 
   // Breadcrumb
 
-  breadcrumbs: BreadcrumbItem[] = [
-    { label: 'Section', level: 1 },
-    { label: 'Category', level: 2 },
-    { label: 'Module', level: 3 }
-    // More items as needed
-  ];
 
   onBreadcrumbClick(clickedLevel: number) {
-    console.log(`Breadcrumb at level ${clickedLevel} clicked`);
-    // Add logic based on clicked level, e.g., navigate or load data
     this.updateBreadcrumbs(clickedLevel);
   }
 
   updateBreadcrumbs(clickedLevel: number) {
-    // Assuming level starts at 1 and increases
-    this.breadcrumbs = this.breadcrumbs.slice(0, clickedLevel);
+    this.breadcrumbsService.categoryBreadcrumbs.slice(0, clickedLevel);
 
-    if (clickedLevel == 1) {
+    if (clickedLevel == BreadcrumbLevel.SECTION) {
       this.pangoMenuService.selectedMiddlePanel = MiddlePanel.DEFAULT
     }
-    // Add logic to append new items to the breadcrumbs if necessary
+    else if (clickedLevel == BreadcrumbLevel.CATEGORY) {
+      this.pangoMenuService.selectedMiddlePanel = MiddlePanel.CATEGORY
+    }
   }
 
 

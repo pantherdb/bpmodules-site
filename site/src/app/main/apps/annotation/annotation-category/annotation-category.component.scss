@@ -68,7 +68,7 @@ $accent: map-get($theme, accent);
     .pango-category-title {
       //    transform: rotate(-30deg) translateX(100%); // Rotate and then shift leftwards
       // transform-origin: top left; // Rotate around the top left corner
-      font-size: 10px;
+      font-size: 24px;
       color: #555;
       background-color: white; // Optional, for readability
       width: 150px; // Set a fixed width
@@ -132,7 +132,7 @@ $accent: map-get($theme, accent);
 
   .pango-percentage-number {
     @include deep-width(30px);
-    @include deep-height(50px);
+    @include deep-height(40px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -161,13 +161,18 @@ $accent: map-get($theme, accent);
     }
 
     .pango-left-header-item {
+      font-size: 12px;
+      width: 120px;
+      display: flex;
+      align-items: center;
       &:nth-child(1) {
-        height: 32px; // Height for the first item
+        height: 30px;
       }
       &:nth-child(2) {
-        height: 60px; // Height for the second item
+        height: 40px;
       }
       &:nth-child(3) {
+        align-items: top;
       }
     }
 
@@ -189,8 +194,12 @@ $accent: map-get($theme, accent);
       font-size: 10px;
       transform-origin: bottom left;
       transform: translateX(45px) rotate(-45deg);
-      //  transform: rotate(-90deg);
-      // transform-origin: top left; // Adjust the transform origin
+
+      cursor: pointer;
+      &:hover {
+        color: $pango-accent-color;
+        font-weight: bold;
+      }
     }
 
     .rotated-header td:not(:first-child) {

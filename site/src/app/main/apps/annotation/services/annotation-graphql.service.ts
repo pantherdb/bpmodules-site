@@ -48,6 +48,7 @@ export class AnnotationGraphQLService {
       },
       query: `query GetAnnotations($filterArgs: AnnotationFilterArgs, $pageArgs: PageArgs) {
                 annotations(filterArgs:$filterArgs, pageArgs:$pageArgs) {
+                  id
                   sectionId
                   sectionLabel
                   categoryId

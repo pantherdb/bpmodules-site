@@ -91,7 +91,7 @@
         <!--  <pango-summary-stats></pango-summary-stats> -->
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
-            <li *ngFor="let crumb of breadcrumbs" class="breadcrumb-item">
+            <li *ngFor="let crumb of breadcrumbsService?.categoryBreadcrumbs" class="breadcrumb-item">
               <a (click)="onBreadcrumbClick(crumb.level)">{{ crumb.label }}</a>
             </li>
           </ol>

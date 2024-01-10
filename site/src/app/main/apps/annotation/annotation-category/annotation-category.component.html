@@ -2,6 +2,7 @@
   <div class="pango-category-title">
     <div>{{ category.categoryLabel }}</div>
   </div>
+  <br>
   <table class="pango-category-table">
     <thead>
       <tr>
@@ -9,7 +10,7 @@
 
         <th class="" *ngFor="let module of category.modules">
           <div class="rotated-header-container">
-            <div class="pango-section-title ">{{module.moduleLabel}} </div>
+            <div class="pango-section-title pango-truncate">{{module.moduleLabel}} </div>
           </div>
         </th>
       </tr>
@@ -50,19 +51,14 @@
               {{module.matchPercentage}}%
             </div>
             <div *ngFor="let node of module.nodes">
-              <div class="pango-node-square" [ngStyle]="{'color': node.matched ? '#0F0' : '#FFF'}"
+              <div class="pango-node-square" [ngStyle]="{'color': node.matched ? '#c0abac' : '#FFF'}"
                 title="{{ node.nodeLabel }}" (click)="openAnnotationSummary(module)">
-
                 <fa-icon [icon]="['fas', 'check-circle']"></fa-icon>
-
               </div>
             </div>
           </div>
         </td>
       </tr>
-
-
-
     </tbody>
   </table>
 </div>

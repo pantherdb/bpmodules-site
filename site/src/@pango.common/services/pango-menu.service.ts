@@ -3,6 +3,7 @@ import { MatDrawer, MatSidenav } from '@angular/material/sidenav';
 import { LeftPanel, MiddlePanel, RightPanel } from '@pango.common/models/menu-panels';
 
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -12,13 +13,13 @@ export class PangoMenuService {
   selectedMiddlePanel: MiddlePanel = MiddlePanel.DEFAULT;
   selectedRightPanel: RightPanel
 
+
   private _leftDrawer: MatDrawer;
   private _rightDrawer: MatDrawer;
 
   constructor() {
 
   }
-
 
   selectLeftPanel(panel: LeftPanel) {
     this.selectedLeftPanel = panel;

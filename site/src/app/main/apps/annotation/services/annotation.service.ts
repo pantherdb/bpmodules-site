@@ -10,8 +10,6 @@ import { AnnotationCount, AnnotationStats, Bucket, Annotation, AutocompleteFilte
 import { AnnotationGraphQLService } from './annotation-graphql.service';
 import { pangoData } from '@pango.common/data/config';
 import { Gene } from '../../gene/models/gene.model';
-
-import genes from '@pango.common/data/genes1.json';
 import { AnnotationDialogService } from './dialog.service';
 
 @Injectable({
@@ -65,8 +63,6 @@ export class AnnotationService {
     geneLookup: Gene[];
     annotationTree: any[];
 
-
-
     constructor(
         private httpClient: HttpClient,
         private annotationGraphQLService: AnnotationGraphQLService,
@@ -102,16 +98,13 @@ export class AnnotationService {
             })
 
             this.addGeneMatch(this.annotationTree, geneSymbols, this.query)
-
         });
-
     }
 
     selectGeneList(geneList: GeneList) {
         this.selectedGeneList = geneList;
         this.onSelectedGeneListChanged.next(geneList);
         this.onRawAnnotationsChanged.next(this.rawAnnotations);
-
     }
 
     deleteGeneList(index: number) {
@@ -159,17 +152,11 @@ export class AnnotationService {
             {
                 next: (annotations: Annotation[]) => {
                     this.annotationPage = Object.assign(Object.create(Object.getPrototypeOf(this.annotationPage)), this.annotationPage);
-
                     this.rawAnnotations = annotations;
-
                     this.annotationTree = this.buildTree(annotations);
-
                     this.geneLookup = this._findUniqueLeafGenes(annotations);
-
                     this.addGeneMatch(this.annotationTree, [], this.query)
-
                     this.onRawAnnotationsChanged.next(this.rawAnnotations);
-
                     self.loading = false;
                 }, error: (err) => {
                     self.loading = false;
@@ -566,12 +553,15 @@ export class AnnotationService {
         return sorted
     }
 
+
+
     // Privates
 
     private _findOrCreateSection(tree, item) {
         let section = tree.find(s => s.sectionId === item.sectionId);
         if (!section) {
             section = {
+                id: item.id,
                 sectionId: item.sectionId,
                 sectionLabel: item.sectionLabel,
                 categories: []
@@ -585,6 +575,7 @@ export class AnnotationService {
         let category = section.categories.find(c => c.categoryId === item.categoryId);
         if (!category) {
             category = {
+                id: item.id,
                 categoryId: item.categoryId,
                 categoryLabel: item.categoryLabel,
                 modules: []
@@ -598,6 +589,7 @@ export class AnnotationService {
         let module = category.modules.find(m => m.moduleId === item.moduleId);
         if (!module) {
             module = {
+                id: item.id,
                 moduleId: item.moduleId,
                 moduleLabel: item.moduleLabel,
                 disposition: item.disposition,
@@ -612,6 +604,7 @@ export class AnnotationService {
 
     private _findOrCreateNode(module, item) {
         const node = {
+            id: item.id,
             nodeId: item.nodeId,
             nodeLabel: item.nodeLabel,
             terms: item.terms,

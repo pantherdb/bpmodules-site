@@ -169,3 +169,54 @@ export class GeneList {
     genes: Gene[] = [];
     count: number
 }
+
+
+//Tree
+export interface TreeData {
+    id: string;
+    sectionId: string;
+    sectionLabel: string;
+    categories: TreeCategory[];
+}
+
+interface TreeCategory {
+    id: string;
+    categoryId: string;
+    categoryLabel: string;
+    modules: TreeModule[];
+}
+
+interface TreeModule {
+    id: string;
+    moduleId: string;
+    moduleLabel: string;
+    disposition: string | null;
+    nodes: TreeNode[];
+    dispositionSourcesTermIds: string[];
+    dispositionSources: any[]; // Define this more specifically if possible
+    matchPercentage: number;
+    grayscaleColor: string;
+}
+
+interface TreeNode {
+    id: string;
+    nodeId: string;
+    nodeLabel: string;
+    terms: TreeTerm[];
+    leafGenes: TreeLeafGene[];
+    matched: boolean;
+}
+
+interface TreeTerm {
+    id: string;
+    label: string;
+}
+
+interface TreeLeafGene {
+    gene: string;
+    geneSymbol: string;
+    geneName: string;
+    taxonId: string;
+    pantherFamily: string | null;
+    longId: string | null;
+}

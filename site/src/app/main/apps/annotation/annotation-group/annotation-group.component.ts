@@ -11,6 +11,7 @@ import { environment } from 'environments/environment';
 import { pangoData } from '@pango.common/data/config';
 import { Annotation } from '../models/annotation';
 import { Gene } from '../../gene/models/gene.model';
+import { AnnotationBreadcrumbsService } from '../services/annotation-breadcrumbs.service';
 @Component({
   selector: 'pango-annotation-group',
   templateUrl: './annotation-group.component.html',
@@ -78,7 +79,8 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy {
 
   constructor(
     public pangoMenuService: PangoMenuService,
-    public annotationService: AnnotationService
+    public annotationService: AnnotationService,
+    public breadcrumbsService: AnnotationBreadcrumbsService,
   ) {
 
     this.loadingIndicator = false;
@@ -173,6 +175,7 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy {
 
   selectCategory(category) {
     this.annotationService.onAnnotationCategoryChanged.next(category)
+    this.breadcrumbsService.onCategoryClick(category.id)
     this.pangoMenuService.selectMiddlePanel(MiddlePanel.CATEGORY);
   }
 
