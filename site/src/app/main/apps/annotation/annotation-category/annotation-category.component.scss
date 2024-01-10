@@ -60,15 +60,6 @@ $accent: map-get($theme, accent);
     // margin-bottom: 20px;
   }
 
-  .pango-section-title {
-    @include deep-width(150px);
-    margin-bottom: 10px;
-    color: #333;
-    font-size: 1em;
-    //  transform: rotate(-90deg);
-    // transform-origin: top left; // Adjust the transform origin
-  }
-
   .pango-category-row {
     position: relative; // Needed for absolute positioning of children
     display: flex;
@@ -95,20 +86,6 @@ $accent: map-get($theme, accent);
     align-items: center; // Center align the titles vertically
   }
 
-  .pango-module-title {
-    width: 60px; // Adjust as needed
-    height: 30px; // Same as pango-square height
-    line-height: 30px; // Center text vertically
-    transform: rotate(-45deg);
-    transform-origin: center;
-    text-align: center;
-    margin: 0 15px; // Adjust margin for spacing and alignment
-    white-space: nowrap;
-    display: flex;
-    justify-content: center; // Center text horizontally
-    align-items: center; // Center text vertically
-  }
-
   .pango-matrix {
     padding-left: 12px;
     flex-grow: 1;
@@ -124,6 +101,8 @@ $accent: map-get($theme, accent);
   }
 
   .pango-square {
+    @include deep-width(30px);
+    @include deep-height(30px);
     position: relative;
     border: 1px solid black;
     display: flex;
@@ -151,38 +130,71 @@ $accent: map-get($theme, accent);
     }
   }
 
-  .table-header-rotated {
-    border-collapse: collapse;
+  .pango-percentage-number {
+    @include deep-width(30px);
+    @include deep-height(50px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    border-bottom: 1px solid $pango-accent-color;
+  }
+
+  .pango-node-square {
+    @include deep-width(25px);
+    @include deep-height(25px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1px;
+    position: relative;
+    border: 1px solid #bbb;
+  }
+
+  .pango-category-table {
+    margin-top: 240px;
+    .rotated-header th {
+      height: 240px;
+      vertical-align: bottom;
+      text-align: left;
+      line-height: 1;
+    }
+
+    .pango-left-header-item {
+      &:nth-child(1) {
+        height: 32px; // Height for the first item
+      }
+      &:nth-child(2) {
+        height: 60px; // Height for the second item
+      }
+      &:nth-child(3) {
+      }
+    }
+
     td {
+      vertical-align: top;
+    }
+
+    .rotated-header-container {
       width: 30px;
     }
-    th {
-      padding: 5px 10px;
+
+    .rotated-header-content {
+      width: 300px;
     }
-    td {
-      text-align: center;
-      padding: 10px 5px;
-      border: 1px solid #ccc;
+
+    .pango-section-title {
+      @include deep-width(300px);
+
+      font-size: 10px;
+      transform-origin: bottom left;
+      transform: translateX(45px) rotate(-45deg);
+      //  transform: rotate(-90deg);
+      // transform-origin: top left; // Adjust the transform origin
     }
-    th.rotate {
-      height: 140px;
-      white-space: nowrap;
-      // Firefox needs the extra DIV for some reason, otherwise the text disappears if you rotate
-      > div {
-        transform: 
-          // Magic Numbers
-          translate(25px, 51px) // 45 is really 360-45
-          rotate(315deg);
-        width: 30px;
-      }
-      > div > span {
-        border-bottom: 1px solid #ccc;
-        padding: 5px 10px;
-      }
-    }
-    th.row-header {
-      padding: 0 10px;
-      border-bottom: 1px solid #ccc;
+
+    .rotated-header td:not(:first-child) {
+      text-align: right;
     }
   }
 }

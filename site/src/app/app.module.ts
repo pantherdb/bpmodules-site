@@ -37,12 +37,12 @@ import {
     faArrowUp,
     faArrowDown,
     faCaretDown,
-    faCaretRight,
+    faCaretRight, faCheckCircle,
     faAngleDoubleDown,
     faTrash,
     faAngleDoubleUp, faUndo, faSave, faExclamationTriangle, faAngleDoubleLeft, faAngleDoubleRight, faAngleLeft, faAngleRight, faCode, faFileCode, faSearchPlus, faTable, faChartBar, faList, faBars, faFilter, faMicroscope, faFlask
 } from '@fortawesome/free-solid-svg-icons';
-import { faCheckCircle, faTimesCircle } from '@fortawesome/free-regular-svg-icons';
+import { faTimesCircle } from '@fortawesome/free-regular-svg-icons';
 import { faGithub, faFacebook, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { MatSidenavModule } from '@angular/material/sidenav';

@@ -62,9 +62,9 @@ $accent: map-get($theme, accent);
 
   .pango-section-title {
     @include deep-width(150px);
-    margin-bottom: 10px;
+    //margin-bottom: 10px;
     color: #333;
-    font-size: 1em;
+    font-size: 14px;
     //  transform: rotate(-90deg);
     // transform-origin: top left; // Adjust the transform origin
   }
@@ -98,17 +98,18 @@ $accent: map-get($theme, accent);
       minmax(30px, 1fr)
     ); /* Responsive columns */
     grid-auto-rows: 30px;
-    gap: 0px;
+    gap: 2px;
   }
 
   .pango-square {
     position: relative;
-    border: 1px solid black;
+    border: 1px solid #333; // #4a8bfc;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     overflow: hidden;
+    margin-bottom: 2px;
 
     .pango-positive {
       border: #489470 solid 1px;
