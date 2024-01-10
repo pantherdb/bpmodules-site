@@ -9,7 +9,7 @@ import { LeftPanel, MiddlePanel, RightPanel } from '@pango.common/models/menu-pa
 export class PangoMenuService {
 
   selectedLeftPanel: LeftPanel = LeftPanel.GENE_LIST;
-  selectedMiddlePanel: MiddlePanel;
+  selectedMiddlePanel: MiddlePanel = MiddlePanel.DEFAULT;
   selectedRightPanel: RightPanel
 
   private _leftDrawer: MatDrawer;

@@ -225,6 +225,38 @@ $primary: map-get($theme, primary);
   }
 }
 
+.breadcrumb {
+  background: none;
+  padding: 0;
+  margin-bottom: 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+
+  .breadcrumb-item {
+    & + .breadcrumb-item::before {
+      content: ">";
+      padding: 0 8px;
+      color: #6c757d;
+    }
+
+    a {
+      color: #007bff;
+      text-decoration: none;
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    span {
+      color: #6c757d; // Color for the current (last) item
+      pointer-events: none;
+    }
+  }
+}
+
 .pango-filter-section {
   margin: 8px;
   padding: 8px;

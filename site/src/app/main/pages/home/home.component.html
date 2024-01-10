@@ -24,7 +24,6 @@
   <mat-drawer-container class="w-100-p h-100-p" fxLayout="row" fxLayoutAlign="start start" autosize>
     <mat-drawer #leftDrawer class="pango-left-drawer" mode="side" position="start" opened="true">
       <ng-container [ngSwitch]="pangoMenuService.selectedLeftPanel">
-
         <div *ngSwitchCase="LeftPanel.BROWSER" fxLayout="column" fxLayoutAlign="start stretch"
           class="pango-browser-drawer pango-drawer h-100-p">
           <div class="pango-drawer-header" fxLayout="row" fxLayoutAlign="start center">
@@ -49,17 +48,16 @@
     <mat-drawer-content #scrollbarRef class="pango-section-body w-100-p">
       <div class="w-100-p" fxLayout="column" fxLayoutAlign="start stretch">
         <div class="pango-header accent w-100-p" fxLayout="column" fxLayoutAlign="start start">
-
           <h1>
-            Pango BP Modules
+            PAN-GO: BP Modules
           </h1>
           <h2>
             This tool is designed for analysis of single-cell RNA-seq data. It takes an input list of genes that are
             expressed in a cell, and converts it to a set of “active modules” that are potentially operating in that
-            cell..</h2>
-
+            cell.
+          </h2>
           <div class="w-100-p" fxLayout="row" fxLayoutAlign="start center">
-            <h3 class="ml-12">
+            <h3 class="">
               See any missing or incorrect functions? <a href="https://help.geneontology.org/" target="_blank">Let us
                 know!</a>
             </h3>
@@ -89,17 +87,24 @@
             <mat-icon matChipRemove>cancel</mat-icon>
           </mat-chip>
 
-          <mat-chip *ngIf="annotationService.searchCriteria[SearchFilterType.SLIM_TERMS].length>0"
-            class="pango-filter-chip" [removable]="true" (removed)="removeFilter(SearchFilterType.SLIM_TERMS)"
-            matTooltip="{{annotationService.searchCriteria.slimTermsTooltip}}" [matTooltipPosition]="'below'"
-            [matTooltipShowDelay]="2000">
-            GO Function Categories <span> ({{
-              annotationService.searchCriteria[SearchFilterType.SLIM_TERMS].length}})</span>
-            <mat-icon matChipRemove>cancel</mat-icon>
-          </mat-chip>
         </div>
         <!--  <pango-summary-stats></pango-summary-stats> -->
-        <pango-annotation-group class="w-100-p" [annotationPage]="annotationPage"></pango-annotation-group>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li *ngFor="let crumb of breadcrumbs" class="breadcrumb-item">
+              <a (click)="onBreadcrumbClick(crumb.level)">{{ crumb.label }}</a>
+            </li>
+          </ol>
+        </nav>
+
+        <div class="w-100-p" [ngSwitch]="pangoMenuService.selectedMiddlePanel">
+          <pango-annotation-group *ngSwitchCase="MiddlePanel.DEFAULT" class="w-100-p"
+            [annotationPage]="annotationPage"></pango-annotation-group>
+
+          <pango-annotation-category *ngSwitchCase="MiddlePanel.CATEGORY" class="w-100-p"
+            [annotationPage]="annotationPage"></pango-annotation-category>
+        </div>
+
       </div>
       <div class="w-100-p">
         <pango-footer></pango-footer>

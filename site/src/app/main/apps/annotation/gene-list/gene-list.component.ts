@@ -8,6 +8,7 @@ import { Annotation, GeneList } from '../models/annotation';
 
 import { AnnotationService } from '../services/annotation.service';
 import { Gene } from '../../gene/models/gene.model';
+import { AnnotationDialogService } from '../services/dialog.service';
 
 @Component({
   selector: 'pango-gene-list',
@@ -24,7 +25,8 @@ export class GeneListComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any>;
   geneList: any;
   constructor(
-    public annotationService: AnnotationService) {
+    public annotationService: AnnotationService,
+    private annotationDialogService: AnnotationDialogService) {
     this._unsubscribeAll = new Subject();
   }
 
@@ -65,11 +67,23 @@ export class GeneListComponent implements OnInit, OnDestroy {
     this.annotationService.selectGeneList(geneList)
   }
 
-  editGene(gene: any): void {
-    // Logic to edit the gene
-    // This could involve opening a dialog or navigating to another view
+  editGeneList(geneList: GeneList): void {
+
+    const success = (geneData) => {
+      if (geneData) {
+        console.log(geneData);
+        // self.geneList.push(geneData);
+      }
+    };
+    const data = { genes: geneList.genes, description: geneList.description }
+
+    this.annotationDialogService.openUploadGenesDialog(data, success);
   }
 
+  deleteGeneList(index: number): void {
+
+    this.annotationService.deleteGeneList(index)
+  }
   close() {
     this.panelDrawer.close()
   }

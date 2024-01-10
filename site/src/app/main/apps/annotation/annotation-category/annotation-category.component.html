@@ -1,0 +1,78 @@
+<div *ngIf="category" class="pango-category-row w-100-p" fxLayout="row" fxLayoutAlign="start center">
+
+
+
+
+  <div class="pango-category-title">
+    <div>{{ category.categoryLabel }}</div>
+  </div>
+
+  <div fxFlex="" class="" fxLayout="column" fxLayoutAlign="start start">
+    <table class="table table-header-rotated">
+      <thead>
+        <tr>
+          <!-- First column header is not rotated -->
+          <th></th>
+
+          <th class="rotate" *ngFor="let module of category.modules">
+            <div class="pango-module-title">
+              <div><span>{{module.moduleLabel}} </span></div>
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th class="row-header">Row header 1</th>
+
+          <td *ngFor="let module of category.modules">
+            <div class="pango-square" *ngIf="!module.disposition" [style.background-color]="module.grayscaleColor"
+              title="{{ module.moduleLabel }}" (click)="openAnnotationSummary(module)">
+
+              <ng-container *ngIf="module.dispositionSources?.length > 1">
+                <div class="pango-positive" [ngStyle]="{'background-color': module.dispositionSources[0].refAnnotation?.matchPercentage
+     > 0 ? '#489470' : 'transparent'}"
+                  (click)="$event.stopPropagation(); openAnnotationSummary(module.dispositionSources[0].refAnnotation)">
+                </div>
+                <div class="pango-negative" [ngStyle]="{'background-color': module.dispositionSources[1].refAnnotation?.matchPercentage
+     > 0 ? '#d46565' : 'transparent'}"
+                  (click)="$event.stopPropagation(); openAnnotationSummary(module.dispositionSources[1].refAnnotation)">
+                </div>
+              </ng-container>
+
+              <span></span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!--     <div class="pango-matrix-header" fxLayout="row" fxLayoutAlign="start start">
+      <ng-container *ngFor="let module of category.modules">
+        <div class="pango-module-title">
+          {{module.moduleLabel}}
+        </div>
+      </ng-container>
+    </div>
+    <div class="pango-matrix">
+      <ng-container *ngFor="let module of category.modules">
+        <div class="pango-square" *ngIf="!module.disposition" [style.background-color]="module.grayscaleColor"
+          title="{{ module.moduleLabel }}" (click)="openAnnotationSummary(module)">
+
+          <ng-container *ngIf="module.dispositionSources?.length > 1">
+            <div class="pango-positive" [ngStyle]="{'background-color': module.dispositionSources[0].refAnnotation?.matchPercentage
+ > 0 ? '#489470' : 'transparent'}"
+              (click)="$event.stopPropagation(); openAnnotationSummary(module.dispositionSources[0].refAnnotation)">
+            </div>
+            <div class="pango-negative" [ngStyle]="{'background-color': module.dispositionSources[1].refAnnotation?.matchPercentage
+ > 0 ? '#d46565' : 'transparent'}"
+              (click)="$event.stopPropagation(); openAnnotationSummary(module.dispositionSources[1].refAnnotation)">
+            </div>
+          </ng-container>
+
+          <span></span>
+        </div>
+      </ng-container>
+    </div> -->
+
+  </div>
+</div>

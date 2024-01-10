@@ -19,12 +19,6 @@ $del-rio: #917072;
 // Greens
 $java: #1fcac5;
 
-// Purples
-$titan-white: #f1eeff;
-$cold-purple: #a69fd6;
-$indigo: #6558d3;
-$governor: #4133b7;
-
 :host {
   .pango-drawer {
     @include deep-width(100% !important);
@@ -50,6 +44,40 @@ $governor: #4133b7;
       color: #888;
       font-weight: bold;
     }
+  }
+
+  .step-guide {
+    font-family: "Arial", sans-serif;
+    background-color: #f8f8f8;
+    // border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 12px;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1px;
+  }
+
+  .step-number {
+    background-color: #4caf50;
+    color: white;
+    border-radius: 50%;
+    @include deep-width(30px);
+    @include deep-height(30px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    font-size: 16px;
+  }
+
+  .step-description {
+    color: #333;
+    font-size: 10px;
+    line-height: 1.6;
   }
 
   .pango-gene-display {
@@ -96,10 +124,6 @@ $governor: #4133b7;
     color: $coffee;
     margin: 0;
     padding: 0;
-  }
-
-  .button:hover {
-    background-color: darken($indigo, 10%);
   }
 
   .selected {

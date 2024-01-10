@@ -77,7 +77,6 @@ $accent: map-get($theme, accent);
     .pango-category-title {
       //    transform: rotate(-30deg) translateX(100%); // Rotate and then shift leftwards
       // transform-origin: top left; // Rotate around the top left corner
-      // transform: translateY(-2px) rotate(-45deg);
       font-size: 10px;
       color: #555;
       background-color: white; // Optional, for readability
@@ -85,6 +84,29 @@ $accent: map-get($theme, accent);
       text-align: right;
       z-index: 1; // Above other content
     }
+  }
+
+  .pango-module-title {
+  }
+
+  .pango-matrix-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center; // Center align the titles vertically
+  }
+
+  .pango-module-title {
+    width: 60px; // Adjust as needed
+    height: 30px; // Same as pango-square height
+    line-height: 30px; // Center text vertically
+    transform: rotate(-45deg);
+    transform-origin: center;
+    text-align: center;
+    margin: 0 15px; // Adjust margin for spacing and alignment
+    white-space: nowrap;
+    display: flex;
+    justify-content: center; // Center text horizontally
+    align-items: center; // Center text vertically
   }
 
   .pango-matrix {
@@ -126,6 +148,41 @@ $accent: map-get($theme, accent);
       right: 0;
       height: 50%;
       width: 50%;
+    }
+  }
+
+  .table-header-rotated {
+    border-collapse: collapse;
+    td {
+      width: 30px;
+    }
+    th {
+      padding: 5px 10px;
+    }
+    td {
+      text-align: center;
+      padding: 10px 5px;
+      border: 1px solid #ccc;
+    }
+    th.rotate {
+      height: 140px;
+      white-space: nowrap;
+      // Firefox needs the extra DIV for some reason, otherwise the text disappears if you rotate
+      > div {
+        transform: 
+          // Magic Numbers
+          translate(25px, 51px) // 45 is really 360-45
+          rotate(315deg);
+        width: 30px;
+      }
+      > div > span {
+        border-bottom: 1px solid #ccc;
+        padding: 5px 10px;
+      }
+    }
+    th.row-header {
+      padding: 0 10px;
+      border-bottom: 1px solid #ccc;
     }
   }
 }

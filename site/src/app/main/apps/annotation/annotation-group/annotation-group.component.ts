@@ -5,7 +5,7 @@ import { PangoMenuService } from '@pango.common/services/pango-menu.service';
 import { AnnotationService } from './../services/annotation.service'
 import { AnnotationPage } from '../models/page';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
-import { RightPanel } from '@pango.common/models/menu-panels';
+import { MiddlePanel, RightPanel } from '@pango.common/models/menu-panels';
 import { MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { environment } from 'environments/environment';
 import { pangoData } from '@pango.common/data/config';
@@ -169,6 +169,11 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
+  }
+
+  selectCategory(category) {
+    this.annotationService.onAnnotationCategoryChanged.next(category)
+    this.pangoMenuService.selectMiddlePanel(MiddlePanel.CATEGORY);
   }
 
   openAnnotationSearch() {

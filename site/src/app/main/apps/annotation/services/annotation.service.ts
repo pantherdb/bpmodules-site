@@ -19,6 +19,7 @@ import { AnnotationDialogService } from './dialog.service';
 })
 export class AnnotationService {
 
+
     aspectMap = pangoData.aspectMap;
     termTypeMap = pangoData.termTypeMap;
     annotationResultsSize = environment.annotationResultsSize;
@@ -32,6 +33,7 @@ export class AnnotationService {
     onAnnotationsAggsChanged: BehaviorSubject<AnnotationStats>;
     onAnnotationChanged: BehaviorSubject<any>;
 
+    onAnnotationCategoryChanged: BehaviorSubject<any>;;
 
     // GEnes
     onGenesChanged: BehaviorSubject<any>;
@@ -89,6 +91,8 @@ export class AnnotationService {
         this.onSelectedGeneChanged = new BehaviorSubject(null);
         this.searchCriteria = new SearchCriteria();
 
+        this.onAnnotationCategoryChanged = new BehaviorSubject(null);
+
         this.onRawAnnotationsChanged.subscribe((annotations: Annotation[]) => {
 
             if (!annotations || !this.selectedGeneList) return;
@@ -110,6 +114,9 @@ export class AnnotationService {
 
     }
 
+    deleteGeneList(index: number) {
+        this.geneList.splice(index, 1);
+    }
 
     buildTree(data) {
         const tree = [];
@@ -158,6 +165,8 @@ export class AnnotationService {
                     this.annotationTree = this.buildTree(annotations);
 
                     this.geneLookup = this._findUniqueLeafGenes(annotations);
+
+                    this.addGeneMatch(this.annotationTree, [], this.query)
 
                     this.onRawAnnotationsChanged.next(this.rawAnnotations);
 
@@ -326,8 +335,8 @@ export class AnnotationService {
 
         const success = (geneData) => {
             if (geneData) {
-                console.log(geneData);
                 self.geneList.push(geneData);
+                self.selectGeneList(geneData);
             }
         };
 

@@ -4,6 +4,8 @@ export enum LeftPanel {
 };
 
 export enum MiddlePanel {
+    DEFAULT,
+    CATEGORY
 };
 
 export enum RightPanel {

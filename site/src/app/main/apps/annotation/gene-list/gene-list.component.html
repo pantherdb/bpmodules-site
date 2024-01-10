@@ -1,23 +1,16 @@
 <div fxLayout="column" fxLayoutAlign="start stretch" class="pango-drawer w-100-p h-100-p">
   <div class="pango-drawer-header" fxLayout="row" fxLayoutAlign="start center">
-    <span class="pango-drawer-header-title">
+    <span class="pango-drawer-header-title mr-12">
       My Genes</span>
-    <span fxFlex></span>
-
     <label for="pango-upload-config" fxLayout="row" fxLayoutAlign="start center" class="pango-file-upload">
-      <button mat-stroked-button olor="warn" class="pango-rounded-button pango-xs mr-8 pango-file-button">
-        Upload Gene File
+      <button mat-raised-button color="accent" class="pango-rounded-button pango-xs mr-8 pango-file-button">
+        Add
       </button>
-
-
     </label>
     <input #configFileInput type="file" id="pango-upload-config"
       (click)="$event.target.value = '';configFileInput.value = null" value=""
       (change)="annotationService.onGeneFileSelected($event)" class="pango-file-upload" />
-
-
-
-
+    <span fxFlex></span>
     <button mat-stroked-button (click)="close()" class="pango-rounded-button pango-xs" color="primary"
       aria-label="Close dialog">Close
     </button>
@@ -27,7 +20,23 @@
 
     <div class="pango-gene-display w-100-p">
       <div fxLayout="column" fxLayoutAlign="start stretch">
-        <div *ngFor="let gene of annotationService.geneList" (click)="selectGene(gene)"
+
+        <div class="pango-alert alert-info step-guide">
+          <div class="step">
+            <span class="step-number">1</span>
+            <p class="step-description">Click the 'Upload Genes' button to add your gene list.</p>
+          </div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <p class="step-description">Browse your uploaded gene sets in the left panel.</p>
+          </div>
+          <div class="step">
+            <span class="step-number">3</span>
+            <p class="step-description">Click on a specific gene set. The right panel will display the analysis results,
+              showcasing the active modules in single-cell RNA-seq data related to your selection.</p>
+          </div>
+        </div>
+        <div *ngFor="let gene of annotationService.geneList; let i = $index" (click)="selectGene(gene)"
           [class.selected]="gene.id === annotationService.selectedGeneList?.id" class="pango-card-gene">
           <div class="pango-gene-count">
             <span>{{gene.count}} <small>/ 6567</small></span>
@@ -39,13 +48,13 @@
           <div class="pango-actions" fxLayout="row" fxLayoutAlign="start center">
             <button fxFlex="50%"
               class="pango-rounded-button pango-half-button pango-r pango-xs pango-action-button mr-4"
-              mat-stroked-button (click)=editGene(gene) color="primary">
+              mat-stroked-button (click)="$event.stopPropagation(); editGeneList(gene)" color="primary">
               <fa-icon class="pango-icon pango-selected-icon" [icon]="['fas', 'pen']"></fa-icon>
             </button>
             <button fxFlex="50%"
               class="pango-rounded-button pango-half-button pango-l pango-xs pango-action-button mr-4"
-              mat-stroked-button (click)="editGene(gene)" color="primary" matTooltip="Save Model Changes"
-              [matTooltipPosition]="'below'" [matTooltipShowDelay]="1000">
+              mat-stroked-button (click)="$event.stopPropagation(); deleteGeneList(i)" color="primary"
+              matTooltip="Delete List" [matTooltipPosition]="'below'" [matTooltipShowDelay]="1000">
               <fa-icon class="pango-icon pango-selected-icon" [icon]="['fas', 'trash']"></fa-icon>
             </button>
           </div>

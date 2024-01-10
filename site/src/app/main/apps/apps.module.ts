@@ -23,6 +23,7 @@ import { AnnotationTreeComponent } from './annotation/annotation-tree/annotation
 import { GeneListComponent } from './annotation/gene-list/gene-list.component';
 import { UploadGenesDialogComponent } from './annotation/dialogs/upload-genes/upload-genes.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { AnnotationCategoryComponent } from './annotation/annotation-category/annotation-category.component';
 
 const routes = [];
 
@@ -47,7 +48,8 @@ const routes = [];
         AnnotationGroupComponent,
         AnnotationTreeComponent,
         GeneListComponent,
-        UploadGenesDialogComponent
+        UploadGenesDialogComponent,
+        AnnotationCategoryComponent
     ],
     imports: [
         RouterModule.forChild(routes),
@@ -75,7 +77,8 @@ const routes = [];
         AnnotationFiltersComponent,
         AnnotationTreeComponent,
         GeneListComponent,
-        UploadGenesDialogComponent
+        UploadGenesDialogComponent,
+        AnnotationCategoryComponent
     ],
     providers: []
 })
