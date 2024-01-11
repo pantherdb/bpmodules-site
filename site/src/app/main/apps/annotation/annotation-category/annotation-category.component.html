@@ -1,8 +1,8 @@
-<div *ngIf="category" class="pango-category-row w-100-p">
+<div *ngIf="category" fxLayout="column" fxLayoutAlign="start start" class="pango-category-row w-100-p">
   <div class="pango-category-title">
-    <div>{{ category.categoryLabel }}</div>
+    <h2>{{ category.categoryLabel }}</h2>
   </div>
-  <br>
+
   <table class="pango-category-table">
     <thead>
       <tr>

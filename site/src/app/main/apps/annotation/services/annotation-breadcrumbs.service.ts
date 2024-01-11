@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { TreeData } from "../models/annotation";
+import { TreeSection } from "../models/annotation";
 import { BreadcrumbItem, BreadcrumbLevel } from "../models/category-breadcrumb.model";
 import { AnnotationService } from "./annotation.service";
 
@@ -66,6 +66,7 @@ export class AnnotationBreadcrumbsService {
 
     updateBreadcrumbs(level: BreadcrumbLevel, id: string) {
         switch (level) {
+            case BreadcrumbLevel.HOME:
             case BreadcrumbLevel.SECTION:
                 this.onSectionClick(id);
                 break;

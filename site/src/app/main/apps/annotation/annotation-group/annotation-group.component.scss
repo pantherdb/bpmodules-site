@@ -56,8 +56,12 @@ $accent: map-get($theme, accent);
 
   .pango-section {
     display: relative;
-    //padding: 24px 12px;
-    // margin-bottom: 20px;
+    padding: 8px 12px;
+    margin: 5px 0;
+
+    &:hover {
+      background-color: rgba($pango-primary-color, 0.1);
+    }
   }
 
   .pango-section-title {
@@ -86,8 +90,6 @@ $accent: map-get($theme, accent);
       // transform: translateY(-2px) rotate(-45deg);
 
       font-size: 10px;
-      color: #555;
-      background-color: white;
       width: 150px;
       text-align: right;
       z-index: 1;

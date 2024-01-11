@@ -61,8 +61,8 @@ export class AnnotationSectionComponent implements OnInit, OnDestroy {
     this.annotationService.onAnnotationSectionChanged
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((section) => {
+        this.annotationService.selectedSection = section;
         this.section = section
-
       });
 
   }

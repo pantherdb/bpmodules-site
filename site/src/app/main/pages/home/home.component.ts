@@ -122,7 +122,7 @@ export class HomeComponent implements OnInit {
   updateBreadcrumbs(clickedLevel: number) {
     this.breadcrumbsService.categoryBreadcrumbs.slice(0, clickedLevel);
 
-    if (clickedLevel == BreadcrumbLevel.SECTION) {
+    if (clickedLevel == BreadcrumbLevel.SECTION || clickedLevel == BreadcrumbLevel.HOME) {
       this.pangoMenuService.selectedMiddlePanel = MiddlePanel.DEFAULT
     }
     else if (clickedLevel == BreadcrumbLevel.CATEGORY) {

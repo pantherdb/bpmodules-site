@@ -6,7 +6,7 @@ import { Client } from 'elasticsearch-browser';
 import { AnnotationPage, GenePage, Query } from '../models/page';
 import { orderBy } from 'lodash';
 import { SearchCriteria } from '@pango.search/models/search-criteria';
-import { AnnotationCount, AnnotationStats, Bucket, Annotation, AutocompleteFilterArgs, Term, GeneList } from '../models/annotation';
+import { AnnotationCount, AnnotationStats, Bucket, Annotation, AutocompleteFilterArgs, Term, GeneList, TreeModule, TreeSection, TreeCategory } from '../models/annotation';
 import { AnnotationGraphQLService } from './annotation-graphql.service';
 import { pangoData } from '@pango.common/data/config';
 import { Gene } from '../../gene/models/gene.model';
@@ -32,9 +32,11 @@ export class AnnotationService {
     onAnnotationChanged: BehaviorSubject<any>;
 
     onAnnotationCategoryChanged: BehaviorSubject<any>;
-    onAnnotationSectionChanged: BehaviorSubject<any>;;
-    onAnnotationModuleChanged: BehaviorSubject<any>;;
-    ;
+    onAnnotationSectionChanged: BehaviorSubject<any>;
+    selectedCategory: TreeCategory;
+    selectedModule: TreeModule;
+    selectedSection: TreeSection;
+    onAnnotationModuleChanged: BehaviorSubject<any>;
 
     // GEnes
     onGenesChanged: BehaviorSubject<any>;
@@ -93,7 +95,6 @@ export class AnnotationService {
         this.onAnnotationSectionChanged = new BehaviorSubject(null);
         this.searchCriteria = new SearchCriteria();
 
-
         this.onAnnotationCategoryChanged = new BehaviorSubject(null);
 
         this.onRawAnnotationsChanged.subscribe((annotations: Annotation[]) => {
@@ -105,6 +106,26 @@ export class AnnotationService {
             })
 
             this.addGeneMatch(this.annotationTree, geneSymbols, this.query)
+
+            if (this.selectedSection?.id) {
+                const section = this.findSection(this.annotationPage.annotations, this.selectedSection.id)
+
+                this.onAnnotationSectionChanged.next(section);
+            }
+
+            if (this.selectedCategory?.id) {
+                const category = this.findCategory(this.annotationPage.annotations, this.selectedCategory.id)
+
+                this.onAnnotationCategoryChanged.next(category);
+            }
+
+            if (this.selectedModule?.id) {
+                const bpmodule = this.findModule(this.annotationPage.annotations, this.selectedModule.id)
+
+                this.onAnnotationModuleChanged.next(bpmodule);
+            }
+
+
         });
     }
 
@@ -561,6 +582,32 @@ export class AnnotationService {
     }
 
 
+    findCategory(annotationTree: TreeSection[], id: string) {
+        for (let section of annotationTree) {
+            let category = section.categories.find(c => c.id === id);
+            if (category) {
+                return category; // Return if found
+            }
+        }
+        return null; // Return null if not found
+    }
+
+    findModule(annotationTree: TreeSection[], id: string) {
+        for (let section of annotationTree) {
+            for (let category of section.categories) {
+                let module = category.modules.find(m => m.id === id);
+                if (module) {
+                    return module; // Return if found
+                }
+            }
+        }
+        return null; // Return null if not found
+    }
+
+    findSection(annotationTree: TreeSection[], id: string) {
+        const section = annotationTree.find(s => s.id === id);
+        return section || null; // Return null if not found
+    }
 
     // Privates
 

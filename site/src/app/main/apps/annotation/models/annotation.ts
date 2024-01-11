@@ -172,21 +172,21 @@ export class GeneList {
 
 
 //Tree
-export interface TreeData {
+export interface TreeSection {
     id: string;
     sectionId: string;
     sectionLabel: string;
     categories: TreeCategory[];
 }
 
-interface TreeCategory {
+export interface TreeCategory {
     id: string;
     categoryId: string;
     categoryLabel: string;
     modules: TreeModule[];
 }
 
-interface TreeModule {
+export interface TreeModule {
     id: string;
     moduleId: string;
     moduleLabel: string;
@@ -198,7 +198,7 @@ interface TreeModule {
     grayscaleColor: string;
 }
 
-interface TreeNode {
+export interface TreeNode {
     id: string;
     nodeId: string;
     nodeLabel: string;
@@ -207,12 +207,12 @@ interface TreeNode {
     matched: boolean;
 }
 
-interface TreeTerm {
+export interface TreeTerm {
     id: string;
     label: string;
 }
 
-interface TreeLeafGene {
+export interface TreeLeafGene {
     gene: string;
     geneSymbol: string;
     geneName: string;

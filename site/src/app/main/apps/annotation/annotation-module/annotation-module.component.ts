@@ -61,6 +61,7 @@ export class AnnotationModuleComponent implements OnInit, OnDestroy {
     this.annotationService.onAnnotationModuleChanged
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((bpmodule) => {
+        this.annotationService.selectedModule = bpmodule;
         this.bpmodule = bpmodule
 
       });
