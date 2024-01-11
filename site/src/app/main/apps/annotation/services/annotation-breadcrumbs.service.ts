@@ -49,7 +49,7 @@ export class AnnotationBreadcrumbsService {
         const section = this.annotationService.annotationTree.find(s => s.id === id);
         if (section) {
             this.categoryBreadcrumbs = [
-                this._getBaseBreadcrumb(), ,
+                this._getBaseBreadcrumb(),
                 { label: section.sectionLabel, level: BreadcrumbLevel.SECTION }];
         }
     }

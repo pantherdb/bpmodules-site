@@ -90,19 +90,29 @@
         </div>
         <!--  <pango-summary-stats></pango-summary-stats> -->
         <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
+          <ul class="breadcrumb">
             <li *ngFor="let crumb of breadcrumbsService?.categoryBreadcrumbs" class="breadcrumb-item">
-              <a (click)="onBreadcrumbClick(crumb.level)">{{ crumb.label }}</a>
+              <a (click)="onBreadcrumbClick(crumb.level)">
+                <span class="icon" [ngClass]="crumb.iconClass"></span>
+                <span class="text">{{ crumb.label }}</span>
+              </a>
             </li>
-          </ol>
+          </ul>
         </nav>
 
         <div class="w-100-p" [ngSwitch]="pangoMenuService.selectedMiddlePanel">
           <pango-annotation-group *ngSwitchCase="MiddlePanel.DEFAULT" class="w-100-p"
             [annotationPage]="annotationPage"></pango-annotation-group>
 
+
+          <pango-annotation-section *ngSwitchCase="MiddlePanel.SECTION" class="w-100-p"
+            [annotationPage]="annotationPage"></pango-annotation-section>
+
           <pango-annotation-category *ngSwitchCase="MiddlePanel.CATEGORY" class="w-100-p"
             [annotationPage]="annotationPage"></pango-annotation-category>
+
+          <pango-annotation-module *ngSwitchCase="MiddlePanel.MODULE" class="w-100-p"
+            [annotationPage]="annotationPage"></pango-annotation-module>
         </div>
 
       </div>

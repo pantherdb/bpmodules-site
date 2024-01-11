@@ -158,6 +158,12 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy {
     }
   }
 
+  selectSection(section) {
+    this.annotationService.onAnnotationSectionChanged.next(section)
+    this.breadcrumbsService.onSectionClick(section.id)
+    this.pangoMenuService.selectMiddlePanel(MiddlePanel.SECTION);
+  }
+
   selectAnnotation(row) {
     this.pangoMenuService.selectRightPanel(RightPanel.DETAIL);
     this.pangoMenuService.openRightDrawer();

@@ -10,7 +10,7 @@
 
         <th class="" *ngFor="let module of category.modules">
           <div class="rotated-header-container">
-            <div class="pango-section-title pango-truncate">{{module.moduleLabel}} </div>
+            <div (click)="selectModule(module)" class="pango-section-title pango-truncate">{{module.moduleLabel}} </div>
           </div>
         </th>
       </tr>

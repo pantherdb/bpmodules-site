@@ -3,6 +3,11 @@
 @import "src/@pango.common/scss/pango.common";
 $primary: map-get($theme, primary);
 
+$green: $pango-primary-color-light;
+$green-dark: $pango-primary-color;
+$size: 50px;
+$f-size: 10px;
+
 :host {
   width: 100%;
 
@@ -225,34 +230,69 @@ $primary: map-get($theme, primary);
   }
 }
 
-.breadcrumb {
-  background: none;
-  padding: 0;
-  margin-bottom: 0;
+ul.breadcrumb {
+  margin-left: $size;
+  display: inline-block;
   list-style: none;
-  display: flex;
-  align-items: center;
 
-  .breadcrumb-item {
-    & + .breadcrumb-item::before {
-      content: ">";
-      padding: 0 8px;
-      color: #6c757d;
-    }
+  li {
+    float: right;
+    padding: $size / 10;
+    background-color: $green-dark;
+    border-radius: $size;
+    position: relative;
+    margin-left: -$size;
+    transition: all 0.2s;
+    margin-top: 3px;
 
     a {
-      color: #007bff;
+      overflow: hidden;
+      border-radius: $size;
+      transition: all 0.2s;
       text-decoration: none;
-      cursor: pointer;
+      height: $size;
+      color: darken($green-dark, 5%);
+      background-color: $green;
+      text-align: center;
+      min-width: $size;
+      display: block;
+      line-height: $size;
+      padding-left: $size + 2;
+      padding-right: $size / 2 + $size / 6;
+
+      .icon {
+        display: inline-block;
+      }
+
+      .text {
+        display: inline-block; /* Changed from 'none' to 'inline-block' */
+        opacity: 1; /* Changed from 0 to 1 */
+      }
 
       &:hover {
-        text-decoration: underline;
+        width: auto; /* Changed to auto to accommodate variable text length */
+        background-color: lighten($green, 5%);
+        .text {
+          opacity: 1;
+        }
       }
     }
 
-    span {
-      color: #6c757d; // Color for the current (last) item
-      pointer-events: none;
+    &:last-child {
+      a {
+        padding: 0;
+      }
+
+      &:hover {
+        padding: ($size / 10 - 2px);
+        margin-top: 0;
+
+        a {
+          width: auto; /* Adjust width for last item */
+          height: $size + 10;
+          line-height: $size + 10;
+        }
+      }
     }
   }
 }

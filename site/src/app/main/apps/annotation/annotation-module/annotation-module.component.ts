@@ -5,19 +5,18 @@ import { PangoMenuService } from '@pango.common/services/pango-menu.service';
 import { AnnotationService } from './../services/annotation.service'
 import { AnnotationPage } from '../models/page';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
-import { MiddlePanel, RightPanel } from '@pango.common/models/menu-panels';
+import { RightPanel } from '@pango.common/models/menu-panels';
 import { MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { environment } from 'environments/environment';
 import { pangoData } from '@pango.common/data/config';
-import { AnnotationBreadcrumbsService } from '../services/annotation-breadcrumbs.service';
 
 @Component({
-  selector: 'pango-annotation-category',
-  templateUrl: './annotation-category.component.html',
-  styleUrls: ['./annotation-category.component.scss'],
+  selector: 'pango-annotation-module',
+  templateUrl: './annotation-module.component.html',
+  styleUrls: ['./annotation-module.component.scss'],
   // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AnnotationCategoryComponent implements OnInit, OnDestroy {
+export class AnnotationModuleComponent implements OnInit, OnDestroy {
   RightPanel = RightPanel;
   aspectMap = pangoData.aspectMap;
   evidenceTypeMap = pangoData.evidenceTypeMap;
@@ -44,12 +43,11 @@ export class AnnotationCategoryComponent implements OnInit, OnDestroy {
   dataSource = new MatTableDataSource<any>();
 
   private _unsubscribeAll: Subject<any>;
-  category: any;
+  bpmodule: any;
 
   constructor(
     public pangoMenuService: PangoMenuService,
-    public annotationService: AnnotationService,
-    public breadcrumbsService: AnnotationBreadcrumbsService,
+    public annotationService: AnnotationService
   ) {
 
     this.loadingIndicator = false;
@@ -60,10 +58,10 @@ export class AnnotationCategoryComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    this.annotationService.onAnnotationCategoryChanged
+    this.annotationService.onAnnotationModuleChanged
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((category) => {
-        this.category = category
+      .subscribe((bpmodule) => {
+        this.bpmodule = bpmodule
 
       });
 
@@ -76,11 +74,10 @@ export class AnnotationCategoryComponent implements OnInit, OnDestroy {
     this.annotationService.onAnnotationChanged.next(row);
   }
 
-  selectModule(bpmodule) {
-    this.annotationService.onAnnotationModuleChanged.next(bpmodule)
-    this.breadcrumbsService.onModuleClick(bpmodule.id)
-    this.pangoMenuService.selectMiddlePanel(MiddlePanel.MODULE);
+  selectGene(gene: string) {
+
   }
+
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();

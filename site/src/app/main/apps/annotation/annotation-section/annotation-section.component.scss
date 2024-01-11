@@ -1,0 +1,209 @@
+@use "@angular/material" as mat;
+@import "src/@pango/scss/pango";
+@import "src/@pango.common/scss/pango.common";
+
+$primary: map-get($theme, primary);
+$accent: map-get($theme, accent);
+
+:host {
+  a {
+    cursor: pointer;
+  }
+  .pango-sidemenu {
+    padding: 0;
+    @include deep-height(100%);
+    @include deep-width(60px);
+    // @include mat-elevation(2);
+    border-right: #999 solid 1px;
+    background-color: #55407a;
+
+    .pango-sidemenu-header {
+      width: 100%;
+      padding: 0 5px;
+      margin-bottom: 20px;
+      @include deep-height(40px);
+      @include mat.elevation(2);
+      z-index: 1000;
+      color: #fff;
+    }
+
+    .pango-label {
+      text-transform: uppercase;
+      font-size: 8px;
+      font-weight: bold;
+    }
+
+    button {
+      @include deep-width(90px);
+      @include deep-height(60px);
+      line-height: 25px;
+      border-radius: 0 !important;
+
+      font-size: 20px;
+      // color: rgba(map-get($primary, default), 0.5);
+      color: #ddd;
+
+      &.pango-active {
+        font-size: 28px;
+        color: map-get($primary, default);
+        color: #fff;
+      }
+    }
+  }
+  .module-container {
+    //margin-bottom: 20px;
+  }
+
+  .pango-section {
+    display: relative;
+    //padding: 24px 12px;
+    // margin-bottom: 20px;
+  }
+
+  .pango-category-row {
+    position: relative; // Needed for absolute positioning of children
+    display: flex;
+    align-items: center;
+
+    .pango-category-title {
+      //    transform: rotate(-30deg) translateX(100%); // Rotate and then shift leftwards
+      // transform-origin: top left; // Rotate around the top left corner
+      font-size: 12px;
+      color: #555;
+      background-color: white; // Optional, for readability
+      width: 150px; // Set a fixed width
+      text-align: right;
+      z-index: 1; // Above other content
+    }
+  }
+
+  .pango-module-title {
+  }
+
+  .pango-matrix-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center; // Center align the titles vertically
+  }
+
+  .pango-matrix {
+    padding-left: 12px;
+    flex-grow: 1;
+    //margin-left: 150px;
+    width: 500px;
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(30px, 1fr)
+    ); /* Responsive columns */
+    grid-auto-rows: 30px;
+    gap: 0px;
+  }
+
+  .pango-square {
+    @include deep-width(30px);
+    @include deep-height(30px);
+    position: relative;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+
+    .pango-positive {
+      border: #489470 solid 1px;
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 50%;
+      width: 50%;
+    }
+
+    .pango-negative {
+      border: #d46565 solid 1px;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      height: 50%;
+      width: 50%;
+    }
+  }
+
+  .pango-percentage-number {
+    @include deep-width(30px);
+    @include deep-height(40px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    border-bottom: 1px solid $pango-accent-color;
+  }
+
+  .pango-node-square {
+    @include deep-width(25px);
+    @include deep-height(25px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1px;
+    position: relative;
+    border: 1px solid #bbb;
+  }
+
+  .pango-category-table {
+    margin-top: 240px;
+    .rotated-header th {
+      height: 240px;
+      vertical-align: bottom;
+      text-align: left;
+      line-height: 1;
+    }
+
+    .pango-left-header-item {
+      font-size: 12px;
+      width: 120px;
+      display: flex;
+      align-items: center;
+      &:nth-child(1) {
+        height: 30px;
+      }
+      &:nth-child(2) {
+        height: 40px;
+      }
+      &:nth-child(3) {
+        align-items: top;
+      }
+    }
+
+    td {
+      vertical-align: top;
+    }
+
+    .rotated-header-container {
+      width: 30px;
+    }
+
+    .rotated-header-content {
+      width: 300px;
+    }
+
+    .pango-section-title {
+      @include deep-width(300px);
+
+      font-size: 10px;
+      transform-origin: bottom left;
+      transform: translateX(45px) rotate(-45deg);
+
+      cursor: pointer;
+      &:hover {
+        color: $pango-accent-color;
+        font-weight: bold;
+      }
+    }
+
+    .rotated-header td:not(:first-child) {
+      text-align: right;
+    }
+  }
+}

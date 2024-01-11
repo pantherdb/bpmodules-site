@@ -31,7 +31,10 @@ export class AnnotationService {
     onAnnotationsAggsChanged: BehaviorSubject<AnnotationStats>;
     onAnnotationChanged: BehaviorSubject<any>;
 
-    onAnnotationCategoryChanged: BehaviorSubject<any>;;
+    onAnnotationCategoryChanged: BehaviorSubject<any>;
+    onAnnotationSectionChanged: BehaviorSubject<any>;;
+    onAnnotationModuleChanged: BehaviorSubject<any>;;
+    ;
 
     // GEnes
     onGenesChanged: BehaviorSubject<any>;
@@ -85,7 +88,11 @@ export class AnnotationService {
         this.onDistinctAggsChanged = new BehaviorSubject(null);
         this.onSearchCriteriaChanged = new BehaviorSubject(null);
         this.onSelectedGeneChanged = new BehaviorSubject(null);
+
+        this.onAnnotationModuleChanged = new BehaviorSubject(null);
+        this.onAnnotationSectionChanged = new BehaviorSubject(null);
         this.searchCriteria = new SearchCriteria();
+
 
         this.onAnnotationCategoryChanged = new BehaviorSubject(null);
 

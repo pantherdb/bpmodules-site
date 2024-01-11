@@ -5,7 +5,9 @@ export enum LeftPanel {
 
 export enum MiddlePanel {
     DEFAULT,
-    CATEGORY
+    SECTION,
+    CATEGORY,
+    MODULE
 };
 
 export enum RightPanel {
