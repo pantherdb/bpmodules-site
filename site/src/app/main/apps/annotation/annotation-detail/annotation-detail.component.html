@@ -10,27 +10,43 @@
   </div>
   <div class="pango-drawer-body" fxLayout="row" fxLayoutAlign="start start" pangoPerfectScrollbar>
     <div *ngIf="module" class="pango-module-display">
-      <div class="pango-module-header">Module Term: {{ module.moduleLabel }}</div>
+      <h2 class="pango-module-header">Module Term: {{ module.moduleLabel }}<br>
+        (<a href="{{pangoUrlLinkerService.linkAmigoTerm(module.moduleId)}}" target="_blank">
+          {{ module.moduleId }}
+        </a>)
+      </h2>
       <p><strong>Matched:</strong> {{module.matchPercentage}}%</p>
-      <div *ngFor="let node of module.nodes" class="node" [ngClass]="{'matched-node': node.matched}">
-        <h4>{{ node.label }}</h4>
-        <p><strong>PTN ID:</strong> {{ node.ptnId }}</p>
-        <div>
-          <strong>Terms:</strong>
-          <span class="terms" *ngFor="let term of node.terms">{{ term.label }}</span>
+      <div *ngFor="let node of module.nodes" class="pango-node" [ngClass]="{'matched-node': node.matched}"
+        fxLayout="column" fxLayoutAlign="start start">
+        <div class="pangp-node-section w-100-p" fxLayout="column" fxLayoutAlign="start start">
+          <strong>Module Component: </strong>
+          <ul>
+            <li>
+              <a href="{{pangoUrlLinkerService.linkPanTree(node.nodeId)}}" target="_blank">{{ node.nodeLabel }}</a>
+            </li>
+          </ul>
         </div>
-        <div>
-          <strong>Leaf Genes:</strong>
-          <span class="genes" *ngFor="let gene of node.leafGenes" [ngClass]="{'matched-gene': isGeneMatched(gene)}">{{
-            gene.gene }}</span>
+        <div class="pangp-node-section w-100-p" fxLayout="column" fxLayoutAlign="start start">
+          <strong>Gene(s)</strong>
+          <ul>
+            <li *ngFor="let gene of node.leafGenes" [ngClass]="{'matched-gene': isGeneMatched(gene)}">
+              <a href="{{pangoUrlLinkerService.getUniprotLink(gene.gene)}}" target="_blank">{{ gene.geneSymbol }}</a>
+              {{ gene.geneName }}
+            </li>
+          </ul>
+        </div>
+        <div class="pangp-node-section w-100-p" fxLayout="column" fxLayoutAlign="start start">
+          <strong>Term(s)</strong>
+          <ul>
+            <li *ngFor="let term of node.terms">
+              {{ term.label }}
+              (<a href="{{pangoUrlLinkerService.linkAmigoTerm(term.id)}}" target="_blank">
+                {{ term.id }}
+              </a>)
+            </li>
+          </ul>
         </div>
       </div>
     </div>
-
-
   </div>
-  <!--   <div fxLayout="row" fxLayoutAlign="start center" class="pango-drawer-footer pango-submit-row">
-    <span fxFlex></span>
-    <button (click)='close()' type="button" mat-raised-button color="" class="mr-8">Close</button>
-  </div> -->
 </div>

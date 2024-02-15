@@ -8,6 +8,7 @@ import { Annotation } from '../models/annotation';
 
 import { AnnotationService } from '../services/annotation.service';
 import { Gene } from '../../gene/models/gene.model';
+import { PangoUrlLinkerService } from '@pango.common/services/pango-url-linker.service';
 
 @Component({
   selector: 'pango-annotation-detail',
@@ -24,7 +25,8 @@ export class AnnotationDetailComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any>;
   module: any;
   constructor(
-    private annotationService: AnnotationService) {
+    private annotationService: AnnotationService,
+    public pangoUrlLinkerService: PangoUrlLinkerService) {
     this._unsubscribeAll = new Subject();
   }
 
