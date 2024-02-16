@@ -68,6 +68,7 @@ $accent: map-get($theme, accent);
     .pango-category-title {
       //    transform: rotate(-30deg) translateX(100%); // Rotate and then shift leftwards
       // transform-origin: top left; // Rotate around the top left corner
+      cursor: pointer;
       font-size: 12px;
       color: #555;
       background-color: white; // Optional, for readability
@@ -90,26 +91,22 @@ $accent: map-get($theme, accent);
     padding-left: 12px;
     flex-grow: 1;
     //margin-left: 150px;
-    width: 500px;
+    width: 3000px;
     display: grid;
-    grid-template-columns: repeat(
-      auto-fill,
-      minmax(30px, 1fr)
-    ); /* Responsive columns */
+    grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
     grid-auto-rows: 30px;
-    gap: 0px;
+    gap: 2px;
   }
 
   .pango-square {
-    @include deep-width(30px);
-    @include deep-height(30px);
     position: relative;
-    border: 1px solid black;
+    border: 1px solid #333; // #4a8bfc;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     overflow: hidden;
+    margin-bottom: 2px;
 
     .pango-positive {
       border: #489470 solid 1px;
@@ -127,6 +124,11 @@ $accent: map-get($theme, accent);
       right: 0;
       height: 50%;
       width: 50%;
+    }
+
+    cursor: pointer;
+    &:hover {
+      background-color: $pango-accent-color;
     }
   }
 

@@ -5,10 +5,11 @@ import { PangoMenuService } from '@pango.common/services/pango-menu.service';
 import { AnnotationService } from './../services/annotation.service'
 import { AnnotationPage } from '../models/page';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
-import { RightPanel } from '@pango.common/models/menu-panels';
+import { MiddlePanel, RightPanel } from '@pango.common/models/menu-panels';
 import { MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { environment } from 'environments/environment';
 import { pangoData } from '@pango.common/data/config';
+import { AnnotationBreadcrumbsService } from '../services/annotation-breadcrumbs.service';
 
 @Component({
   selector: 'pango-annotation-section',
@@ -47,7 +48,8 @@ export class AnnotationSectionComponent implements OnInit, OnDestroy {
 
   constructor(
     public pangoMenuService: PangoMenuService,
-    public annotationService: AnnotationService
+    public annotationService: AnnotationService,
+    public breadcrumbsService: AnnotationBreadcrumbsService,
   ) {
 
     this.loadingIndicator = false;
@@ -81,6 +83,18 @@ export class AnnotationSectionComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
+  }
+
+  selectCategory(category) {
+    this.annotationService.onAnnotationCategoryChanged.next(category)
+    this.breadcrumbsService.onCategoryClick(category.id)
+    this.pangoMenuService.selectMiddlePanel(MiddlePanel.CATEGORY);
+  }
+
+  selectSection(section) {
+    this.annotationService.onAnnotationSectionChanged.next(section)
+    this.breadcrumbsService.onSectionClick(section.id)
+    this.pangoMenuService.selectMiddlePanel(MiddlePanel.SECTION);
   }
 
   openAnnotationSearch() {

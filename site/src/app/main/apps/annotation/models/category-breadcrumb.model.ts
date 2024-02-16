@@ -6,8 +6,8 @@ export interface BreadcrumbItem {
 }
 
 export enum BreadcrumbLevel {
-  HOME,
-  SECTION,
-  CATEGORY,
-  MODULE
+  HOME = 0,
+  SECTION = 1,
+  CATEGORY = 2,
+  MODULE = 3
 }

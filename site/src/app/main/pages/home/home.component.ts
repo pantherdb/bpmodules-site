@@ -120,16 +120,16 @@ export class HomeComponent implements OnInit {
   }
 
   updateBreadcrumbs(clickedLevel: number) {
-    this.breadcrumbsService.categoryBreadcrumbs.slice(0, clickedLevel);
+    this.breadcrumbsService.categoryBreadcrumbs = this.breadcrumbsService.categoryBreadcrumbs.slice(0, clickedLevel + 1);
 
-    if (clickedLevel == BreadcrumbLevel.SECTION || clickedLevel == BreadcrumbLevel.HOME) {
+    if (clickedLevel === BreadcrumbLevel.HOME) {
       this.pangoMenuService.selectedMiddlePanel = MiddlePanel.DEFAULT
-    }
-    else if (clickedLevel == BreadcrumbLevel.CATEGORY) {
+    } else if (clickedLevel === BreadcrumbLevel.SECTION) {
+      this.pangoMenuService.selectedMiddlePanel = MiddlePanel.SECTION
+    } else if (clickedLevel === BreadcrumbLevel.CATEGORY) {
       this.pangoMenuService.selectedMiddlePanel = MiddlePanel.CATEGORY
     }
   }
-
 
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);

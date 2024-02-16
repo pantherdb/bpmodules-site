@@ -16,29 +16,59 @@
         <mat-label>File Name</mat-label>
         <input matInput formControlName="description" placeholder="File Name" />
       </mat-form-field>
-      <div fxFlex="" class="gene-table w-100-p mt-12" fxLayout="column" fxLayoutAlign="start stretch">
-        <div class="gene-row gene-header">
-          <div class="gene-column">Gene</div>
-          <div class="gene-column">Gene Symbol</div>
-          <div class="gene-column">Gene Name</div>
-        </div>
-        <div fxFlex="">
+
+      <div class="tabs-buttons">
+        <button mat-button class="pango-sm" [class.active]="activeTab === 'matched'" (click)="setActiveTab('matched')">
+          Matched Genes (<small>{{matchingGenes.length}}</small>)
+        </button>
+        <button mat-button class="pango-sm" [class.active]="activeTab === 'unmatched'"
+          (click)="setActiveTab('unmatched')">
+          Unmatched Genes (<small>{{nonMatchingGenes.length}}</small>)
+        </button>
+        <button mat-button class="pango-sm" [class.active]="activeTab === 'unmatchedList'"
+          (click)="setActiveTab('unmatchedList')">Identifiers Not Found
+          (<small>{{unmatchedGeneList.length}}</small>)</button>
+      </div>
+
+      <div class="tab-content h-100-p">
+        <!-- Matched Genes -->
+        <ng-container *ngIf="activeTab === 'matched'">
           <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport">
-            <div *cdkVirtualFor="let gene of genes" class="gene-row">
+            <div *cdkVirtualFor="let gene of matchingGenes" class="gene-row">
               <div class="gene-column">{{ gene.gene }}</div>
               <div class="gene-column">{{ gene.geneSymbol }}</div>
               <div class="gene-column">{{ gene.geneName }}</div>
             </div>
           </cdk-virtual-scroll-viewport>
-        </div>
+        </ng-container>
+
+        <!-- Unmatched Genes -->
+        <ng-container *ngIf="activeTab === 'unmatched'">
+          <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport">
+            <div *cdkVirtualFor="let gene of nonMatchingGenes" class="gene-row">
+              <div class="gene-column">{{ gene.gene }}</div>
+              <div class="gene-column">{{ gene.geneSymbol }}</div>
+              <div class="gene-column">{{ gene.geneName }}</div>
+            </div>
+          </cdk-virtual-scroll-viewport>
+        </ng-container>
+
+        <!-- Unmatched Gene List -->
+        <ng-container *ngIf="activeTab === 'unmatchedList'">
+          <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport">
+            <div *cdkVirtualFor="let geneIdentifier of unmatchedGeneList" class="gene-row">
+              <div class="gene-column">{{ geneIdentifier }}</div>
+            </div>
+          </cdk-virtual-scroll-viewport>
+        </ng-container>
       </div>
     </div>
 
-    <div *ngIf="!dataSource" class="w-100-p h-100-p" fxFlex="" fxLayout="column" fxLayoutAlign="start stretch">
+    <!--    <div *ngIf="!dataSource" class="w-100-p h-100-p" fxFlex="" fxLayout="column" fxLayoutAlign="start stretch">
       <div class="pango-no-info">
         No Results
       </div>
-    </div>
+    </div> -->
   </div>
   <div class="m-0 p-16 pango-dialog-footer" fxLayout="row" fxLayoutAlign="space-between center">
     <button (click)='close()' type="button" mat-raised-button color="" class="mr-8">

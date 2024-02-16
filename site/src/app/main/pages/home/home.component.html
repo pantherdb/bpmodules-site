@@ -69,15 +69,12 @@
             class="pango-no-info">
             No FIlters selected: You can filter the list to find a specific gene or function category.
           </span>
-
           <ng-container *ngIf="annotationService.searchCriteria.filtersCount>0">
             <small class="mr-12">Filtered By: </small>
-
             <mat-chip (click)="clearAllFilters()" class="pango-clearall-chip">
               Clear All
             </mat-chip>
           </ng-container>
-
           <mat-chip *ngIf="annotationService.searchCriteria[SearchFilterType.GENES].length>0" class="pango-filter-chip"
             [removable]="true" (removed)="removeFilter(SearchFilterType.GENES)"
             matTooltip="{{annotationService.searchCriteria.genesTooltip}}" [matTooltipPosition]="'below'"
@@ -86,29 +83,22 @@
               annotationService.searchCriteria[SearchFilterType.GENES].length}})</span>
             <mat-icon matChipRemove>cancel</mat-icon>
           </mat-chip>
-
         </div>
         <!--  <pango-summary-stats></pango-summary-stats> -->
         <nav aria-label="breadcrumb" class="helper-set-block">
           <div class="arrow-wrapper">
-            <li *ngFor="let crumb of breadcrumbsService?.categoryBreadcrumbs" class="breadcrumb-item">
+            <li *ngFor="let crumb of breadcrumbsService.categoryBreadcrumbs" class="breadcrumb-item">
               <a (click)="onBreadcrumbClick(crumb.level)">{{ crumb.label }}</a>
             </li>
           </div>
         </nav>
-
-
         <div class="w-100-p p-12" [ngSwitch]="pangoMenuService.selectedMiddlePanel">
           <pango-annotation-group *ngSwitchCase="MiddlePanel.DEFAULT" class="w-100-p"
             [annotationPage]="annotationPage"></pango-annotation-group>
-
-
           <pango-annotation-section *ngSwitchCase="MiddlePanel.SECTION" class="w-100-p"
             [annotationPage]="annotationPage"></pango-annotation-section>
-
           <pango-annotation-category *ngSwitchCase="MiddlePanel.CATEGORY" class="w-100-p"
             [annotationPage]="annotationPage"></pango-annotation-category>
-
           <pango-annotation-module *ngSwitchCase="MiddlePanel.MODULE" class="w-100-p"
             [annotationPage]="annotationPage"></pango-annotation-module>
         </div>

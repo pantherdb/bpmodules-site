@@ -20,11 +20,15 @@
                 title="{{ module.moduleLabel }}" (click)="openAnnotationSummary(module)">
 
                 <ng-container *ngIf="module.dispositionSources?.length > 1">
-                  <div *ngIf="module.dispositionSources[0].refAnnotation" class="pango-positive" [ngStyle]="{'background-color': module.dispositionSources[0].refAnnotation?.matchPercentage
+                  <div *ngIf="module.dispositionSources[0].refAnnotation"
+                    title="{{ module.dispositionSources[0].refAnnotation?.moduleLabel}}" class="pango-positive"
+                    [ngStyle]="{'background-color': module.dispositionSources[0].refAnnotation?.matchPercentage
  > 0 ? '#489470' : 'transparent'}"
                     (click)="$event.stopPropagation(); openAnnotationSummary(module.dispositionSources[0].refAnnotation)">
                   </div>
-                  <div *ngIf="module.dispositionSources[1].refAnnotation" class="pango-negative" [ngStyle]="{'background-color': module.dispositionSources[1].refAnnotation?.matchPercentage
+                  <div *ngIf="module.dispositionSources[1].refAnnotation"
+                    title="{{ module.dispositionSources[1].refAnnotation?.moduleLabel}}" class="pango-negative"
+                    [ngStyle]="{'background-color': module.dispositionSources[1].refAnnotation?.matchPercentage
  > 0 ? '#d46565' : 'transparent'}"
                     (click)="$event.stopPropagation(); openAnnotationSummary(module.dispositionSources[1].refAnnotation)">
                   </div>

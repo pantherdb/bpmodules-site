@@ -368,8 +368,11 @@ export class AnnotationService {
             const uniqueLines = new Set(trimmedLines);
             const geneIds = Array.from(uniqueLines).filter(line => line !== '');
 
-            const genes = self._findMatchingGenes(geneIds, self.geneLookup);
-            const data = { genes, description: file.name }
+            const { matchingGenes, nonMatchingGenes, unmatchedGeneList } = this._findMatchingAndNonMatchingGenes(geneIds, self.geneLookup);
+
+
+            console.log(matchingGenes, nonMatchingGenes, unmatchedGeneList)
+            const data = { matchingGenes, nonMatchingGenes, unmatchedGeneList, description: file.name }
 
             self.annotationDialogService.openUploadGenesDialog(data, success);
         };
@@ -769,12 +772,29 @@ export class AnnotationService {
         return Array.from(uniqueGenesMap.values());
     }
 
-    private _findMatchingGenes(geneList: string[], leafGenes: Gene[]) {
-        return leafGenes.filter(leafGene =>
-            geneList.includes(leafGene.gene) || geneList.includes(leafGene.geneSymbol)
-        );
+    private _findMatchingAndNonMatchingGenes(geneList: string[], leafGenes: Gene[]) {
+        const result: any = leafGenes.reduce((acc, leafGene) => {
+            if (geneList.includes(leafGene.gene) || geneList.includes(leafGene.geneSymbol)) {
+                acc.matchingGenes.push(leafGene);
+            } else {
+                acc.nonMatchingGenes.push(leafGene);
+            }
+            return acc;
+        }, { matchingGenes: [], nonMatchingGenes: [] });
+
+        // Replace flatMap with map and reduce for compatibility
+        const allGenesSet = new Set(leafGenes.reduce((acc, leafGene) => {
+            acc.push(leafGene.gene, leafGene.geneSymbol);
+            return acc;
+        }, []));
+
+        // Filter the geneList to find items not in allGenesSet, indicating they were not matched in leafGenes
+        const unmatchedGeneList = geneList.filter(gene => !allGenesSet.has(gene));
+
+        // Add unmatchedGeneList to the result
+        result.unmatchedGeneList = unmatchedGeneList;
+
+        return result;
     }
-
-
 
 }

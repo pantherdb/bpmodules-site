@@ -20,20 +20,11 @@ export class UploadGenesDialogComponent implements OnInit, AfterViewInit, OnDest
   private _unsubscribeAll: Subject<any>;
   geneFormGroup: FormGroup;
 
-  @ViewChild(MatTable) table: MatTable<any>
+  matchingGenes: Gene[] = [];
+  nonMatchingGenes: Gene[] = [];
+  unmatchedGeneList: string[] = [];
 
-  @ViewChild('paginator') paginator: MatPaginator;
-
-  dataSource = new MatTableDataSource<Gene>();
-
-  displayedColumns = [
-    'gene',
-    'geneName',
-    'geneSymbol',
-
-  ];
-  genePage: GenePage;
-  genes: Gene[] = [];
+  activeTab: string = 'matched';
 
 
   constructor(
@@ -43,9 +34,13 @@ export class UploadGenesDialogComponent implements OnInit, AfterViewInit, OnDest
   ) {
     this._unsubscribeAll = new Subject();
 
-    this.genes = _data.genes
-    this.dataSource = new MatTableDataSource<any>(this.genes);
-    console.log('genes', this.genes)
+    this.matchingGenes = _data.matchingGenes
+    console.log('genes', this.matchingGenes)
+
+    this.nonMatchingGenes = _data.nonMatchingGenes
+    console.log('genes', this.nonMatchingGenes)
+
+    this.unmatchedGeneList = _data.unmatchedGeneList
   }
 
   ngOnInit() {
@@ -54,6 +49,10 @@ export class UploadGenesDialogComponent implements OnInit, AfterViewInit, OnDest
 
   ngAfterViewInit() {
     // this.dataSource.paginator = this.paginator;
+  }
+
+  setActiveTab(tabName: string) {
+    this.activeTab = tabName;
   }
 
   ngOnDestroy(): void {
@@ -74,10 +73,14 @@ export class UploadGenesDialogComponent implements OnInit, AfterViewInit, OnDest
     const id = uuid()
     const description = this.geneFormGroup.value['description'] ?? 'My Genes';
 
-    const genes = this.genes
+    const genes = this.matchingGenes
     const count = genes.length
-    const value = { id, description, count, genes }
-    console.log('value', value)
+    const value = {
+      id, description, count,
+      matchingGenes: this.matchingGenes,
+      nonMatchingGenes: this.nonMatchingGenes,
+      unmatchedGeneList: this.unmatchedGeneList,
+    }
     this._matDialogRef.close(value);
   }
 
