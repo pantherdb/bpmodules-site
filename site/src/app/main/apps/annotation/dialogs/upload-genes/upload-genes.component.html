@@ -19,7 +19,7 @@
 
       <div class="tabs-buttons">
         <button mat-button class="pango-sm" [class.active]="activeTab === 'matched'" (click)="setActiveTab('matched')">
-          Matched Genes (<small>{{matchingGenes.length}}</small>)
+          Matched Genes (<small>{{genes.length}}</small>)
         </button>
         <button mat-button class="pango-sm" [class.active]="activeTab === 'unmatched'"
           (click)="setActiveTab('unmatched')">
@@ -34,7 +34,7 @@
         <!-- Matched Genes -->
         <ng-container *ngIf="activeTab === 'matched'">
           <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport">
-            <div *cdkVirtualFor="let gene of matchingGenes" class="gene-row">
+            <div *cdkVirtualFor="let gene of genes" class="gene-row">
               <div class="gene-column">{{ gene.gene }}</div>
               <div class="gene-column">{{ gene.geneSymbol }}</div>
               <div class="gene-column">{{ gene.geneName }}</div>

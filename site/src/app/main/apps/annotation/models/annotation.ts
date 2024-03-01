@@ -163,11 +163,20 @@ export interface AnnotationTreeNode {
     children?: AnnotationTreeNode[];
 }
 
+export interface GeneMeta {
+    genes: Gene[];
+    nonMatchingGenes: Gene[];
+    unmatchedGeneList: string[];
+    description: string;
+}
+
 export class GeneList {
     id: string;
     description: string;
     genes: Gene[] = [];
-    count: number
+    unmatchedGenes: Gene[] = [];
+    identifiersNotMatched: Gene[] = [];
+    count?: number = 0
 }
 
 

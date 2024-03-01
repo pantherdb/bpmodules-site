@@ -75,7 +75,13 @@ export class GeneListComponent implements OnInit, OnDestroy {
         // self.geneList.push(geneData);
       }
     };
-    const data = { genes: geneList.genes, description: geneList.description }
+    const data: GeneList = {
+      id: geneList.id,
+      genes: geneList.genes,
+      unmatchedGenes: geneList.unmatchedGenes,
+      description: geneList.description,
+      identifiersNotMatched: geneList.identifiersNotMatched,
+    }
 
     this.annotationDialogService.openUploadGenesDialog(data, success);
   }

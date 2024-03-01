@@ -20,7 +20,7 @@ export class UploadGenesDialogComponent implements OnInit, AfterViewInit, OnDest
   private _unsubscribeAll: Subject<any>;
   geneFormGroup: FormGroup;
 
-  matchingGenes: Gene[] = [];
+  genes: Gene[] = [];
   nonMatchingGenes: Gene[] = [];
   unmatchedGeneList: string[] = [];
 
@@ -34,8 +34,8 @@ export class UploadGenesDialogComponent implements OnInit, AfterViewInit, OnDest
   ) {
     this._unsubscribeAll = new Subject();
 
-    this.matchingGenes = _data.matchingGenes
-    console.log('genes', this.matchingGenes)
+    this.genes = _data.genes
+    console.log('genes', this.genes)
 
     this.nonMatchingGenes = _data.nonMatchingGenes
     console.log('genes', this.nonMatchingGenes)
@@ -73,11 +73,11 @@ export class UploadGenesDialogComponent implements OnInit, AfterViewInit, OnDest
     const id = uuid()
     const description = this.geneFormGroup.value['description'] ?? 'My Genes';
 
-    const genes = this.matchingGenes
+    const genes = this.genes
     const count = genes.length
     const value = {
       id, description, count,
-      matchingGenes: this.matchingGenes,
+      genes: this.genes,
       nonMatchingGenes: this.nonMatchingGenes,
       unmatchedGeneList: this.unmatchedGeneList,
     }

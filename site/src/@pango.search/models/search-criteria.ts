@@ -46,7 +46,6 @@ export class SearchCriteria {
         this.terms = [];
         this.genes = []
         this.slimTerms = [];
-        this.genes = [];
         this.fieldValues = [];
     }
 

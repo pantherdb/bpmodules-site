@@ -6,7 +6,7 @@ import { Client } from 'elasticsearch-browser';
 import { AnnotationPage, GenePage, Query } from '../models/page';
 import { orderBy } from 'lodash';
 import { SearchCriteria } from '@pango.search/models/search-criteria';
-import { AnnotationCount, AnnotationStats, Bucket, Annotation, AutocompleteFilterArgs, Term, GeneList, TreeModule, TreeSection, TreeCategory } from '../models/annotation';
+import { AnnotationCount, AnnotationStats, Bucket, Annotation, AutocompleteFilterArgs, Term, GeneList, TreeModule, TreeSection, TreeCategory, GeneMeta } from '../models/annotation';
 import { AnnotationGraphQLService } from './annotation-graphql.service';
 import { pangoData } from '@pango.common/data/config';
 import { Gene } from '../../gene/models/gene.model';
@@ -16,7 +16,6 @@ import { AnnotationDialogService } from './dialog.service';
     providedIn: 'root',
 })
 export class AnnotationService {
-
 
     aspectMap = pangoData.aspectMap;
     termTypeMap = pangoData.termTypeMap;
@@ -30,7 +29,6 @@ export class AnnotationService {
     onUniqueListChanged: BehaviorSubject<any>;
     onAnnotationsAggsChanged: BehaviorSubject<AnnotationStats>;
     onAnnotationChanged: BehaviorSubject<any>;
-
     onAnnotationCategoryChanged: BehaviorSubject<any>;
     onAnnotationSectionChanged: BehaviorSubject<any>;
     selectedCategory: TreeCategory;
@@ -313,11 +311,6 @@ export class AnnotationService {
             // query.filterArgs.slimTermIds.push(term.id);
         });
 
-        this.searchCriteria.genes.forEach((annotation: Annotation) => {
-            // query.filterArgs.geneIds.push(annotation.gene);
-        });
-
-
 
         this.query = query;
 
@@ -368,11 +361,10 @@ export class AnnotationService {
             const uniqueLines = new Set(trimmedLines);
             const geneIds = Array.from(uniqueLines).filter(line => line !== '');
 
-            const { matchingGenes, nonMatchingGenes, unmatchedGeneList } = this._findMatchingAndNonMatchingGenes(geneIds, self.geneLookup);
+            const { genes, nonMatchingGenes, unmatchedGeneList } = this._findMatchingAndNonMatchingGenes(geneIds, self.geneLookup);
 
 
-            console.log(matchingGenes, nonMatchingGenes, unmatchedGeneList)
-            const data = { matchingGenes, nonMatchingGenes, unmatchedGeneList, description: file.name }
+            const data: GeneMeta = { genes, nonMatchingGenes, unmatchedGeneList, description: file.name }
 
             self.annotationDialogService.openUploadGenesDialog(data, success);
         };
@@ -775,12 +767,12 @@ export class AnnotationService {
     private _findMatchingAndNonMatchingGenes(geneList: string[], leafGenes: Gene[]) {
         const result: any = leafGenes.reduce((acc, leafGene) => {
             if (geneList.includes(leafGene.gene) || geneList.includes(leafGene.geneSymbol)) {
-                acc.matchingGenes.push(leafGene);
+                acc.genes.push(leafGene);
             } else {
                 acc.nonMatchingGenes.push(leafGene);
             }
             return acc;
-        }, { matchingGenes: [], nonMatchingGenes: [] });
+        }, { genes: [], nonMatchingGenes: [] });
 
         // Replace flatMap with map and reduce for compatibility
         const allGenesSet = new Set(leafGenes.reduce((acc, leafGene) => {
