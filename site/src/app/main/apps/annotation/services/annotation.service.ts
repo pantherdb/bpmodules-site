@@ -36,9 +36,9 @@ export class AnnotationService {
     selectedSection: TreeSection;
     onAnnotationModuleChanged: BehaviorSubject<any>;
 
-    // GEnes
+    // Genes
     onGenesChanged: BehaviorSubject<any>;
-    onGeneListChanged: BehaviorSubject<any>;
+    //onGeneListChanged: BehaviorSubject<any>;
     onSelectedGeneListChanged: BehaviorSubject<any>;
 
 
@@ -78,7 +78,7 @@ export class AnnotationService {
         this.onAnnotationChanged = new BehaviorSubject(null);
         this.onGenesChanged = new BehaviorSubject(null);
 
-        this.onGeneListChanged = new BehaviorSubject(null);
+        // this.onGeneListChanged = new BehaviorSubject(null);
         this.onGeneCountChanged = new BehaviorSubject(null);
         this.onSelectedGeneListChanged = new BehaviorSubject(null);
         //this.onAnnotationGroupsChanged = new BehaviorSubject(null);

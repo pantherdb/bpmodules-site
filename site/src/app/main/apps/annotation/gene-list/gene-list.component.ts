@@ -44,17 +44,19 @@ export class GeneListComponent implements OnInit, OnDestroy {
       });
 
 
-    this.annotationService.onGeneListChanged
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((geneList) => {
-        if (!geneList) {
-          return
-        }
-        this.geneList = geneList
-
-        // console.log(this.annotation)
-      });
+    /*     this.annotationService.onGeneListChanged
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe((geneList) => {
+            if (!geneList) {
+              return
+            }
+           // this.geneList = geneList
+    
+            // console.log(this.annotation)
+          });*/
   }
+
+
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
