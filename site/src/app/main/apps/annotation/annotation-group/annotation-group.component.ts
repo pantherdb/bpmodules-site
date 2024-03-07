@@ -120,6 +120,11 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy {
     }
   }
 
+  findCategory(annotation, id: string) {
+    const category = this.annotationService.findCategory(annotation, id)
+    return [category]
+  }
+
 
 
   toggleExpand(gene: Gene) {

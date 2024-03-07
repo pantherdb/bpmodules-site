@@ -6,11 +6,12 @@ import { Client } from 'elasticsearch-browser';
 import { AnnotationPage, GenePage, Query } from '../models/page';
 import { orderBy } from 'lodash';
 import { SearchCriteria } from '@pango.search/models/search-criteria';
-import { AnnotationCount, AnnotationStats, Bucket, Annotation, AutocompleteFilterArgs, Term, GeneList, TreeModule, TreeSection, TreeCategory, GeneMeta } from '../models/annotation';
+import { AnnotationCount, AnnotationStats, Bucket, Annotation, AutocompleteFilterArgs, Term, GeneList, TreeModule, TreeSection, TreeCategory, GeneData } from '../models/annotation';
 import { AnnotationGraphQLService } from './annotation-graphql.service';
 import { pangoData } from '@pango.common/data/config';
 import { Gene } from '../../gene/models/gene.model';
 import { AnnotationDialogService } from './dialog.service';
+import { getColor, getGrayscaleColor } from '@pango.common/data/pango-colors';
 
 @Injectable({
     providedIn: 'root',
@@ -61,7 +62,7 @@ export class AnnotationService {
 
     onCategoryChanged: BehaviorSubject<any>;
     geneList: GeneList[] = [];
-    selectedGeneList: GeneList;
+    selectedGeneLists: GeneList[] = [];
     rawAnnotations: Annotation[];
     geneLookup: Gene[];
     annotationTree: any[];
@@ -97,38 +98,56 @@ export class AnnotationService {
 
         this.onRawAnnotationsChanged.subscribe((annotations: Annotation[]) => {
 
-            if (!annotations || !this.selectedGeneList) return;
+            if (!annotations || !this.selectedGeneLists) return;
 
-            const geneSymbols = this.selectedGeneList.genes.map((gene: Gene) => {
-                return gene.geneSymbol
+            const geneData: GeneData[] = this.selectedGeneLists.map((geneList) => {
+
+                return {
+                    color: geneList.color,
+                    geneSymbols: geneList.genes.map((gene: Gene) => {
+                        return gene.geneSymbol;
+                    })
+                };
             })
 
-            this.addGeneMatch(this.annotationTree, geneSymbols, this.query)
+            this.addGeneMatch(this.annotationTree, geneData, this.query)
 
             if (this.selectedSection?.id) {
-                const section = this.findSection(this.annotationPage.annotations, this.selectedSection.id)
+                const sections = this.annotationPage.annotations.map((annotation) => {
+                    this.findSection(annotation, this.selectedSection.id)
+                });
 
-                this.onAnnotationSectionChanged.next(section);
+                this.onAnnotationSectionChanged.next(sections);
             }
 
             if (this.selectedCategory?.id) {
-                const category = this.findCategory(this.annotationPage.annotations, this.selectedCategory.id)
+                const categories = this.annotationPage.annotations.map((annotation) => {
+                    this.findCategory(annotation, this.selectedCategory.id)
+                });
 
-                this.onAnnotationCategoryChanged.next(category);
+                this.onAnnotationCategoryChanged.next(categories);
             }
 
             if (this.selectedModule?.id) {
-                const bpmodule = this.findModule(this.annotationPage.annotations, this.selectedModule.id)
+                const bpmodules = this.annotationPage.annotations.map((annotation) => {
+                    this.findModule(annotation, this.selectedModule.id)
+                });
 
-                this.onAnnotationModuleChanged.next(bpmodule);
+                this.onAnnotationModuleChanged.next(bpmodules);
             }
-
-
         });
     }
 
-    selectGeneList(geneList: GeneList) {
-        this.selectedGeneList = geneList;
+    toggleGeneList(geneList: GeneList) {
+        const index = this.selectedGeneLists.findIndex(item => item.id === geneList.id);
+
+        if (index !== -1) {
+            this.selectedGeneLists.splice(index, 1);
+        } else {
+            this.selectedGeneLists.push(geneList);
+        }
+
+        // Trigger updates
         this.onSelectedGeneListChanged.next(geneList);
         this.onRawAnnotationsChanged.next(this.rawAnnotations);
     }
@@ -165,9 +184,6 @@ export class AnnotationService {
         return tree;
     }
 
-
-
-
     getAnnotationsPage(query: Query, page: number): any {
         const self = this;
         self.loading = true;
@@ -191,16 +207,17 @@ export class AnnotationService {
     }
 
 
-    addGeneMatch(annotationTree, geneSymbols: string[], query: Query) {
+    addGeneMatch(annotationTree, geneData: GeneData[], query: Query) {
 
-        const matchedAnnotations = this.calculateMatchPercentages(annotationTree, geneSymbols);
+        const matchedAnnotations = geneData.map((geneData) => {
+            return this.calculateMatchPercentages(annotationTree, geneData.geneSymbols, geneData.color);
+        });
 
         this.annotationPage.query = query;
         this.annotationPage.updatePage()
         this.annotationPage.annotations = matchedAnnotations;
         //  this.annotationPage.aggs = response.aggregations;
         this.annotationPage.query.source = query.source;
-
 
         this.onAnnotationsChanged.next(this.annotationPage);
     }
@@ -344,7 +361,7 @@ export class AnnotationService {
         const success = (geneData) => {
             if (geneData) {
                 self.geneList.push(geneData);
-                self.selectGeneList(geneData);
+                self.toggleGeneList(geneData);
             }
         };
 
@@ -361,10 +378,9 @@ export class AnnotationService {
             const uniqueLines = new Set(trimmedLines);
             const geneIds = Array.from(uniqueLines).filter(line => line !== '');
 
-            const { genes, nonMatchingGenes, unmatchedGeneList } = this._findMatchingAndNonMatchingGenes(geneIds, self.geneLookup);
+            const { genes, nonMatchingGenes, identifiersNotMatched } = this._findMatchingAndNonMatchingGenes(geneIds, self.geneLookup);
 
-
-            const data: GeneMeta = { genes, nonMatchingGenes, unmatchedGeneList, description: file.name }
+            const data: Partial<GeneList> = { genes, nonMatchingGenes, identifiersNotMatched, description: file.name }
 
             self.annotationDialogService.openUploadGenesDialog(data, success);
         };
@@ -719,7 +735,7 @@ export class AnnotationService {
         });
     }
 
-    private calculateMatchPercentages(data: any[], geneSymbols: string[]): any[] {
+    private calculateMatchPercentages(data: any[], geneSymbols: string[], color: string): any[] {
         return data.map(item => ({
             ...item,
             categories: item.categories.map(category => ({
@@ -727,7 +743,7 @@ export class AnnotationService {
                 modules: category.modules.map(module => {
                     const { updatedNodes, matchingNodesCount } = this.calculateMatchForNodes(module.nodes, geneSymbols);
                     const matchPercentage = module.nodes.length > 0 ? Math.round((matchingNodesCount / module.nodes.length) * 100) : 0;
-                    const grayscaleColor = this._getGrayscaleColor(matchPercentage);
+                    const grayscaleColor = getGrayscaleColor(color, matchPercentage);
 
                     const updatedDispositionSources = this.updateRefAnnotations(module.dispositionSources, geneSymbols);
 
@@ -742,7 +758,6 @@ export class AnnotationService {
             }))
         }));
     }
-
 
 
     private _getGrayscaleColor(percentage: number): string {
@@ -781,10 +796,10 @@ export class AnnotationService {
         }, []));
 
         // Filter the geneList to find items not in allGenesSet, indicating they were not matched in leafGenes
-        const unmatchedGeneList = geneList.filter(gene => !allGenesSet.has(gene));
+        const identifiersNotMatched = geneList.filter(gene => !allGenesSet.has(gene));
 
-        // Add unmatchedGeneList to the result
-        result.unmatchedGeneList = unmatchedGeneList;
+        // Add identifiersNotMatched to the result
+        result.identifiersNotMatched = identifiersNotMatched;
 
         return result;
     }

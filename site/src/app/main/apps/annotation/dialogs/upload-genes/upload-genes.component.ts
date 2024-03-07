@@ -10,6 +10,8 @@ import { GenePage, Query } from '../../models/page';
 import { Gene } from '../../../gene/models/gene.model';
 
 import { v4 as uuid } from 'uuid';
+import { geneColors } from '@pango.common/data/pango-colors';
+import { GeneList } from '../../models/annotation';
 
 @Component({
   selector: 'app-upload-genes',
@@ -20,11 +22,14 @@ export class UploadGenesDialogComponent implements OnInit, AfterViewInit, OnDest
   private _unsubscribeAll: Subject<any>;
   geneFormGroup: FormGroup;
 
+  geneColors = geneColors;
+
   genes: Gene[] = [];
   nonMatchingGenes: Gene[] = [];
-  unmatchedGeneList: string[] = [];
-
+  identifiersNotMatched: string[] = [];
   activeTab: string = 'matched';
+
+  currentColor: string = geneColors[0];
 
 
   constructor(
@@ -35,12 +40,8 @@ export class UploadGenesDialogComponent implements OnInit, AfterViewInit, OnDest
     this._unsubscribeAll = new Subject();
 
     this.genes = _data.genes
-    console.log('genes', this.genes)
-
     this.nonMatchingGenes = _data.nonMatchingGenes
-    console.log('genes', this.nonMatchingGenes)
-
-    this.unmatchedGeneList = _data.unmatchedGeneList
+    this.identifiersNotMatched = _data.identifiersNotMatched
   }
 
   ngOnInit() {
@@ -49,6 +50,10 @@ export class UploadGenesDialogComponent implements OnInit, AfterViewInit, OnDest
 
   ngAfterViewInit() {
     // this.dataSource.paginator = this.paginator;
+  }
+
+  onColorChange(newColor: string) {
+    this.currentColor = newColor;
   }
 
   setActiveTab(tabName: string) {
@@ -64,9 +69,7 @@ export class UploadGenesDialogComponent implements OnInit, AfterViewInit, OnDest
     return new FormGroup({
       description: new FormControl(this._data.description),
     })
-
   }
-
 
   save() {
 
@@ -75,11 +78,12 @@ export class UploadGenesDialogComponent implements OnInit, AfterViewInit, OnDest
 
     const genes = this.genes
     const count = genes.length
-    const value = {
+    const value: GeneList = {
       id, description, count,
+      color: this.currentColor,
       genes: this.genes,
       nonMatchingGenes: this.nonMatchingGenes,
-      unmatchedGeneList: this.unmatchedGeneList,
+      identifiersNotMatched: this.identifiersNotMatched,
     }
     this._matDialogRef.close(value);
   }

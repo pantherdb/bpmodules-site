@@ -7,9 +7,7 @@
         <div class="pango-category-title" (click)="selectCategory(category)">
           <div>{{ category.categoryLabel }}</div>
         </div>
-
         <div fxFlex="" class="">
-
           <div class="pango-matrix">
             <ng-container *ngFor="let module of category.modules">
               <div class="pango-square" *ngIf="!module.disposition" [style.background-color]="module.grayscaleColor"
@@ -29,15 +27,11 @@
                     (click)="$event.stopPropagation(); openAnnotationSummary(module.dispositionSources[1].refAnnotation)">
                   </div>
                 </ng-container>
-
-                <span></span>
               </div>
             </ng-container>
           </div>
-
         </div>
       </div>
     </div>
-
   </div>
 </div>

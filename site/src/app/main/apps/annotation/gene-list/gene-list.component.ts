@@ -9,6 +9,7 @@ import { Annotation, GeneList } from '../models/annotation';
 import { AnnotationService } from '../services/annotation.service';
 import { Gene } from '../../gene/models/gene.model';
 import { AnnotationDialogService } from '../services/dialog.service';
+import { getGrayscaleColor } from '@pango.common/data/pango-colors';
 
 @Component({
   selector: 'pango-gene-list',
@@ -22,8 +23,9 @@ export class GeneListComponent implements OnInit, OnDestroy {
   panelDrawer: MatDrawer;
 
   annotation: Annotation;
+  selectedGeneIndex: number | null = null;
   private _unsubscribeAll: Subject<any>;
-  geneList: any;
+  geneLists: GeneList[] = [];
   constructor(
     public annotationService: AnnotationService,
     private annotationDialogService: AnnotationDialogService) {
@@ -38,7 +40,8 @@ export class GeneListComponent implements OnInit, OnDestroy {
         if (!annotation) {
           return
         }
-        this.geneList = annotation
+        this.geneLists = annotation
+        //this.geneLists.forEach((geneList: GeneList) => {
 
         // console.log(this.annotation)
       });
@@ -62,11 +65,19 @@ export class GeneListComponent implements OnInit, OnDestroy {
     this._unsubscribeAll.complete();
   }
 
+  getBackgroundColor(geneList: GeneList, geneLists: GeneList[]): string {
 
-  selectedGeneIndex: number | null = null;
+    const selected = geneLists.some(g => g.id === geneList.id);
+    return selected ? getGrayscaleColor(geneList.color, 25) : '#FFFFFF';
+  }
 
-  selectGene(geneList: GeneList): void {
-    this.annotationService.selectGeneList(geneList)
+
+  toggleGene(geneList: GeneList): void {
+    this.annotationService.toggleGeneList(geneList)
+  }
+
+  isGeneInList(id: string, geneList: GeneList[]): boolean {
+    return geneList.some(g => g.id === id);
   }
 
   editGeneList(geneList: GeneList): void {
@@ -79,8 +90,9 @@ export class GeneListComponent implements OnInit, OnDestroy {
     };
     const data: GeneList = {
       id: geneList.id,
+      color: geneList.color,
       genes: geneList.genes,
-      unmatchedGenes: geneList.unmatchedGenes,
+      nonMatchingGenes: geneList.nonMatchingGenes,
       description: geneList.description,
       identifiersNotMatched: geneList.identifiersNotMatched,
     }

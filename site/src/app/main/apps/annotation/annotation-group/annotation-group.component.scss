@@ -101,6 +101,10 @@ $accent: map-get($theme, accent);
     }
   }
 
+  .pango-matrix-group {
+    margin: 5px 0;
+  }
+
   .pango-matrix {
     padding-left: 12px;
     flex-grow: 1;

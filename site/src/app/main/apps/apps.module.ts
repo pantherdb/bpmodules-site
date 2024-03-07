@@ -17,6 +17,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { AnnotationCategoryComponent } from './annotation/annotation-category/annotation-category.component';
 import { AnnotationModuleComponent } from './annotation/annotation-module/annotation-module.component';
 import { AnnotationSectionComponent } from './annotation/annotation-section/annotation-section.component';
+import { PangoColorPickerMinModule } from '@pango/components/color-picker-min/color-picker-min.module';
 
 const routes = [];
 
@@ -42,6 +43,7 @@ const routes = [];
         NgxChartsModule,
         PangoSharedModule,
         PangoConfirmDialogModule,
+        PangoColorPickerMinModule,
         ScrollingModule
     ],
     exports: [

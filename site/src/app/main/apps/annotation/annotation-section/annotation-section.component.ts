@@ -66,7 +66,6 @@ export class AnnotationSectionComponent implements OnInit, OnDestroy {
         this.annotationService.selectedSection = section;
         this.section = section
       });
-
   }
 
 

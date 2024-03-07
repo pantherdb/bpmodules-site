@@ -12,11 +12,14 @@
   <div class="pango-dialog-content">
     <div class="h-100-p" name="geneFormGroup" [formGroup]="geneFormGroup" fxLayout="column"
       fxLayoutAlign="start stretch">
-      <mat-form-field class="w-100-p" appearance="outline">
-        <mat-label>File Name</mat-label>
-        <input matInput formControlName="description" placeholder="File Name" />
-      </mat-form-field>
-
+      <div class="w-100-p" fxLayout="row" fxLayoutAlign="start center">
+        <mat-form-field fxFlex="40" appearance="outline">
+          <mat-label>File Name</mat-label>
+          <input matInput formControlName="description" placeholder="File Name" />
+        </mat-form-field>
+        <pango-color-picker-min fxFlex="" [selectedColor]="currentColor" [colors]="geneColors"
+          (colorChange)="onColorChange($event)"></pango-color-picker-min>
+      </div>
       <div class="tabs-buttons">
         <button mat-button class="pango-sm" [class.active]="activeTab === 'matched'" (click)="setActiveTab('matched')">
           Matched Genes (<small>{{genes.length}}</small>)
@@ -27,7 +30,7 @@
         </button>
         <button mat-button class="pango-sm" [class.active]="activeTab === 'unmatchedList'"
           (click)="setActiveTab('unmatchedList')">Identifiers Not Found
-          (<small>{{unmatchedGeneList.length}}</small>)</button>
+          (<small>{{identifiersNotMatched.length}}</small>)</button>
       </div>
 
       <div class="tab-content h-100-p">
@@ -56,7 +59,7 @@
         <!-- Unmatched Gene List -->
         <ng-container *ngIf="activeTab === 'unmatchedList'">
           <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport">
-            <div *cdkVirtualFor="let geneIdentifier of unmatchedGeneList" class="gene-row">
+            <div *cdkVirtualFor="let geneIdentifier of identifiersNotMatched" class="gene-row">
               <div class="gene-column">{{ geneIdentifier }}</div>
             </div>
           </cdk-virtual-scroll-viewport>

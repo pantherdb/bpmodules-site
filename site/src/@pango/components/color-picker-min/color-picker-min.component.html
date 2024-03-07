@@ -1,0 +1,5 @@
+<div class="color-grid">
+  <div *ngFor="let color of colors" class="color-circle" [style.background-color]="color" (click)="selectColor(color)"
+    [class.selected]="color === selectedColor">
+  </div>
+</div>

@@ -16,15 +16,12 @@
     </button>
   </div>
   <div class="pango-drawer-body" fxLayout="column" fxLayoutAlign="start start" pangoPerfectScrollbar>
-
-
     <div class="pango-gene-display w-100-p">
       <div fxLayout="column" fxLayoutAlign="start stretch">
-
         <div class="pango-alert alert-info step-guide">
           <div class="step">
             <span class="step-number">1</span>
-            <p class="step-description">Click the 'Upload Genes' button to add your gene list.</p>
+            <p class="step-description">Click the 'Add' button to add your gene list.</p>
           </div>
           <div class="step">
             <span class="step-number">2</span>
@@ -32,17 +29,20 @@
           </div>
           <div class="step">
             <span class="step-number">3</span>
-            <p class="step-description">Click on a specific gene set. The right panel will display the analysis results,
+            <p class="step-description">Click on a specific gene set to toggle select. The right panel will display the
+              analysis results,
               showcasing the active modules in single-cell RNA-seq data related to your selection.</p>
           </div>
         </div>
-        <div *ngFor="let gene of annotationService.geneList; let i = $index" (click)="selectGene(gene)"
-          [class.selected]="gene.id === annotationService.selectedGeneList?.id" class="pango-card-gene">
+        <div *ngFor="let gene of annotationService.geneList; let i = $index" (click)="toggleGene(gene)"
+          class="pango-card-gene"
+          [style.background-color]="getBackgroundColor(gene, annotationService.selectedGeneLists)">
           <div class="pango-gene-count">
             <span>{{gene.count}} <small>/ 6567</small></span>
           </div>
-
-          <h4 class="pango-title">{{gene.description}}</h4>
+          <div class="" fxLayout="column" fxLayoutAlign="start start">
+            <h4 class="pango-title">{{gene.description}}</h4>
+          </div>
           <span fxFlex=""> </span>
 
           <div class="pango-actions" fxLayout="row" fxLayoutAlign="start center">
@@ -58,15 +58,9 @@
               <fa-icon class="pango-icon pango-selected-icon" [icon]="['fas', 'trash']"></fa-icon>
             </button>
           </div>
-
         </div>
       </div>
     </div>
-
-
-
-
-
   </div>
   <!--   <div fxLayout="row" fxLayoutAlign="start center" class="pango-drawer-footer pango-submit-row">
     <span fxFlex></span>
