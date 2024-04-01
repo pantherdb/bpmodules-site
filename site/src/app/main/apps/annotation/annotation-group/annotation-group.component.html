@@ -1,11 +1,45 @@
-<div *ngFor="let item of  bpModules" class="item">
-  <h2>{{ item.id }}</h2>
-  <div *ngFor="let category of item.categories" class="category">
-    <h3>{{ category.id }}</h3>
-    <div class="matrix">
-      <div class="square" *ngFor="let module of category.modules" [style.background-color]="module.grayscaleColor"
-        title="{{ module.module_term }}" (click)="openAnnotationSummary(module)">
-        <span>{{ module.module_term }}</span>
+<!-- <pango-general-stats [ibdData]="categories"></pango-general-stats>
+ -->
+
+
+<div class="w-100-p" fxLayout="column" fxLayoutAlign="start center">
+  <div class="w-100-p pango-section" *ngFor="let item of annotations[0]" fxLayout="row" fxLayoutAlign="start center">
+    <div (click)="selectSection(item)" class="pango-section-title pango-truncate">{{ item.sectionLabel }}</div>
+    <div fxFlex="" fxLayout="column" fxLayoutAlign="start center">
+      <div *ngFor="let category of item.categories" class="pango-category-row w-100-p" fxLayout="row"
+        fxLayoutAlign="start center">
+        <div class="pango-category-title" (click)="selectCategory(category)">
+          <div>{{ category.categoryLabel }}</div>
+        </div>
+        <div fxFlex="" class="pango-matrix-group">
+          <ng-container *ngFor="let innerAnnotation of annotations">
+            <ng-container *ngFor="let innerCategory of findCategory(innerAnnotation, category.id)">
+              <div class="pango-matrix">
+                <ng-container *ngFor="let module of innerCategory.modules">
+                  <div class="pango-square" *ngIf="!module.disposition" [style.background-color]="module.grayscaleColor"
+                    title="{{ module.moduleLabel }}" (click)="openAnnotationSummary(module)">
+
+                    <ng-container *ngIf="module.dispositionSources?.length > 1">
+                      <div *ngIf="module.dispositionSources[0].refAnnotation"
+                        title="{{ module.dispositionSources[0].refAnnotation?.moduleLabel}}" class="pango-positive"
+                        [ngStyle]="{'background-color': module.dispositionSources[0].refAnnotation?.matchPercentage
+ > 0 ? '#489470' : 'transparent'}"
+                        (click)="$event.stopPropagation(); openAnnotationSummary(module.dispositionSources[0].refAnnotation)">
+                      </div>
+                      <div *ngIf="module.dispositionSources[1].refAnnotation"
+                        title="{{ module.dispositionSources[1].refAnnotation?.moduleLabel}}" class="pango-negative"
+                        [ngStyle]="{'background-color': module.dispositionSources[1].refAnnotation?.matchPercentage
+ > 0 ? '#d46565' : 'transparent'}"
+                        (click)="$event.stopPropagation(); openAnnotationSummary(module.dispositionSources[1].refAnnotation)">
+                      </div>
+                    </ng-container>
+                    <span></span>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
       </div>
     </div>
   </div>

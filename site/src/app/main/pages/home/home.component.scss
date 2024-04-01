@@ -1,17 +1,69 @@
+@use "@angular/material" as mat;
 @import "src/@pango/scss/pango";
 @import "src/@pango.common/scss/pango.common";
 $primary: map-get($theme, primary);
 
+$green: $pango-primary-color-light;
+$green-dark: $pango-primary-color;
+$size: 50px;
+$f-size: 10px;
+
 :host {
   width: 100%;
 
+  .pango-sidemenu {
+    padding: 0;
+    @include deep-height(100%);
+    @include deep-width(60px);
+    // @include mat-elevation(2);
+    border-right: #999 solid 1px;
+    background-color: $pango-primary-color-light;
+
+    .pango-sidemenu-header {
+      width: 100%;
+      padding: 0 5px;
+      margin-bottom: 20px;
+      @include deep-height(40px);
+      @include mat.elevation(2);
+      z-index: 1000;
+      color: #fff;
+    }
+
+    .pango-label {
+      text-transform: uppercase;
+      font-size: 8px;
+      font-weight: bold;
+    }
+
+    button {
+      @include deep-width(90px);
+      @include deep-height(60px);
+      line-height: 25px;
+      border-radius: 0 !important;
+
+      font-size: 20px;
+      // color: rgba(map-get($primary, default), 0.5);
+      color: #ddd;
+
+      &.pango-active {
+        font-size: 28px;
+        color: map-get($primary, default);
+        color: #fff;
+      }
+    }
+  }
+
   .pango-left-drawer {
-    width: 380px;
+    // width: 380px;
     border-right: #111 solid 1px;
 
     .pango-menu-section {
       width: 100%;
     }
+  }
+
+  .pango-browser-drawer {
+    @include deep-width(300px !important);
   }
 
   pango-summary-stats {
@@ -20,6 +72,11 @@ $primary: map-get($theme, primary);
   }
 
   pango-gene-form {
+    @include deep-width(300px !important);
+    display: block;
+  }
+
+  pango-gene-list {
     @include deep-width(300px !important);
     display: block;
   }
@@ -42,9 +99,9 @@ $primary: map-get($theme, primary);
   padding: 20px;
   background-image: linear-gradient(
       to right,
-      #00174f,
-      rgba(#00174f, 0.8),
-      rgba(#00174f, 0.5)
+      $pango-primary-color-light,
+      rgba($pango-primary-color, 0.8),
+      rgba($pango-primary-color-light, 0.5)
     ),
     url("~assets/images/gene.jpeg");
   background-blend-mode: initial;
@@ -52,7 +109,7 @@ $primary: map-get($theme, primary);
   background-position: top;
   position: relative;
   flex: 1 0 auto;
-  height: 270px;
+  height: 170px;
   min-width: 800px;
   max-height: 400px;
   //text-align: center;
@@ -173,6 +230,84 @@ $primary: map-get($theme, primary);
   }
 }
 
+.helper-set-block {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  background: $pango-primary-color;
+  overflow: hidden;
+
+  .arrow-wrapper {
+    text-align: left; // Align to the left instead of center
+    font-size: 0px;
+    z-index: 10;
+    cursor: pointer;
+    display: inline-flex;
+    width: 100%;
+
+    .breadcrumb-item {
+      list-style-type: none;
+
+      a {
+        font-size: 16px;
+        color: $pango-accent-color;
+        background: $pango-primary-color;
+        display: inline-block;
+        padding: 0 8px 0 30px;
+        margin: 0 1px 0 0;
+        height: 40px;
+        line-height: 40px;
+        position: relative;
+        white-space: nowrap;
+        max-width: 4px;
+        overflow: hidden;
+        transition: max-width ease-in-out 0.8s;
+        text-decoration: none;
+
+        &:hover,
+        &:last-child {
+          color: $pango-accent-color;
+          max-width: 499px; // Expand the last item
+        }
+
+        &.active {
+          background-color: $pango-primary-color-light;
+          max-width: 999px;
+        }
+
+        &:before,
+        &:after {
+          position: absolute;
+          width: 0;
+          height: 0;
+          border-style: solid;
+          border-width: 20px 0 20px 20px;
+          border-color: transparent transparent transparent white;
+          content: "";
+          top: 0;
+        }
+
+        &:before {
+          left: 0px;
+          z-index: 1;
+          border-left-color: white;
+        }
+
+        &:after {
+          left: -1px;
+          z-index: 2;
+          border-left-color: $pango-primary-color;
+        }
+      }
+
+      &:first-child a:before,
+      &:first-child a:after {
+        display: none;
+      }
+    }
+  }
+}
+
 .pango-filter-section {
   margin: 8px;
   padding: 8px;
@@ -210,7 +345,8 @@ $primary: map-get($theme, primary);
 }
 
 .pango-section-body {
-  background-color: $pango-background;
+  min-height: 1000px;
+  background-color: #fff;
 }
 
 .pango-middle-panel {

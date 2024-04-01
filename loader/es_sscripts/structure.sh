@@ -1,3 +1,3 @@
 . host.sh
 
-curl "$host/pango-annotations/structure"
+curl "$host/pango-bpmodules/structure"

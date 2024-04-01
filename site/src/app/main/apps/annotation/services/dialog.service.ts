@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { UploadGenesDialogComponent } from '../dialogs/upload-genes/upload-genes.component';
 
 
 @Injectable({
@@ -21,6 +22,20 @@ export class AnnotationDialogService {
             duration: 10000,
             verticalPosition: 'top'
         });
+    }
+
+    openUploadGenesDialog(data, success: Function): void {
+        this.dialogRef = this._matDialog.open(UploadGenesDialogComponent, {
+            panelClass: 'pango-upload-genes-dialog',
+            data,
+            width: '600px',
+        });
+        this.dialogRef.afterClosed()
+            .subscribe(response => {
+                if (response) {
+                    success(response);
+                }
+            });
     }
 
 }

@@ -3,28 +3,22 @@
 set -e
 
 
-terms_fp='./downloads/input/full_go_annotated.json'
-annotations_fp='./downloads/input/human_iba_annotations.json'
-clean_articles_fp='./downloads/clean-articles.json'
-genes_fp='./downloads/input/human_iba_gene_info.json'
-taxon_fp='./downloads/input/taxon_lkp.json'
-clean_annotations_fp='./downloads/human_iba_annotations_clean.json'
-genes_annotations_fp='./downloads/human_iba_genes_clean.json'
+terms_fp='./downloads/input/go_term_info.json'
+genes_fp='./downloads/input/bp_module_gene_info.json'
+term_dispositions_fp='./downloads/input/term_dispositions.json'
+bpmodules_fp='./downloads/input/ibd_modules_organized.json'
+clean_bpmodules_fp='./downloads/input/clean_bpmodules.json'
+unique_genes_fp='./downloads/input/unique_genes.json'
 
 
-# python3 -m src.get_articles -a $annotations_fp -o $clean_articles_fp
-
-python3 -m src.clean_annotations \
--a $annotations_fp \
+python3 -m src.clean_bpmodules \
+-bp $bpmodules_fp \
 -t $terms_fp \
--tax $taxon_fp \
--art $clean_articles_fp \
+-td $term_dispositions_fp \
 -g $genes_fp \
--o $clean_annotations_fp
+-ug $unique_genes_fp \
+-o $clean_bpmodules_fp
 
 
-python3 -m src.generate_gene_annotations \
--a $clean_annotations_fp \
--o $genes_annotations_fp
 
-python3 -m src.index_es -a $clean_annotations_fp -g $genes_annotations_fp
+python3 -m src.index_es -bp $clean_bpmodules_fp -g $unique_genes_fp

@@ -1,3 +1,3 @@
 . host.sh
 
-curl $host/pango-annotations/_search?pretty=true&q=*:*
+curl $host/pango-bpmodules/_search?pretty=true&q=*:*

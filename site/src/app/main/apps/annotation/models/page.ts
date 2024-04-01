@@ -14,7 +14,7 @@ export class Page {
 export class Query {
     source: string[];
     from = 0;
-    size = 50;
+    size = 100000;
     filterArgs: FilterArgs = new FilterArgs()
     pageArgs = new PageArgs()
     pageNumber = 0;
@@ -25,6 +25,20 @@ export class AnnotationPage extends Page {
 
     query;
     annotations: any;
+    aggs: any;
+
+    updatePage() {
+        this.pageNumber = this.query.pageArgs.page;
+        this.size = this.query.pageArgs.size;
+    }
+
+
+}
+
+export class GenePage extends Page {
+
+    query;
+    genes: any;
     aggs: any;
 
     updatePage() {

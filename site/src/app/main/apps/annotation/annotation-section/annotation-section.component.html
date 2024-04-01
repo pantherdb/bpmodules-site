@@ -1,0 +1,37 @@
+<div *ngIf="section" class="w-100-p" fxLayout="column" fxLayoutAlign="start center">
+  <div class="w-100-p pango-section" fxLayout="column" fxLayoutAlign="start start">
+    <div class="pango-section-title pango-truncate">{{ section.sectionLabel }}</div>
+    <div fxFlex="" fxLayout="column" fxLayoutAlign="start center">
+      <div *ngFor="let category of section.categories" class="pango-category-row w-100-p" fxLayout="row"
+        fxLayoutAlign="start center">
+        <div class="pango-category-title" (click)="selectCategory(category)">
+          <div>{{ category.categoryLabel }}</div>
+        </div>
+        <div fxFlex="" class="">
+          <div class="pango-matrix">
+            <ng-container *ngFor="let module of category.modules">
+              <div class="pango-square" *ngIf="!module.disposition" [style.background-color]="module.grayscaleColor"
+                title="{{ module.moduleLabel }}" (click)="openAnnotationSummary(module)">
+
+                <ng-container *ngIf="module.dispositionSources?.length > 1">
+                  <div *ngIf="module.dispositionSources[0].refAnnotation"
+                    title="{{ module.dispositionSources[0].refAnnotation?.moduleLabel}}" class="pango-positive"
+                    [ngStyle]="{'background-color': module.dispositionSources[0].refAnnotation?.matchPercentage
+ > 0 ? '#489470' : 'transparent'}"
+                    (click)="$event.stopPropagation(); openAnnotationSummary(module.dispositionSources[0].refAnnotation)">
+                  </div>
+                  <div *ngIf="module.dispositionSources[1].refAnnotation"
+                    title="{{ module.dispositionSources[1].refAnnotation?.moduleLabel}}" class="pango-negative"
+                    [ngStyle]="{'background-color': module.dispositionSources[1].refAnnotation?.matchPercentage
+ > 0 ? '#d46565' : 'transparent'}"
+                    (click)="$event.stopPropagation(); openAnnotationSummary(module.dispositionSources[1].refAnnotation)">
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

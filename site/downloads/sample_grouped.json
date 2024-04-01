@@ -1,0 +1,54 @@
+[
+  {
+    "sectionId": "GO:0071840",
+    "sectionLabel": "cellular component organization or biogenesis",
+    "categories": [
+      {
+        "categoryId": "GO:0034330",
+        "categoryLabel": "cell junction organization",
+        "modules": [
+          {
+            "moduleId": "GO:0120192",
+            "moduleLabel": "tight junction assembly",
+            "disposition": null,
+            "nodes": [
+              {
+                "nodeId": "PTN007679700",
+                "nodeLabel": "PATJ HOMOLOG",
+                "terms": [
+                  {
+                    "id": "GO:0120192",
+                    "label": "tight junction assembly"
+                  }
+                ],
+                "leafGenes": [
+                  {
+                    "gene": "UniProtKB:O75970",
+                    "geneSymbol": "MPDZ",
+                    "geneName": "Multiple PDZ domain protein",
+                    "taxonId": "9606",
+                    "pantherFamily": null,
+                    "longId": null
+                  },
+                  {
+                    "gene": "UniProtKB:Q8NI35",
+                    "geneSymbol": "PATJ",
+                    "geneName": "InaD-like protein",
+                    "taxonId": "9606",
+                    "pantherFamily": null,
+                    "longId": null
+                  }
+                ],
+                "matched": true
+              }
+            ],
+            "dispositionSourcesTermIds": [],
+            "dispositionSources": [],
+            "matchPercentage": 22,
+            "grayscaleColor": "rgb(199, 199, 199)"
+          }
+        ]
+      }
+    ]
+  }
+]

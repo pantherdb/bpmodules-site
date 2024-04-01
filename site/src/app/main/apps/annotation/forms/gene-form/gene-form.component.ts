@@ -75,7 +75,7 @@ export class GeneFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  geneDisplayFn(gene: Annotation): string | undefined {
+  geneDisplayFn(gene: any): string | undefined {
     return gene ? gene.gene : undefined;
   }
 

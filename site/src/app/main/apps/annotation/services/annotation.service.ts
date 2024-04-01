@@ -1,140 +1,187 @@
 import { environment } from 'environments/environment';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, map, Observable, throwError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Client } from 'elasticsearch-browser';
-import { AnnotationPage, Query } from '../models/page';
-import { cloneDeep, find, orderBy, uniqBy } from 'lodash';
-import { SearchCriteria, SearchType } from '@pango.search/models/search-criteria';
-import { AnnotationCount, AnnotationStats, Bucket, FilterArgs, Annotation, AutocompleteFilterArgs, Term } from '../models/annotation';
+import { AnnotationPage, GenePage, Query } from '../models/page';
+import { orderBy } from 'lodash';
+import { SearchCriteria } from '@pango.search/models/search-criteria';
+import { AnnotationCount, AnnotationStats, Bucket, Annotation, AutocompleteFilterArgs, Term, GeneList, TreeModule, TreeSection, TreeCategory, GeneData } from '../models/annotation';
 import { AnnotationGraphQLService } from './annotation-graphql.service';
 import { pangoData } from '@pango.common/data/config';
 import { Gene } from '../../gene/models/gene.model';
-
-import genes from '@pango.common/data/genes1.json';
+import { AnnotationDialogService } from './dialog.service';
+import { getColor, getGrayscaleColor } from '@pango.common/data/pango-colors';
 
 @Injectable({
     providedIn: 'root',
 })
 export class AnnotationService {
+
     aspectMap = pangoData.aspectMap;
     termTypeMap = pangoData.termTypeMap;
     annotationResultsSize = environment.annotationResultsSize;
     onGeneCountChanged: BehaviorSubject<number>;
     //onAnnotationGroupsChanged: BehaviorSubject<AnnotationPage>;
     onAnnotationsChanged: BehaviorSubject<AnnotationPage>;
+
+    onRawAnnotationsChanged: BehaviorSubject<Annotation[]>;
     onAutocompleteChanged: BehaviorSubject<AnnotationPage>;
     onUniqueListChanged: BehaviorSubject<any>;
     onAnnotationsAggsChanged: BehaviorSubject<AnnotationStats>;
-    onDistinctAggsChanged: BehaviorSubject<AnnotationStats>;
     onAnnotationChanged: BehaviorSubject<any>;
+    onAnnotationCategoryChanged: BehaviorSubject<any>;
+    onAnnotationSectionChanged: BehaviorSubject<any>;
+    selectedCategory: TreeCategory;
+    selectedModule: TreeModule;
+    selectedSection: TreeSection;
+    onAnnotationModuleChanged: BehaviorSubject<any>;
+
+    // Genes
+    onGenesChanged: BehaviorSubject<any>;
+    //onGeneListChanged: BehaviorSubject<any>;
+    onSelectedGeneListChanged: BehaviorSubject<any>;
+
+
+    onDistinctAggsChanged: BehaviorSubject<AnnotationStats>;
     onSearchCriteriaChanged: BehaviorSubject<any>;
 
     onSelectedGeneChanged: BehaviorSubject<Gene>;
     searchCriteria: SearchCriteria;
     annotationPage: AnnotationPage = new AnnotationPage();
+    genePage: GenePage = new GenePage();
+
+
     loading = false;
     selectedQuery;
     queryOriginal;
     query: Query = new Query();
-    searchType = SearchType.ANNOTATIONS
 
     private client: Client;
     uniqueList: Annotation[];
-    onBPModulesChanged: BehaviorSubject<any>;
-    onBPModuleChanged: BehaviorSubject<any>;
-    leafGenesToCheck = genes
 
+    onCategoryChanged: BehaviorSubject<any>;
+    geneList: GeneList[] = [];
+    selectedGeneLists: GeneList[] = [];
+    rawAnnotations: Annotation[];
+    geneLookup: Gene[];
+    annotationTree: any[];
 
     constructor(
         private httpClient: HttpClient,
-        private annotationGraphQLService: AnnotationGraphQLService) {
-        this.onBPModulesChanged = new BehaviorSubject(null);
-        this.onBPModuleChanged = new BehaviorSubject(null);
+        private annotationGraphQLService: AnnotationGraphQLService,
+        private annotationDialogService: AnnotationDialogService
+    ) {
+
+        this.onCategoryChanged = new BehaviorSubject(null);
+        this.onRawAnnotationsChanged = new BehaviorSubject(null);
         this.onAnnotationsChanged = new BehaviorSubject(null);
+        this.onAnnotationChanged = new BehaviorSubject(null);
+        this.onGenesChanged = new BehaviorSubject(null);
+
+        // this.onGeneListChanged = new BehaviorSubject(null);
         this.onGeneCountChanged = new BehaviorSubject(null);
+        this.onSelectedGeneListChanged = new BehaviorSubject(null);
         //this.onAnnotationGroupsChanged = new BehaviorSubject(null);
         this.onUniqueListChanged = new BehaviorSubject(null);
         this.onAutocompleteChanged = new BehaviorSubject(null);
         this.onAnnotationsAggsChanged = new BehaviorSubject(null);
         this.onDistinctAggsChanged = new BehaviorSubject(null);
-        this.onAnnotationChanged = new BehaviorSubject(null);
         this.onSearchCriteriaChanged = new BehaviorSubject(null);
         this.onSelectedGeneChanged = new BehaviorSubject(null);
+
+        this.onAnnotationModuleChanged = new BehaviorSubject(null);
+        this.onAnnotationSectionChanged = new BehaviorSubject(null);
         this.searchCriteria = new SearchCriteria();
 
-    }
+        this.onAnnotationCategoryChanged = new BehaviorSubject(null);
 
-    private _handleError(error: any) {
-        const err = new Error(error);
-        return throwError(() => err);
-    }
+        this.onRawAnnotationsChanged.subscribe((annotations: Annotation[]) => {
 
-    private jsonUrl = 'assets/sample.json';  // URL to JSON file
+            if (!annotations || !this.selectedGeneLists) return;
 
+            const geneData: GeneData[] = this.selectedGeneLists.map((geneList) => {
 
-    getJsonData() {
-        this.httpClient.get<any>(this.jsonUrl).subscribe({
-            next: (data) => {
-                const data1 = this.calculateMatchPercentagesAndColor(data);
-                this.onBPModulesChanged.next(data1);
-            },
-            error: (err) => {
-                // Handle error here
-                console.error('Error fetching data:', err);
+                return {
+                    color: geneList.color,
+                    geneSymbols: geneList.genes.map((gene: Gene) => {
+                        return gene.geneSymbol;
+                    })
+                };
+            })
+
+            this.addGeneMatch(this.annotationTree, geneData, this.query)
+
+            if (this.selectedSection?.id) {
+                const sections = this.annotationPage.annotations.map((annotation) => {
+                    this.findSection(annotation, this.selectedSection.id)
+                });
+
+                this.onAnnotationSectionChanged.next(sections);
+            }
+
+            if (this.selectedCategory?.id) {
+                const categories = this.annotationPage.annotations.map((annotation) => {
+                    this.findCategory(annotation, this.selectedCategory.id)
+                });
+
+                this.onAnnotationCategoryChanged.next(categories);
+            }
+
+            if (this.selectedModule?.id) {
+                const bpmodules = this.annotationPage.annotations.map((annotation) => {
+                    this.findModule(annotation, this.selectedModule.id)
+                });
+
+                this.onAnnotationModuleChanged.next(bpmodules);
             }
         });
     }
 
-    private calculateMatchPercentagesAndColor(data: any[]): any[] {
-        return data.map(item => ({
-            ...item,
-            categories: item.categories.map(category => ({
-                ...category,
-                modules: category.modules.map(module => {
-                    const totalNodes = module.nodes.length;
-                    const matchingNodesCount = module.nodes.filter(node =>
-                        node.leaf_genes.some(gene => this.leafGenesToCheck.includes(gene))
-                    ).length;
-                    const matchPercentage = totalNodes > 0 ? (matchingNodesCount / totalNodes) * 100 : 0;
-                    const grayscaleColor = this.getGrayscaleColor(matchPercentage);
-                    return {
-                        ...module,
-                        matchPercentage,
-                        grayscaleColor // Add the calculated color
-                    };
-                })
-            }))
-        }));
+    toggleGeneList(geneList: GeneList) {
+        const index = this.selectedGeneLists.findIndex(item => item.id === geneList.id);
+
+        if (index !== -1) {
+            this.selectedGeneLists.splice(index, 1);
+        } else {
+            this.selectedGeneLists.push(geneList);
+        }
+
+        // Trigger updates
+        this.onSelectedGeneListChanged.next(geneList);
+        this.onRawAnnotationsChanged.next(this.rawAnnotations);
     }
 
-    private getGrayscaleColor(percentage: number): string {
-        const intensity = Math.round(255 - (255 * percentage / 100));
-        return `rgb(${intensity}, ${intensity}, ${intensity})`;
+    deleteGeneList(index: number) {
+        this.geneList.splice(index, 1);
     }
 
+    buildTree(data) {
+        const tree = [];
 
+        // First Pass: Build the tree structure
+        for (const item of data) {
+            const section = this._findOrCreateSection(tree, item);
+            const category = this._findOrCreateCategory(section, item);
+            const module = this._findOrCreateModule(category, item);
+            this._findOrCreateNode(module, item); // Add nodes here
+        }
 
-    getAnnotationsExport(page: number): any {
-        const self = this;
-        self.loading = true;
+        // Second Pass: Set refAnnotation
+        for (const item of data) {
+            const section = tree.find(s => s.sectionId === item.sectionId);
+            const category = section?.categories.find(c => c.categoryId === item.categoryId);
+            const module = category?.modules.find(m => m.moduleId === item.moduleId);
 
-        this.searchCriteria.clearSearch()
-        this.searchCriteria = new SearchCriteria();
+            if (module && item.dispositionSources) {
+                module.dispositionSources = item.dispositionSources.map(ds => {
+                    const refModule = this._findModuleByTermId(tree, ds.termId);
+                    return { ...ds, refAnnotation: refModule || null };
+                });
+            }
+        }
 
-        self.getAnnotationsPage(this.query, page);
-        self.getAnnotationsCount(this.query);
-        self.queryAnnotationStats(this.query);
-    }
-
-    getAnnotationsExportAll(): any {
-        const self = this;
-        self.loading = true;
-        return this.annotationGraphQLService.getAnnotationsExportAllQuery(this.query)
-    }
-
-    setDetail(bpModule) {
-        this.onBPModuleChanged.next(bpModule);
+        return tree;
     }
 
     getAnnotationsPage(query: Query, page: number): any {
@@ -147,21 +194,32 @@ export class AnnotationService {
             {
                 next: (annotations: Annotation[]) => {
                     this.annotationPage = Object.assign(Object.create(Object.getPrototypeOf(this.annotationPage)), this.annotationPage);
-
-                    this.annotationPage.query = query;
-                    this.annotationPage.updatePage()
-                    this.annotationPage.annotations = annotations;
-                    //  this.annotationPage.aggs = response.aggregations;
-                    this.annotationPage.query.source = query.source;
-
-
-                    this.onAnnotationsChanged.next(this.annotationPage);
-
+                    this.rawAnnotations = annotations;
+                    this.annotationTree = this.buildTree(annotations);
+                    this.geneLookup = this._findUniqueLeafGenes(annotations);
+                    this.addGeneMatch(this.annotationTree, [], this.query)
+                    this.onRawAnnotationsChanged.next(this.rawAnnotations);
                     self.loading = false;
                 }, error: (err) => {
                     self.loading = false;
                 }
             });
+    }
+
+
+    addGeneMatch(annotationTree, geneData: GeneData[], query: Query) {
+
+        const matchedAnnotations = geneData.map((geneData) => {
+            return this.calculateMatchPercentages(annotationTree, geneData.geneSymbols, geneData.color);
+        });
+
+        this.annotationPage.query = query;
+        this.annotationPage.updatePage()
+        this.annotationPage.annotations = matchedAnnotations;
+        //  this.annotationPage.aggs = response.aggregations;
+        this.annotationPage.query.source = query.source;
+
+        this.onAnnotationsChanged.next(this.annotationPage);
     }
 
     getGenesPage(query: Query, page: number): any {
@@ -175,43 +233,18 @@ export class AnnotationService {
             {
                 next: (genes: Gene[]) => {
                     //const annotationData = annotations
-                    this.annotationPage = Object.assign(Object.create(Object.getPrototypeOf(this.annotationPage)), this.annotationPage);
-                    this.annotationPage.query = query;
-                    this.annotationPage.updatePage()
-                    this.annotationPage.annotations = genes;
-                    // this.annotationPage.aggs = response.aggregations;
-                    this.annotationPage.query.source = query.source;
+                    this.genePage = Object.assign(Object.create(Object.getPrototypeOf(this.genePage)), this.genePage);
+                    this.genePage.query = query;
+                    this.genePage.updatePage()
+                    this.genePage.genes = genes;
+                    // this.genePage.aggs = response.aggregations;
+                    this.genePage.query.source = query.source;
 
-                    this.onAnnotationsChanged.next(this.annotationPage);
-
-                    self.loading = false;
-                }, error: (err) => {
-                    self.loading = false;
-                }
-            });
-    }
-
-    getAnnotationsExportPage(query: Query, page: number): any {
-        const self = this;
-        self.loading = true;
-        query.pageArgs.page = (page - 1);
-        query.pageArgs.size = this.annotationResultsSize;
-        this.query = query;
-        return this.annotationGraphQLService.getAnnotationsQuery(query).subscribe(
-            {
-                next: (annotations: Annotation[]) => {
-                    const annotationData = annotations
-
-                    this.annotationPage.query = query;
-                    this.annotationPage.updatePage()
-                    this.annotationPage.annotations = annotationData;
-                    //  this.annotationPage.aggs = response.aggregations;
-                    this.annotationPage.query.source = query.source;
-
-                    this.onAnnotationsChanged.next(this.annotationPage);
+                    this.onGenesChanged.next(this.genePage);
 
                     self.loading = false;
                 }, error: (err) => {
+                    console.log(err)
                     self.loading = false;
                 }
             });
@@ -292,38 +325,129 @@ export class AnnotationService {
         const query = new Query()
 
         this.searchCriteria.slimTerms.forEach((term: Term) => {
-            query.filterArgs.slimTermIds.push(term.id);
-        });
-
-        this.searchCriteria.genes.forEach((annotation: Annotation) => {
-            query.filterArgs.geneIds.push(annotation.gene);
-        });
-
-        this.searchCriteria.aspects.forEach((aspect: string) => {
-            query.filterArgs.aspectIds.push(aspect);
-        });
-        this.searchCriteria.termTypes.forEach((value) => {
-            query.filterArgs.termTypeIds.push(value);
-        });
-
-        this.searchCriteria.evidenceTypes.forEach((evidenceType: string) => {
-            query.filterArgs.evidenceTypeIds.push(evidenceType);
+            // query.filterArgs.slimTermIds.push(term.id);
         });
 
 
         this.query = query;
 
-        if (this.searchType === SearchType.ANNOTATION_GROUP) {
-            this.getGenesPage(query, 1);
 
-        } else {
-            this.getAnnotationsPage(query, 1);
-            this.getAnnotationsCount(query)
-        }
-        this.getGenesCount(query)
-        this.queryAnnotationStats(query)
+        this.getAnnotationsPage(query, 1);
+        this.getAnnotationsCount(query)
+
+        //this.getGenesCount(query)
+        //this.queryAnnotationStats(query)
         //this.getUniqueItems(query)
     }
+
+    onGeneFileSelected(event: Event): void {
+        const input = event.target as HTMLInputElement;
+
+        if (input.files && input.files.length > 0) {
+            const file = input.files[0];
+
+            // Check if file size is less than 20 MB
+            if (file.size <= 50 * 1024 * 1024) {
+                this.readGeneFile(file);
+            } else {
+                alert("File size must be less than 50 MB");
+            }
+        }
+    }
+    readGeneFile(file: File): void {
+        const self = this;
+        const fileReader = new FileReader();
+
+        const success = (geneData) => {
+            if (geneData) {
+                self.geneList.push(geneData);
+                self.toggleGeneList(geneData);
+            }
+        };
+
+
+        fileReader.onload = (e) => {
+            const text = fileReader.result as string;
+
+            // Replace commas with new lines, remove quotes, and trim each line
+            const transformedText = text.replace(/,/g, '\n').replace(/["']/g, '').trim();
+
+            // Split into lines and process each line
+            const lines = transformedText.split(/\r\n|\n/);
+            const trimmedLines = lines.map(line => line.trim());
+            const uniqueLines = new Set(trimmedLines);
+            const geneIds = Array.from(uniqueLines).filter(line => line !== '');
+
+            const { genes, nonMatchingGenes, identifiersNotMatched } = this._findMatchingAndNonMatchingGenes(geneIds, self.geneLookup);
+
+            const data: Partial<GeneList> = { genes, nonMatchingGenes, identifiersNotMatched, description: file.name }
+
+            self.annotationDialogService.openUploadGenesDialog(data, success);
+        };
+
+        fileReader.readAsText(file);
+    }
+
+
+
+
+    onConfigFileChange(event) {
+        const self = this;
+        let reader = new FileReader();
+        //console.log(event, control)
+
+        if (event.target.files && event.target.files.length) {
+            const [file] = event.target.files;
+            reader.readAsText(file);
+
+            reader.onload = () => {
+                try {
+                    const searchCriteria = JSON.parse(reader.result as string);
+                    //document.getElementById('elementid').value = "";
+                    if (searchCriteria && searchCriteria._source) {
+                        //self.doFileSelection(searchCriteria._source, self.treeControl.dataNodes, self.checklistSelection);
+
+                    } else {
+                        alert("wrong file format")
+                    }
+                } catch (exception) {
+                    alert("invalid file")
+                }
+            };
+        }
+    }
+
+    downloadConfig() {/*
+    const annotations = this.checklistSelection.selected as any[];
+    const source = annotations.reduce((annotationString, item) => {
+      return annotationString + ' ' + item.id
+    }, []);
+
+    if (source.length > 0) {
+      this.annotationService.downloadConfig(source.trim());
+    } else {
+      this.snpDialogService.openMessageToast('Select at least one annotation from the tree', 'OK');
+    }*/
+        /*    const annotations = this.checklistSelection.selected as any[];
+           const source = annotations.map((item: AnnotationFlatNode) => {
+               return item.name; //item.leaf ? item.name : false;
+           }, []);
+           if (source.length > 0) {
+               this.saveConfig(JSON.stringify({ "_source": source }));
+           } else {
+             //  this.confirmDialogService.openConfirmDialog(
+                   'No Selection Found', 'Select at least one annotation from the tree');
+           } */
+    }
+
+    saveConfig(configText: string) {
+        var blob = new Blob([configText], { type: "text/plain;charset=utf-8" });
+        //  saveAs(blob, "config.txt");
+    }
+
+
+
+
 
     buildSummaryTree(aggs) {
 
@@ -468,5 +592,216 @@ export class AnnotationService {
         return sorted
     }
 
+
+    findCategory(annotationTree: TreeSection[], id: string) {
+        for (let section of annotationTree) {
+            let category = section.categories.find(c => c.id === id);
+            if (category) {
+                return category; // Return if found
+            }
+        }
+        return null; // Return null if not found
+    }
+
+    findModule(annotationTree: TreeSection[], id: string) {
+        for (let section of annotationTree) {
+            for (let category of section.categories) {
+                let module = category.modules.find(m => m.id === id);
+                if (module) {
+                    return module; // Return if found
+                }
+            }
+        }
+        return null; // Return null if not found
+    }
+
+    findSection(annotationTree: TreeSection[], id: string) {
+        const section = annotationTree.find(s => s.id === id);
+        return section || null; // Return null if not found
+    }
+
+    // Privates
+
+    private _findOrCreateSection(tree, item) {
+        let section = tree.find(s => s.sectionId === item.sectionId);
+        if (!section) {
+            section = {
+                id: item.id,
+                sectionId: item.sectionId,
+                sectionLabel: item.sectionLabel,
+                categories: []
+            };
+            tree.push(section);
+        }
+        return section;
+    }
+
+    private _findOrCreateCategory(section, item) {
+        let category = section.categories.find(c => c.categoryId === item.categoryId);
+        if (!category) {
+            category = {
+                id: item.id,
+                categoryId: item.categoryId,
+                categoryLabel: item.categoryLabel,
+                modules: []
+            };
+            section.categories.push(category);
+        }
+        return category;
+    }
+
+    private _findOrCreateModule(category, item) {
+        let module = category.modules.find(m => m.moduleId === item.moduleId);
+        if (!module) {
+            module = {
+                id: item.id,
+                moduleId: item.moduleId,
+                moduleLabel: item.moduleLabel,
+                disposition: item.disposition,
+                nodes: [],
+                // Temporarily store termIds, to be processed later
+                dispositionSourcesTermIds: item.dispositionSources?.map(ds => ds.termId) || []
+            };
+            category.modules.push(module);
+        }
+        return module;
+    }
+
+    private _findOrCreateNode(module, item) {
+        const node = {
+            id: item.id,
+            nodeId: item.nodeId,
+            nodeLabel: item.nodeLabel,
+            terms: item.terms,
+            leafGenes: item.leafGenes
+        };
+        module.nodes.push(node);
+    }
+
+
+    private _findModuleByTermId(tree, termId) {
+        for (const section of tree) {
+            for (const category of section.categories) {
+                for (const module of category.modules) {
+                    if (module.moduleId === termId) {
+                        return module;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private calculateMatchForNodes(nodes, geneSymbols) {
+        let matchingNodesCount = 0;
+
+        const updatedNodes = nodes.map(node => {
+            const isMatched = node.leafGenes.some(leafGene =>
+                geneSymbols.includes(leafGene.geneSymbol)
+            );
+
+            if (isMatched) matchingNodesCount++;
+
+            return {
+                ...node,
+                matched: isMatched
+            };
+        });
+
+        return { updatedNodes, matchingNodesCount };
+    }
+
+    private updateRefAnnotations(dispositionSources, geneSymbols) {
+        return dispositionSources.map(ds => {
+            if (ds.refAnnotation && ds.refAnnotation.nodes) {
+                const { updatedNodes, matchingNodesCount } = this.calculateMatchForNodes(ds.refAnnotation.nodes, geneSymbols);
+                const totalRefNodes = updatedNodes.length;
+                const refMatchPercentage = totalRefNodes > 0 ? Math.round((matchingNodesCount / totalRefNodes) * 100) : 0;
+                const refGrayscaleColor = totalRefNodes > 0 ? (ds.disposition === "negative" ? '#0F0' : '#F00') : 'transparent';
+
+
+                return {
+                    ...ds,
+                    refAnnotation: {
+                        ...ds.refAnnotation,
+                        nodes: updatedNodes,
+                        matchPercentage: refMatchPercentage,
+                        grayscaleColor: refGrayscaleColor
+                    },
+                    matched: matchingNodesCount > 0  // Update matched based on the updatedNodes
+                };
+            }
+            return ds;
+        });
+    }
+
+    private calculateMatchPercentages(data: any[], geneSymbols: string[], color: string): any[] {
+        return data.map(item => ({
+            ...item,
+            categories: item.categories.map(category => ({
+                ...category,
+                modules: category.modules.map(module => {
+                    const { updatedNodes, matchingNodesCount } = this.calculateMatchForNodes(module.nodes, geneSymbols);
+                    const matchPercentage = module.nodes.length > 0 ? Math.round((matchingNodesCount / module.nodes.length) * 100) : 0;
+                    const grayscaleColor = getGrayscaleColor(color, matchPercentage);
+
+                    const updatedDispositionSources = this.updateRefAnnotations(module.dispositionSources, geneSymbols);
+
+                    return {
+                        ...module,
+                        nodes: updatedNodes,
+                        dispositionSources: updatedDispositionSources,
+                        matchPercentage,
+                        grayscaleColor
+                    };
+                })
+            }))
+        }));
+    }
+
+
+    private _getGrayscaleColor(percentage: number): string {
+        const intensity = Math.round(255 - (255 * percentage / 100));
+        return `rgb(${intensity}, ${intensity}, ${intensity})`;
+    }
+
+    private _findUniqueLeafGenes(data: Annotation[]) {
+        const uniqueGenesMap = new Map();
+
+        data.forEach(item => {
+            item.leafGenes.forEach(leafGene => {
+                if (!uniqueGenesMap.has(leafGene.geneSymbol)) {
+                    uniqueGenesMap.set(leafGene.geneSymbol, leafGene);
+                }
+            });
+        });
+
+        return Array.from(uniqueGenesMap.values());
+    }
+
+    private _findMatchingAndNonMatchingGenes(geneList: string[], leafGenes: Gene[]) {
+        const result: any = leafGenes.reduce((acc, leafGene) => {
+            if (geneList.includes(leafGene.gene) || geneList.includes(leafGene.geneSymbol)) {
+                acc.genes.push(leafGene);
+            } else {
+                acc.nonMatchingGenes.push(leafGene);
+            }
+            return acc;
+        }, { genes: [], nonMatchingGenes: [] });
+
+        // Replace flatMap with map and reduce for compatibility
+        const allGenesSet = new Set(leafGenes.reduce((acc, leafGene) => {
+            acc.push(leafGene.gene, leafGene.geneSymbol);
+            return acc;
+        }, []));
+
+        // Filter the geneList to find items not in allGenesSet, indicating they were not matched in leafGenes
+        const identifiersNotMatched = geneList.filter(gene => !allGenesSet.has(gene));
+
+        // Add identifiersNotMatched to the result
+        result.identifiersNotMatched = identifiersNotMatched;
+
+        return result;
+    }
 
 }

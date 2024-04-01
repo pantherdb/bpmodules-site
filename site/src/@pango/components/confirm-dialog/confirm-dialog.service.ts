@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { PangoConfirmDialogComponent } from '@pango/components/confirm-dialog/confirm-dialog.component';
 
@@ -15,16 +13,9 @@ export class PangoConfirmDialogService {
     dialogRef: any;
 
     constructor(
-        private snackBar: MatSnackBar,
         private _matDialog: MatDialog) {
     }
 
-    openSuccessfulSaveToast(message: string, action: string) {
-        this.snackBar.open(message, action, {
-            duration: 5000,
-            verticalPosition: 'top'
-        });
-    }
 
     openConfirmDialog(title: string, message: string, success?, options?): void {
         let confirmDialogRef: MatDialogRef<PangoConfirmDialogComponent> = this._matDialog.open(PangoConfirmDialogComponent, {

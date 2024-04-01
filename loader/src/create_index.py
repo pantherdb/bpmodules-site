@@ -7,7 +7,7 @@ from src.config.es import es
 
 def get_index_name(tsv_type: TableAggType):
     index_map = {
-        'annotations': settings.PANGO_ANNOTATIONS_INDEX,
+        'bpmodules': settings.PANGO_BPMODULES_INDEX,
         'genes': settings.PANGO_GENES_INDEX
     }
 
@@ -20,8 +20,9 @@ def create_index(tsv_type: TableAggType):
     es.options(ignore_status=[400, 404]).indices.delete(index=es_index)
     es.options(ignore_status=[400, 404]).indices.create(index=es_index, settings=add_settings())
      
-    if(tsv_type == TableAggType.ANNOTATIONS.value):
-        es.indices.put_mapping(index=es_index, body=annotations_mapping())         
+    if(tsv_type == TableAggType.BPMODULES.value):
+        es.indices.put_mapping(index=es_index, body=bpmodules_mapping())     
+            
     elif(tsv_type == TableAggType.GENES.value):
         es.indices.put_mapping(index=es_index, body=genes_mapping()) 
 
@@ -35,8 +36,8 @@ def add_settings():
     return data
 
 
-def annotations_mapping():
-    with open(Path('.') / 'data/es_settings/annotations_mappings.json', 'r') as f:
+def bpmodules_mapping():
+    with open(Path('.') / 'data/es_settings/bpmodules_mappings.json', 'r') as f:
         data = json.load(f)
 
     return data

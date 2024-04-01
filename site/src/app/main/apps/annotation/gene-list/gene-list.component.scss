@@ -1,0 +1,142 @@
+@use "@angular/material" as mat;
+@import "src/@pango/scss/pango";
+@import "src/@pango.common/scss/pango.common";
+
+$primary: map-get($theme, primary);
+$accent: map-get($theme, accent);
+
+// Greys
+$ash: #eaeef6;
+$charcoal: #a0a0a0;
+$void: #141b22;
+
+// Beige/Browns
+$fair-pink: #ffedec;
+$apricot: #fbc8be;
+$coffee: #754d42;
+$del-rio: #917072;
+
+// Greens
+$java: #1fcac5;
+
+:host {
+  .pango-drawer {
+    @include deep-width(100% !important);
+  }
+
+  .pthr-file-upload-header {
+    height: 35px;
+
+    button {
+      @include deep-height(35px);
+
+      &.pthr-file-button {
+        pointer-events: none;
+      }
+    }
+
+    label {
+      padding: 0;
+    }
+
+    .pthr-file-upload-title {
+      margin-left: 4px;
+      color: #888;
+      font-weight: bold;
+    }
+  }
+
+  .step-guide {
+    font-family: "Arial", sans-serif;
+    background-color: #f8f8f8;
+    // border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 12px;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1px;
+  }
+
+  .step-number {
+    background-color: #4caf50;
+    color: white;
+    border-radius: 50%;
+    @include deep-width(30px);
+    @include deep-height(30px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    font-size: 16px;
+  }
+
+  .step-description {
+    color: #333;
+    font-size: 10px;
+    line-height: 1.6;
+  }
+
+  .pango-gene-display {
+    padding: 10px 8px;
+  }
+
+  .pango-card-gene {
+    position: relative;
+    margin-bottom: 12px;
+    padding: 40px 5px 10px 5px;
+    overflow: hidden;
+    border: 1px solid #bbb;
+    background-color: #f7f7f7;
+    height: 80px;
+    @include mat.elevation(2);
+  }
+
+  .pango-gene-count {
+    position: absolute;
+    top: -10px;
+    left: 0;
+    //background-color: $apricot;
+    border-bottom-right-radius: 25px;
+    border: #888 solid 1px;
+    padding: 12px 20px 5px 8px;
+    font-weight: 600;
+    color: $coffee;
+    small {
+      color: $del-rio;
+      font-size: 0.75em;
+      margin-left: 0.25em;
+    }
+  }
+
+  .pango-actions {
+    position: absolute;
+    top: -2px;
+    right: -10px;
+    width: 80px;
+    height: 30px;
+  }
+
+  .pango-color-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+  }
+
+  .pango-title {
+    font-weight: normal;
+    color: $coffee;
+    margin: 0;
+    padding: 0;
+  }
+
+  .selected {
+    border: 2px solid $java;
+    background-color: #c0abac;
+  }
+}

@@ -2,8 +2,8 @@
 # import asyncio
 import pprint
 import typing
-from src.resolvers.annotation_resolver import get_annotations_query, get_genes_query
-from src.models.annotation_model import  AnnotationFilterArgs, AnnotationStats, Bucket, Entity, Frequency, GeneFilterArgs, ResultCount
+from src.resolvers.annotation_resolver import get_annotations_query
+from src.models.annotation_model import  AnnotationFilterArgs, AnnotationStats, Bucket, Entity, Frequency, ResultCount
 from src.config.settings import settings
 from src.config.es import  es
 
@@ -20,44 +20,32 @@ async def get_annotations_count(filter_args:AnnotationFilterArgs):
     return results   
 
 
-async def get_genes_count(filter_args:GeneFilterArgs):
-
-    query = await get_genes_query(filter_args)
-    resp = await es.count(
-          index=settings.PANGO_GENES_INDEX,
-          query=query
-    )
-    
-    results = ResultCount(total=resp['count'])
-        
-    return results  
-
-
 async def get_annotations_stats(filter_args:AnnotationFilterArgs):
     
     query = await get_annotations_query(filter_args)
     aggs = {     
-        "aspect_frequency": {
+        "section_frequency": {
           "terms": {
-            "field": "term.aspect.keyword",
+            "field": "section_label.keyword",
              "order":{"_count":"desc"},
              "size": 20
           }
         },
-         "evidence_type_frequency": {
+             "category_frequency": {
           "terms": {
-            "field": "evidence_type.keyword",
+            "field": "category_label.keyword",
              "order":{"_count":"desc"},
              "size": 20
           }
         },
-        "term_type_frequency": {
+                  "module_frequency": {
           "terms": {
-            "field": "term_type.keyword",
-            "order":{"_count":"desc"},
-            "size": 2
+            "field": "module_label.keyword",
+             "order":{"_count":"desc"},
+             "size": 20
           }
         },
+    
         "slim_term_frequency": get_slim_terms_query()        
     }
     

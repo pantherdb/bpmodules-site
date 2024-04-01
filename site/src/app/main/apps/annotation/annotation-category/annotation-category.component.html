@@ -1,0 +1,64 @@
+<div *ngIf="category" fxLayout="column" fxLayoutAlign="start start" class="pango-category-row w-100-p">
+  <div class="pango-category-title">
+    <h2>{{ category.categoryLabel }}</h2>
+  </div>
+
+  <table class="pango-category-table">
+    <thead>
+      <tr>
+        <th>Modules</th>
+
+        <th class="" *ngFor="let module of category.modules">
+          <div class="rotated-header-container">
+            <div (click)="selectModule(module)" class="pango-section-title pango-truncate">{{module.moduleLabel}} </div>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="w-100-p" fxLayout="column" fxLayoutAlign="start end">
+            <div class="pango-left-header-item">
+              Module Activeness
+            </div>
+            <div class="pango-left-header-item">
+              Coverage
+            </div>
+            <div class="pango-left-header-item">
+              Nodes
+            </div>
+          </div>
+        </td>
+        <td *ngFor="let module of category.modules">
+          <div class="w-100-p" fxLayout="column" fxLayoutAlign="start center">
+            <div class="pango-square" [style.background-color]="module.grayscaleColor" title="{{ module.moduleLabel }}"
+              (click)="openAnnotationSummary(module)">
+
+              <ng-container *ngIf="module.dispositionSources?.length > 1">
+                <div class="pango-positive" [ngStyle]="{'background-color': module.dispositionSources[0].refAnnotation?.matchPercentage
+     > 0 ? '#489470' : 'transparent'}"
+                  (click)="$event.stopPropagation(); openAnnotationSummary(module.dispositionSources[0].refAnnotation)">
+                </div>
+                <div class="pango-negative" [ngStyle]="{'background-color': module.dispositionSources[1].refAnnotation?.matchPercentage
+     > 0 ? '#d46565' : 'transparent'}"
+                  (click)="$event.stopPropagation(); openAnnotationSummary(module.dispositionSources[1].refAnnotation)">
+                </div>
+              </ng-container>
+            </div>
+
+            <div class="pango-percentage-number">
+              {{module.matchPercentage}}%
+            </div>
+            <div *ngFor="let node of module.nodes">
+              <div class="pango-node-square" [ngStyle]="{'color': node.matched ? '#c0abac' : '#FFF'}"
+                title="{{ node.nodeLabel }}" (click)="openAnnotationSummary(module)">
+                <fa-icon [icon]="['fas', 'check-circle']"></fa-icon>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

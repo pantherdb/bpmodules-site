@@ -1,7 +1,7 @@
 from src.config.es import es
 import logging
 
-annotations_dir = ''
+bpmodules_dir = ''
 logging.basicConfig(
     handlers=[logging.FileHandler('logfile.log', 'w', 'utf-8')],
     format='%(levelname)s: %(message)s',

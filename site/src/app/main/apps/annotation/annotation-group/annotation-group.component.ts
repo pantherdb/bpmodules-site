@@ -5,19 +5,20 @@ import { PangoMenuService } from '@pango.common/services/pango-menu.service';
 import { AnnotationService } from './../services/annotation.service'
 import { AnnotationPage } from '../models/page';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
-import { RightPanel } from '@pango.common/models/menu-panels';
+import { MiddlePanel, RightPanel } from '@pango.common/models/menu-panels';
 import { MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { environment } from 'environments/environment';
 import { pangoData } from '@pango.common/data/config';
 import { Annotation } from '../models/annotation';
 import { Gene } from '../../gene/models/gene.model';
+import { AnnotationBreadcrumbsService } from '../services/annotation-breadcrumbs.service';
 @Component({
   selector: 'pango-annotation-group',
   templateUrl: './annotation-group.component.html',
   styleUrls: ['./annotation-group.component.scss'],
   // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
+export class AnnotationGroupComponent implements OnInit, OnDestroy {
   RightPanel = RightPanel;
   aspectMap = pangoData.aspectMap;
   evidenceTypeMap = pangoData.evidenceTypeMap;
@@ -26,7 +27,7 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
   columns: any[] = [];
   count = 0
 
-  bpModules: any[] = []
+  annotations: any[] = []
 
   amigoTermUrl = environment.amigoTermUrl
   pubmedUrl = environment.pubmedUrl
@@ -52,11 +53,9 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
   genes: Gene[];
 
   displayedColumns = [
-    'expand',
-    'gene',
-    'mfs',
-    'bps',
-    'ccs',
+    'section',
+    'category',
+    'module',
   ];
 
   @Input('maxReferences') maxReferences = 2
@@ -65,45 +64,67 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
 
   selectedGP: Gene
 
+  categories = []
+  view: any[] = [700, 400];
+
+  // options
+  gradient: boolean = true;
+  showLegend: boolean = true;
+  showLabels: boolean = true;
+  isDoughnut: boolean = false;
+  legendPosition: string = 'below';
+
+
   private _unsubscribeAll: Subject<any>;
 
   constructor(
     public pangoMenuService: PangoMenuService,
-    public annotationService: AnnotationService
+    public annotationService: AnnotationService,
+    public breadcrumbsService: AnnotationBreadcrumbsService,
   ) {
+
     this.loadingIndicator = false;
 
     this._unsubscribeAll = new Subject();
 
-    this.annotationService.getJsonData()
-
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.annotationPage.currentValue) {
-      this.genes = this.annotationPage.annotations
-      this.dataSource = new MatTableDataSource<any>(this.genes);
-    }
-  }
 
   ngOnInit(): void {
 
-    this.annotationService.onBPModulesChanged
+    this.annotationService.onAnnotationsChanged
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((bpModules) => {
-        if (!bpModules) {
-          this.bpModules = []
-          return
+      .subscribe((annotationPage: AnnotationPage) => {
+        console.log('annotationPage', annotationPage)
+        if (annotationPage) {
+          this.annotations = annotationPage.annotations
+        } else {
+          this.annotations = []
         }
 
-        this.bpModules = bpModules
-      });
+        this.categories = this.annotations.map((annotation) => {
+          return {
+            name: annotation.label,
+            value: annotation.count
+          }
+        });
 
+        // this.categories = this.transformData(this.annotations)
+
+        //this.annotationService.onCategoryChanged.next(annotations)
+
+      });
 
     if (this.options?.displayedColumns) {
       this.displayedColumns = this.options.displayedColumns
     }
   }
+
+  findCategory(annotation, id: string) {
+    const category = this.annotationService.findCategory(annotation, id)
+    return [category]
+  }
+
 
 
   toggleExpand(gene: Gene) {
@@ -142,8 +163,14 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  selectSection(section) {
+    this.annotationService.onAnnotationSectionChanged.next(section)
+    this.breadcrumbsService.onSectionClick(section.id)
+    this.pangoMenuService.selectMiddlePanel(MiddlePanel.SECTION);
+  }
+
   selectAnnotation(row) {
-    this.pangoMenuService.selectRightPanel(RightPanel.annotationDetail);
+    this.pangoMenuService.selectRightPanel(RightPanel.DETAIL);
     this.pangoMenuService.openRightDrawer();
     this.annotationService.onAnnotationChanged.next(row);
   }
@@ -157,24 +184,31 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy, OnChanges {
     this._unsubscribeAll.complete();
   }
 
+  selectCategory(category) {
+    this.annotationService.onAnnotationCategoryChanged.next(category)
+    this.breadcrumbsService.onCategoryClick(category.id)
+    this.pangoMenuService.selectMiddlePanel(MiddlePanel.CATEGORY);
+  }
+
   openAnnotationSearch() {
-    this.pangoMenuService.selectRightPanel(RightPanel.annotationSearch);
+    this.pangoMenuService.selectRightPanel(RightPanel.SEARCH);
     this.pangoMenuService.openRightDrawer()
   }
 
   openAnnotationTable() {
-    this.pangoMenuService.selectRightPanel(RightPanel.annotationTable);
+    this.pangoMenuService.selectRightPanel(RightPanel.TABLE);
     this.pangoMenuService.closeRightDrawer()
   }
 
   openAnnotationSummary(term) {
-    this.annotationService.onBPModuleChanged.next(term)
-    this.pangoMenuService.selectRightPanel(RightPanel.annotationDetail);
+    console.log('term', term)
+    this.annotationService.onAnnotationChanged.next(term)
+    this.pangoMenuService.selectRightPanel(RightPanel.DETAIL);
     this.pangoMenuService.openRightDrawer()
   }
 
   openAnnotationStats() {
-    this.pangoMenuService.selectRightPanel(RightPanel.annotationStats);
+    this.pangoMenuService.selectRightPanel(RightPanel.STATS);
     this.pangoMenuService.openRightDrawer();
   }
 }

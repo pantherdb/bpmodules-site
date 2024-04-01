@@ -1,6 +1,7 @@
 $pango-border-color: #bbb;
 
 .pango-rounded-button {
+  min-width: 0 !important;
   border-radius: 20px !important;
   @include deep-height(40px);
   line-height: 40px;

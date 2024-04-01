@@ -6,8 +6,12 @@ $accent: map-get($theme, accent);
 
 :host {
   .footer {
-    background: #1a237e;
-    background: linear-gradient(to right, #0e2a3b 0%, #34306b 100%);
+    background: $pango-primary-color;
+    background: linear-gradient(
+      to right,
+      $pango-primary-color 0%,
+      $pango-primary-color-light 100%
+    );
     padding: 20px;
     color: #fff;
   }

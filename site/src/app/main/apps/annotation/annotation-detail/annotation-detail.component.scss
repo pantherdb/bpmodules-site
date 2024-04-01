@@ -10,10 +10,15 @@ $accent: map-get($theme, accent);
   }
 
   .matched-gene {
-    background-color: #28a745 !important;
+    background-color: #106323 !important;
     color: #f2f2f2;
   }
-  .module-display {
+
+  .matched-node {
+    background-color: #a5d8b1 !important;
+  }
+
+  .pango-module-display {
     border: 1px solid #ddd;
     padding: 20px;
     margin-top: 20px;
@@ -22,16 +27,12 @@ $accent: map-get($theme, accent);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .module-header {
-    background-color: #e7f5ff;
-    padding: 10px 15px;
-    border-radius: 6px;
+  .pango-module-header {
+    //padding: 10px 15px;
     margin-bottom: 15px;
-    font-size: 18px;
-    color: #0056b3;
   }
 
-  .node {
+  .pango-node {
     background-color: #fff;
     border: 1px solid #eee;
     padding: 15px;
@@ -40,18 +41,8 @@ $accent: map-get($theme, accent);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
 
-  .node h4 {
-    color: #007bff;
-    margin-bottom: 10px;
-  }
-
-  .node p {
-    margin-bottom: 8px;
-    line-height: 1.6;
-  }
-
-  .terms,
-  .genes {
+  .pango-node-terms,
+  .pango-node-genes {
     background-color: #f2f2f2;
     padding: 8px;
     border-radius: 4px;
@@ -70,12 +61,12 @@ $accent: map-get($theme, accent);
       font-size: 10px;
     }
 
-    .pango-cell-section {
+    .pango-node-section {
       //border-bottom: #aaa solid 1px;
       padding: 5px 0;
     }
 
-    .pango-cell-inner-section {
+    .pango-node-inner-section {
       padding-left: 30px;
     }
 

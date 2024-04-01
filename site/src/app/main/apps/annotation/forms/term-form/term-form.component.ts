@@ -87,7 +87,7 @@ export class TermFormComponent implements OnInit, OnDestroy {
   }
 
   termDisplayFn(term: Annotation): string | undefined {
-    return term ? term.term.label : undefined;
+    return term ? term.categoryLabel : undefined;
   }
 
   slimTermDisplayFn(term: Term): string | undefined {
