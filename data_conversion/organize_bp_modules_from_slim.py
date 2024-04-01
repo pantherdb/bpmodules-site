@@ -5,9 +5,9 @@ from typing import Dict, List
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-m', '--bp_modules_json')
+parser.add_argument('-m', '--bp_modules_json', nargs='*', help="Flat list JSON of BP modules. Multiple args allowed.")
 parser.add_argument('-s', '--go_slim_file')
-parser.add_argument('-o', '--go_ontology_file', help="TSV of GO term parent(col1)-child(col2) relationships (is_a, part_of only)")
+parser.add_argument('-o', '--go_ontology_file', help="TSV of GO term parent(col1)-child(col2) relationships (is_a, part_of, regulates)")
 parser.add_argument('-t', '--level_one_terms_file', help="File of line-separated GO terms to use as level one terms")
 parser.add_argument('-p', '--other_ont_json', help="JSON of OTHER: terms to use for level one terms")
 parser.add_argument('-l', '--go_term_labels_file')
@@ -154,8 +154,10 @@ if __name__ == "__main__":
             term_labels[goterm] = label
 
     # Load BP modules
-    with open(args.bp_modules_json) as bmj:
-        bp_modules = json.load(bmj)
+    bp_modules = []
+    for bmj in args.bp_modules_json:
+        with open(bmj) as bmj_file:
+            bp_modules += json.load(bmj_file)
     print(len(bp_modules))
     # Iterate through and put module in go_slim_terms key if key is_ancestor_of module_term
     module_leftovers = {}
