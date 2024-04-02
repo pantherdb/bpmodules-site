@@ -317,6 +317,11 @@ export class AnnotationService {
         });
     }
 
+    selectSection(sections) {
+
+        this.onAnnotationSectionChanged.next(sections)
+    }
+
     updateSearch() {
         this.searchCriteria.updateFiltersCount();
         this.searchCriteria.updateTooltips()

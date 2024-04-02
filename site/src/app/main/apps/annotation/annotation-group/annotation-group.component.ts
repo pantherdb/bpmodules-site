@@ -102,13 +102,6 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy {
           this.annotations = []
         }
 
-        this.categories = this.annotations.map((annotation) => {
-          return {
-            name: annotation.label,
-            value: annotation.count
-          }
-        });
-
         // this.categories = this.transformData(this.annotations)
 
         //this.annotationService.onCategoryChanged.next(annotations)
@@ -164,7 +157,7 @@ export class AnnotationGroupComponent implements OnInit, OnDestroy {
   }
 
   selectSection(section) {
-    this.annotationService.onAnnotationSectionChanged.next(section)
+    this.annotationService.selectSection(section)
     this.breadcrumbsService.onSectionClick(section.id)
     this.pangoMenuService.selectMiddlePanel(MiddlePanel.SECTION);
   }

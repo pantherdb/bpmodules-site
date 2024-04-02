@@ -21,10 +21,7 @@ export class AnnotationSectionComponent implements OnInit, OnDestroy {
   RightPanel = RightPanel;
   aspectMap = pangoData.aspectMap;
   evidenceTypeMap = pangoData.evidenceTypeMap;
-
   uniprotUrl = environment.uniprotUrl;
-
-
   amigoTermUrl = environment.amigoTermUrl
 
   loadingIndicator: boolean;
@@ -44,6 +41,7 @@ export class AnnotationSectionComponent implements OnInit, OnDestroy {
   dataSource = new MatTableDataSource<any>();
 
   private _unsubscribeAll: Subject<any>;
+  annotations: any[] = []
   section: any;
 
   constructor(
@@ -59,6 +57,17 @@ export class AnnotationSectionComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
+
+    this.annotationService.onAnnotationsChanged
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((annotationPage: AnnotationPage) => {
+        console.log('annotationPage', annotationPage)
+        if (annotationPage) {
+          this.annotations = annotationPage.annotations
+        } else {
+          this.annotations = []
+        }
+      });
 
     this.annotationService.onAnnotationSectionChanged
       .pipe(takeUntil(this._unsubscribeAll))
@@ -84,6 +93,11 @@ export class AnnotationSectionComponent implements OnInit, OnDestroy {
     this._unsubscribeAll.complete();
   }
 
+  findCategory(annotation, id: string) {
+    const category = this.annotationService.findCategory(annotation, id)
+    return [category]
+  }
+
   selectCategory(category) {
     this.annotationService.onAnnotationCategoryChanged.next(category)
     this.breadcrumbsService.onCategoryClick(category.id)
@@ -91,7 +105,7 @@ export class AnnotationSectionComponent implements OnInit, OnDestroy {
   }
 
   selectSection(section) {
-    this.annotationService.onAnnotationSectionChanged.next(section)
+    this.annotationService.selectSection(section)
     this.breadcrumbsService.onSectionClick(section.id)
     this.pangoMenuService.selectMiddlePanel(MiddlePanel.SECTION);
   }

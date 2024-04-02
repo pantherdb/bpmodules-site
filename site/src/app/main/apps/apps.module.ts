@@ -59,6 +59,7 @@ const routes = [];
         AnnotationCategoryComponent,
         AnnotationSectionComponent,
         AnnotationModuleComponent,
+        AnnotationDetailComponent,
     ],
     providers: []
 })
